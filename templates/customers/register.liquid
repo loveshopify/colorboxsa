@@ -1,0 +1,39 @@
+<h1 class="page-title">{{ 'customers.register.header' | t }}</h1>
+
+{% include 'breadcrumbs' %}
+
+<div class="customer-wrapper">
+
+  {% form 'create_customer', class: 'customer-register' %}
+
+    {% if form.errors %}
+      {{ form.errors | default_errors }}
+    {% endif %}
+
+    <div class="input-wrapper">
+      <label for="customer[first_name]">{{ 'customers.general.first_name' | t }}</label>
+      <input type="text" placeholder="" value="{{ form.first_name }}" name="customer[first_name]" class="{% if form.errors contains "first_name" %}error{% endif %}">
+    </div>
+
+    <div class="input-wrapper">
+      <label for="customer[last_name]">{{ 'customers.general.last_name' | t }}</label>
+      <input type="text" placeholder="" value="{{ form.last_name }}" name="customer[last_name]" class="{% if form.errors contains "last_name" %}error{% endif %}">
+    </div>
+
+    <div class="input-wrapper">
+      <label for="customer[email]">{{ 'general.general.email' | t }}</label>
+      <input type="text" placeholder="{{ 'general.general.email_placeholder' | t }}" value="{{ form.email }}" name="customer[email]" class="{% if form.errors contains "email" %}error{% endif %}">
+    </div>
+
+    <div class="input-wrapper">
+      <label for="customer[password]">{{ 'general.general.password' | t }}</label>
+      <input type="password" placeholder="" value="" name="customer[password]">
+    </div>
+
+    <div class="input-wrapper">
+      <input type="submit" value="{{ 'customers.register.submit' | t }}">
+    </div>
+
+  {% endform %}
+
+</div>

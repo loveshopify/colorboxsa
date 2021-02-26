@@ -1,0 +1,29 @@
+{% if settings.instagram-widget-access-token != blank %}
+
+  <div class="instagram-widget">
+    <div class="instagram-photos"></div>
+    {% if settings.instagram-username != blank %}
+      {% capture instagramLink %}
+        <a href="http://instagram.com/{{ settings.instagram-username }}">@{{ settings.instagram-username }}</a>
+      {% endcapture %}
+      <div class="instagram-follow">{{ 'general.social.follow_on_instagram_html' | t: instagram_link: instagramLink }}</div>
+    {% endif %}
+  </div>
+
+{% else %}
+
+  <div class="instagram-widget onboarding">
+    <div class="instagram-photos">
+      {% for i in (1..3) %}
+        <div class="instagram-photo">
+          <span></span>
+        </div>
+      {% endfor %}
+    </div>
+    {% capture instagramLink %}
+      <a href="http://instagram.com/pixelunion">@pixelunion</a>
+    {% endcapture %}
+    <div class="instagram-follow">{{ 'general.social.follow_on_instagram_html' | t: instagram_link: instagramLink }}</div>
+  </div>
+
+{% endif %}

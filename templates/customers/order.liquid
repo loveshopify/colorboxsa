@@ -1,0 +1,119 @@
+<h1 class="page-title">{{ 'customers.order.header' | t: order_number: order.name }}</h1>
+
+{% include 'breadcrumbs' %}
+
+<div class="customer-wrapper">
+
+  <div class="shipping-info">
+    <div class="customer-address shipping-address">
+      <h2 class="section-title">{{ 'customers.order.shipping_address' | t }}</h2>
+      <p>
+        <span>{{ order.shipping_address.first_name }} {{ order.shipping_address.last_name }}</span><br>
+        {% if order.shipping_address.company != blank %}
+          <span>{{ order.shipping_address.company }}</span><br>
+        {% endif %}
+        {% if order.shipping_address.street != blank %}
+          <span>{{ order.shipping_address.street }}</span><br>
+        {% endif %}
+        {% if order.shipping_address.city != blank or order.shipping_address.province_code != blank %}
+          <span>{{ order.shipping_address.city }}{% if order.shipping_address.province_code %}, {{ order.shipping_address.province_code }}{% endif %}</span><br>
+        {% endif %}
+        {% if order.shipping_address.country != blank or order.shipping_address.zip != blank %}
+          <span>{{ order.shipping_address.country }} {{ order.shipping_address.zip }}</span><br>
+        {% endif %}
+        {% if order.shipping_address.phone != blank %}
+          <span>{{ order.shipping_address.phone }}</span><br>
+        {% endif %}
+      </p>
+    </div>
+
+    <div class="customer-address shipping-address">
+      <h2 class="section-title">{{ 'customers.order.billing_address' | t }}</h2>
+      <p>
+        <span>{{ order.billing_address.first_name }} {{ order.billing_address.last_name }}</span><br>
+        {% if order.billing_address.company != blank %}
+          <span>{{ order.billing_address.company }}</span><br>
+        {% endif %}
+        {% if order.billing_address.street != blank %}
+          <span>{{ order.billing_address.street }}</span><br>
+        {% endif %}
+        {% if order.billing_address.city != blank or order.billing_address.province_code != blank %}
+          <span>{{ order.billing_address.city }}{% if order.billing_address.province_code %}, {{ order.billing_address.province_code }}{% endif %}</span><br>
+        {% endif %}
+        {% if order.billing_address.country != blank or order.billing_address.zip != blank %}
+          <span>{{ order.billing_address.country }} {{ order.billing_address.zip }}</span><br>
+        {% endif %}
+        {% if order.billing_address.phone != blank %}
+          <span>{{ order.billing_address.phone }}</span><br>
+        {% endif %}
+      </p>
+    </div>
+  </div>
+
+  <div class="order-history">
+
+    <table class="order">
+      <thead>
+        <tr>
+          <th class="first">{{ 'general.general.product' | t }}</th>
+          <th>{{ 'general.general.price' | t }}</th>
+          <th>{{ 'general.general.quantity' | t }}</th>
+          <th class="last">{{ 'general.general.total' | t }}</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {% for line_item in order.line_items %}
+          <tr class="{% include 'for-looper' %} {% if order.cancelled %}cancelled_order{% endif %}">
+            <td class="order-product-item first">
+              <a class="order-image" href="{{ line_item.product.url }}">
+                {%
+                  include 'rimg',
+                  img: line_item.product,
+                  alt: line_item.title,
+                  size: '100x100'
+                %}
+              </a>
+              <div class="order-details">
+                <span class="order-vendor">{{ line_item.vendor }}</span>
+                <span class="order-title">{{ line_item.title | link_to: line_item.product.url }}</span>
+                {% if line_item.variant.title != 'Default Title' %}
+                  <span class="order-variant">{{ line_item.variant.title }}</span>
+                {% endif %}
+              </div>
+            </td>
+            <td class="order-price" data-title="{{ 'general.general.price' | t }}"><span class="money">{% include 'money', value: line_item.price %}</span></td>
+            <td class="order-quantity" data-title="{{ 'general.general.quantity' | t }}"><span>{{ line_item.quantity }}</span></td>
+            {% assign total = line_item.quantity | times: line_item.price %}
+            <td class="order-total last" data-title="{{ 'general.general.total' | t }}"><span class="money">{% include 'money', value: total %}</span></td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <table class="order-totals">
+      <tr>
+        <td>{{ 'general.general.subtotal' | t }}</td>
+        <td><span class="money">{% include 'money', value: order.subtotal_price %}</span></td>
+      </tr>
+      <tr>
+        {% for shipping_method in order.shipping_methods %}
+          <td>{{ 'customers.order.shipping' | t }} ({{ shipping_method.title }})</td>
+          <td><span class="money">{% include 'money', value: shipping_method.price %}</span></td>
+        {% endfor %}
+      </tr>
+      <tr>
+        {% for tax_line in order.tax_lines %}
+          <td>{{ 'customers.order.tax' | t }} ({{ tax_line.title }} {{ tax_line.rate | times: 100 }}%)</td>
+          <td><span class="money">{% include 'money', value: tax_line.price %}</span></td>
+        {% endfor %}
+      </tr>
+      <tr>
+        <td>{{ 'general.general.total' | t }}</td>
+        <td><span class="money">{% include 'money', value: order.total_price %}</span></td>
+      </tr>
+    </table>
+
+  </div>
+
+</div>

@@ -1,0 +1,140 @@
+{% layout none %}
+
+{% assign formatted_initial_value = gift_card.initial_value | money_without_trailing_zeros: gift_card.currency %}
+{% assign formatted_initial_value_stripped = formatted_initial_value | strip_html %}
+
+<!doctype html>
+<!--[if lt IE 7]><html class="no-js lt-ie10 lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if IE 7]><html class="no-js lt-ie10 lt-ie9 lt-ie8" lang="en"> <![endif]-->
+<!--[if IE 8]><html class="no-js ie8 lt-ie10 lt-ie9" lang="en"> <![endif]-->
+<!--[if IE 9 ]><html class="no-js ie9 lt-ie10"> <![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!--> <html class="no-js"> <!--<![endif]-->
+<head>
+
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="format-detection" content="telephone=no">
+
+  <title>{{ 'gift_cards.issued.title' | t: value: formatted_initial_value_stripped, shop: shop.name }}</title>
+  <meta name="description" content="{{ 'gift_cards.issued.subtext' | t }}">
+
+  {{ 'gift-card.scss.css' | asset_url | stylesheet_tag }}
+  {{ 'modernizr-2.8.2.min.js' | asset_url | script_tag }}
+  {{ 'vendor/qrcode.js' | shopify_asset_url | script_tag }}
+
+  <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+
+  <script type='text/javascript'>
+    function selectText(element) {
+
+        var doc = document;
+        var text = doc.getElementById(element);
+
+        if (doc.body.createTextRange) { // ms
+            var range = doc.body.createTextRange();
+            range.moveToElementText(text);
+            range.select();
+        } else if (window.getSelection) { // moz, opera, webkit
+            var selection = window.getSelection();
+            var range = doc.createRange();
+            range.selectNodeContents(text);
+            selection.removeAllRanges();
+            selection.addRange(range);
+        }
+
+    }
+
+    Theme = {}
+  </script>
+</head>
+
+<body class="gift-card-template">
+
+  <div class="wrap">
+
+    <header role="banner">
+      <a href="{{ shop.url }}" class="shop-title">{{ shop.name }}</a>
+    </header>
+
+      <main role="main">
+
+          <div class="gift-card-outer-container" {% if gift_card.expired or gift_card.enabled != true %}class="disabled"{% endif %}>
+            <div class="gift-card-inner-container">
+
+              <header class="gift-card-header">
+                <h2>{{ 'gift_cards.issued.subtext' | t }}</h2>
+                {% unless gift_card.enabled %}
+                  <span class="tag">{{ 'gift_cards.issued.disabled' | t }}</span>
+                {% endunless %}
+                {% assign gift_card_expiry_date = gift_card.expires_on | date: format: 'gift_card_expiry' %}
+                {% if gift_card.expired and gift_card.enabled %}
+                   <span class="tag">{{ 'gift_cards.issued.expired' | t: expiry: gift_card_expiry_date }}</span>
+                {% endif %}
+                {% if gift_card.expired != true and gift_card.expires_on and gift_card.enabled %}
+                  <span class="tag light">{{ 'gift_cards.issued.active' | t: expiry: gift_card_expiry_date }}</span>
+                {% endif %}
+              </header>
+
+              <div class="gift-card-holder">
+                <div class="corner top-left"></div>
+                <div class="corner bottom-right"></div>
+                <div class="corner top-right"></div>
+                <div class="corner bottom-left"></div>
+                <div class="gift-card">
+                  <img src="{{ 'gift-card/card.jpg' | shopify_asset_url }}">
+                  {% assign initial_value_size = formatted_initial_value | size %}
+                  <div class="gift-card-amount" class="{% if initial_value_size > 6 %}medium{% endif %}">
+                    {% if gift_card.balance != gift_card.initial_value %}
+                      {% capture balance %}
+                        {% include 'money', value: gift_card.balance %}
+                      {% endcapture %}
+                      <span class="tooltip-container"><span class="tooltip-label">{{ 'gift_cards.issued.balance' | t: balance: balance }}</span><span class="tooltip-triangle"></span></span>
+                    {% endif %}
+                    <strong>{{ formatted_initial_value }}</strong>
+                  </div>
+                  {% assign code_size = gift_card.code | format_code | size %}
+                  <div class="gift-card-code-outer" class="{% if code_size <= 25 %}large{% elsif code_size > 25 and code_size <= 30 %}medium{% else %}small{% endif %}" onclick="selectText('gift-card-code-digits');">
+                    <div class="gift-card-code-inner">
+                      <strong id="gift-card-code-digits">{{ gift_card.code | format_code }}</strong>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="gift-card-instructions">
+                <p>{{ 'gift_cards.issued.redeem' | t }}</p>
+              </div>
+
+              <div class="gift-card-qr-code" data-qr-code="{{ gift_card.qr_identifier }}"></div>
+
+              <div class="gift-card-actions">
+                <a href="{{ shop.url }}" class="btn center" target="_blank">{{ 'gift_cards.issued.shop_link' | t }}</a>
+                <a href="#" class="action-link" onclick="window.print();"><i class="ico-16 print"></i>{{ 'gift_cards.issued.print' | t }}</a>
+              </div>
+
+            </div>
+          </div>
+      </main> <!-- / Main -->
+
+      {% if gift_card.pass_url %}
+        <footer role="contentinfo">
+          <a class="gift-card-apple-wallet-badge" href="{{ gift_card.pass_url }}">
+            <img class="gift-card-apple-wallet-badge-image" src="{{ 'gift-card/add-to-apple-wallet.svg' | shopify_asset_url }}" alt="{{ 'gift_cards.issued.apple_wallet' | t }}">
+          </a>
+        </footer>
+      {%  endif %}
+
+    </div>
+
+<!-- Third party JS Assets
+///////////////////////////////////////// -->
+{{ 'jquery-3.3.1.min.js' | asset_url | script_tag }}
+{{ 'api.jquery.js' | shopify_asset_url | script_tag }}
+
+{{ 'plugins.js'  | asset_url | script_tag }}
+{{ 'grid.js'  | asset_url | script_tag }}
+</body>
+</html>

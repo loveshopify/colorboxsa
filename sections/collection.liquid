@@ -1,0 +1,277 @@
+{% capture quickshop_settings_string %}
+  {{ settings.quickshop_enable_zoom }}
+  {{ settings.quickshop_images_layout }}
+  {{ settings.show_vendor }}
+  {{ settings.quickshop_show_social_media_icons }}
+  {{ settings.quickshop_show_payment_button }}
+{% endcapture %}
+
+{% assign products_per_page = section.settings.products_per_row | times: section.settings.number_of_rows %}
+
+{% assign use_masonry = false %}
+{% if section.settings.layout == 'masonry' %}
+  {% assign use_masonry = true %}
+{% endif %}
+
+{% assign show_tags = false %}
+{% if section.settings.tag_filtering and collection.all_tags.size > 0 and collection.handle %}
+  {% assign show_tags = true %}
+{% endif %}
+
+{% assign show_sorting = false %}
+{% if section.settings.sorting %}
+  {% assign show_sorting = true %}
+{% endif %}
+
+{% assign show_collection_image = false %}
+{% if collection.image and section.settings.show_collection_image %}
+  {% assign show_collection_image = true %}
+{% endif %}
+
+<script
+  type="application/json"
+  data-section-id="{{ section.id }}"
+  data-section-type="static-collection"
+>
+</script>
+
+
+<div>
+  {% unless use_masonry %}
+    <h1 class="page-title">{{ collection.title }}</h1>
+    {% include 'breadcrumbs' %}
+  {% endunless %}
+
+  {% paginate collection.products by products_per_page %}
+
+  <section
+    class="collection"
+    data-product-hover="{{ section.settings.product-hover }}"
+    {% if use_masonry %}data-collection-masonry{% endif %}
+    data-section-id="{{ section.id }}"
+    data-section-type="collection">
+
+    {% if use_masonry or show_collection_image or collection.description != blank or show_sorting or show_tags %}
+      <div class="collection-header {% if use_masonry %}collection-header-alternate{% endif %}">
+        {% if show_collection_image %}
+          <div class="collection-featured-image">
+            {%
+              include 'rimg',
+              img: collection.image,
+              size: '1024x1024',
+              lazy: true
+            %}
+          </div>
+        {% endif %}
+
+        <div class="collection-header-content">
+          {% if use_masonry %}
+            {% include 'breadcrumbs' %}
+            <h1 class="page-title">{{ collection.title }}</h1>
+          {% endif %}
+
+          {% if collection.description != blank and section.settings.show_description %}
+            <div class="collection-description rte">
+              {{ collection.description }}
+            </div>
+          {% endif %}
+
+          {% if show_tags or show_sorting %}
+            <div class="collection-filters">
+
+              {% if show_sorting %}
+                <div class="collection-dropdown select-wrapper {% if collection.current_vendor %}vendor-collection{% endif %}">
+
+                  {% assign current_sort = collection.sort_by | default: collection.default_sort_by %}
+
+                  <span class="selected-text"></span>
+                  <select data-collection-sorting>
+                    {%- for option in collection.sort_options -%}
+                      {% if current_sort == option.value %}
+                        <option value="{{ option.value }}" selected="selected">{{ option.name }}</option>
+                      {% else %}
+                        <option value="{{ option.value }}">{{ option.name }}</option>
+                      {% endif %}
+                    {% endfor %}
+                  </select>
+                </div>
+              {% endif %}
+
+              {% if show_tags %}
+                <div class="collection-dropdown select-wrapper">
+                  <span class="selected-text"></span>
+                  <select class="collection-tags" data-url="{{ collection.handle }}" data-collection-tags>
+                    <option value="all">{{ 'collections.collection.all_tags' | t }}</option>
+                    {% for tag in collection.all_tags %}
+                      {% if current_tags contains tag %}
+                        <option value="{{ tag | handle }}" selected="selected">{{ tag }}</option>
+                      {% else %}
+                        <option value="{{ tag | handle }}">{{ tag }}</option>
+                      {% endif %}
+                    {% endfor %}
+                  </select>
+                </div>
+              {% endif %}
+
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    {% endif %}
+
+    <div
+      class="collection-products rows-of-{{ section.settings.products_per_row }}"
+      {% if use_masonry %}data-masonry-grid{% endif %}
+    >
+      {%- if use_masonry -%}
+        <div class="product-grid-masonry-sizer" data-masonry-sizer></div>
+      {%- endif -%}
+
+      {%- if collection.handle == 'all' and collection.all_vendors.size == 0 and collection.all_types.size == 0 -%}
+        {%- for i in (1..section.settings.products_per_row) -%}
+          {%- capture productImage -%}
+            {%- cycle 'product-1', 'product-2', 'product-3' -%}
+          {%- endcapture -%}
+          {%- assign image = productImage | placeholder_svg_tag: 'placeholder-svg' -%}
+
+          {%- include 'home-onboard-product' -%}
+        {%- endfor -%}
+      {%- else -%}
+        {% for product in collection.products %}
+          {%- assign product_hover = section.settings.product-hover -%}
+          {%- assign product_stock_level_threshold = section.settings.product_stock_level_threshold -%}
+          {%- assign product_badges = section.settings.product-badges -%}
+          {%- assign product_icons = section.settings.product-badges-icons -%}
+          {%- assign product_vendor = settings.show_vendor -%}
+
+          {% include 'product-list-item',
+            product_hover: product_hover,
+            product_stock_level_threshold: product_stock_level_threshold,
+            product_badges: product_badges,
+            product_icons: product_icons,
+            product_vendor: product_vendor %}
+        {% else %}
+          <p class="empty">{{ 'collections.collection.empty' | t }}</p>
+        {% endfor %}
+      {%- endif -%}
+    </div>
+
+  </section>
+
+  {% include 'pagination' %}
+
+  {% endpaginate %}
+</div>
+
+{% schema %}
+{
+  "name": "Collection pages",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_collection_image",
+      "label": "Show collection image"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_description",
+      "label": "Show description"
+    },
+    {
+      "type": "checkbox",
+      "id": "sorting",
+      "label": "Enable sorting",
+      "info": "Parameters include: best selling, A-Z, newest to oldest, etc."
+    },
+    {
+      "type": "checkbox",
+      "id": "tag_filtering",
+      "label": "Enable tag filtering"
+    },
+    {
+      "type": "select",
+      "id": "layout",
+      "label": "Layout",
+      "options": [
+        {
+          "value": "default",
+          "label": "Default"
+        },
+        {
+          "value": "masonry",
+          "label": "Masonry"
+        }
+      ],
+      "default": "default"
+    },
+    {
+      "type": "range",
+      "id": "products_per_row",
+      "label": "Products per row",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "number_of_rows",
+      "label": "Rows",
+      "min": 1,
+      "max": 12,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "header",
+      "content": "Product item"
+    },
+    {
+      "type": "select",
+      "id": "product-hover",
+      "label": "Overlay / hover interaction",
+      "options": [
+        {
+          "value": "quick-shop",
+          "label": "Quick shop",
+          "group": "Hover"
+        },
+        {
+          "value": "image-flip",
+          "label": "Secondary image",
+          "group": "Hover"
+        },
+        {
+          "value": "stock-level",
+          "label": "Stock level indicator",
+          "group": "Overlay"
+        },
+        {
+          "value": "none",
+          "label": "None"
+        }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "product_stock_level_threshold",
+      "label": "Show warning when stock is equal to or less than:",
+      "min": 1,
+      "max": 10,
+      "step": 1,
+      "default": 5
+    },
+    {
+      "type": "checkbox",
+      "id": "product-badges",
+      "label": "Show 'on sale' \/ 'sold out' badges"
+    },
+    {
+      "type": "checkbox",
+      "id": "product-badges-icons",
+      "label": "Use icons for 'on sale' \/ 'sold out' badges"
+    }
+  ]
+}
+
+{% endschema %}

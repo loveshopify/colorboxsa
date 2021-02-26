@@ -1,0 +1,142 @@
+<script
+  type="application/json"
+  data-section-type="dynamic-featured-collection"
+  data-section-id="{{ section.id }}"
+></script>
+
+{%- assign product_count = section.settings.product-columns | times: section.settings.product-rows -%}
+
+<section
+  class="home-products home-products-columns-{{ section.settings.product-columns }}"
+  data-section-id="{{ section.id }}"
+  data-section-type="home-featured-collection"
+  data-product-hover="{{ section.settings.product-hover }}"
+>
+  {% if section.settings.title != blank %}
+    <h2 class="section-title">{{ section.settings.title | escape }}</h2>
+  {% endif %}
+
+  <div class="home-products-content" data-products-container>
+    {%- assign collection = collections[section.settings.collection] -%}
+
+    {%- unless section.settings.collection == blank or collection.all_products_count == 0 -%}
+      {%- for product in collection.products limit: product_count -%}
+        {%- assign product_hover = section.settings.product-hover -%}
+        {%- assign product_stock_level_threshold = section.settings.product_stock_level_threshold -%}
+        {%- assign product_badges = section.settings.product-badges -%}
+        {%- assign product_icons = section.settings.product-badges-icons -%}
+        {%- assign product_vendor = settings.show_vendor -%}
+
+        {% include 'product-list-item',
+          product_hover: product_hover,
+          product_stock_level_threshold: product_stock_level_threshold,
+          product_badges: product_badges,
+          product_icons: product_icons,
+          product_vendor: product_vendor %}
+      {%- endfor -%}
+    {%- else -%}
+      {%- for i in (1..product_count) -%}
+        {%- capture productImage -%}
+          {%- cycle 'product-1', 'product-2', 'product-3' -%}
+        {%- endcapture -%}
+        {%- assign image = productImage | placeholder_svg_tag: 'placeholder-svg' -%}
+
+        {%- include 'home-onboard-product' -%}
+      {%- endfor -%}
+    {%- endunless -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Featured collection",
+  "class": "home-products-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Featured collection"
+    },
+    {
+      "id": "collection",
+      "type": "collection",
+      "label": "Collection"
+    },
+    {
+      "type": "range",
+      "id": "product-columns",
+      "label": "Products per row",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "product-rows",
+      "label": "Rows",
+      "min": 1,
+      "max": 12,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "header",
+      "content": "Product item"
+    },
+    {
+      "type": "select",
+      "id": "product-hover",
+      "label": "Hover interaction",
+      "options": [
+        {
+          "value": "quick-shop",
+          "label": "Quick shop"
+        },
+        {
+          "value": "image-flip",
+          "label": "Show secondary image"
+        },
+        {
+          "value": "stock-level",
+          "label": "Stock level indicator"
+        },
+        {
+          "value": "none",
+          "label": "None"
+        }
+      ],
+      "default": "quick-shop"
+    },
+    {
+      "type": "range",
+      "id": "product_stock_level_threshold",
+      "label": "Show warning when stock is equal to or less than:",
+      "min": 1,
+      "max": 10,
+      "step": 1,
+      "default": 5
+    },
+    {
+      "type": "checkbox",
+      "id": "product-badges",
+      "label": "Show 'on sale' \/ 'sold out' badges",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "product-badges-icons",
+      "label": "Use icons for 'on sale' \/ 'sold out' badges",
+      "default": true
+    }
+  ],
+  "presets": [
+    {
+      "category": "Collection",
+      "name": "Featured collection"
+    }
+  ]
+}
+
+{% endschema %}

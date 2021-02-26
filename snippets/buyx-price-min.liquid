@@ -1,0 +1,41 @@
+{% assign buyx_price_min = buyx-price-min.price_max %}
+{% assign buyx_product_available = false %}
+{% assign buyx_product_variants_size = 0 %}
+
+{% for variant in buyx-price-min.variants %}
+    {% unless variant.title contains '% Off' %}
+    {% unless variant.metafields.shappify_qb.qb_hide == "1" %}
+    {% unless variant.metafields.shappify_bundle.is_bundle == "true" %}
+    {% unless variant.metafields.brodev_scn.hide == "true" %}
+    {% unless variant.metafields.secomapp.freegifts %}
+    {% unless variant.metafields.Wholesaler.level %}
+    {% unless variant.title contains '(Wholesale' %} 
+    {% unless variant.title contains '(wholesale' %}
+
+      {% if variant.price < buyx_price_min %}
+        {% assign buyx_price_min = variant.price %}
+      {% endif %}
+      {% if variant.available %}
+        {% assign buyx_product_available = true %}
+      {% endif %}
+	    {% assign buyx_product_variants_size = buyx_product_variants_size | plus: 1 %}
+	{% endunless %}
+	{% endunless %}
+	{% endunless %}
+	{% endunless %}
+	{% endunless %}
+	{% endunless %}
+	{% endunless %}
+	{% endunless %}
+{% endfor %}
+
+
+{% assign buyx_product_options_size = product.options | size %}
+{% if buyx_product_options_size > 1 %}
+  {% if buyx_product_options_size == 2 and product.options[1] == "BuyXDiscount" %}
+      {% assign buyx_product_options_size = 1 %}
+  {% endif %}
+  {% if buyx_product_options_size == 3 and product.options[2] == "BuyXDiscount" %}
+      {% assign buyx_product_options_size = 2 %}
+  {% endif %}
+{% endif %}

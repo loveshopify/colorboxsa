@@ -1,0 +1,110 @@
+<script
+  type="application/json"
+  data-section-id="{{ section.id }}"
+  data-section-type="static-collections-list"
+>
+</script>
+
+
+{% assign use_masonry = false %}
+
+{% if section.settings.layout == 'masonry' %}
+  {% assign use_masonry = true %}
+{% endif %}
+
+<section
+  class="collections-list-section {% unless use_masonry %}collections-list-grid{% endunless %}"
+  {% if use_masonry %}data-collection-masonry{% endif %}>
+  <h1 class="page-title">{{ 'collections.listing.header' | t }}</h1>
+
+  {% include 'breadcrumbs' %}
+
+  {% assign using_linklist = false %}
+  {% if linklists['all-collections'] and linklists['all-collections'].links.size > 0 %}
+    {% assign using_linklist = true %}
+  {% endif %}
+
+  {% assign collections_per_page = section.settings.collections_per_row | times: section.settings.collections_number_of_rows %}
+
+  <div class="collections-list-content">
+    <div
+      class="rows-of-{{ section.settings.collections_per_row }} {% if use_masonry %}masonry-grid{% endif %}"
+      {% if use_masonry %}data-masonry-grid{% endif %}
+    >
+      {%- if use_masonry -%}
+        <div class="masonry-grid-sizer" data-masonry-sizer></div>
+      {%- endif -%}
+
+      {%- if using_linklist -%}
+        {% for link in linklists['all-collections'].links %}
+          {%
+            include 'collection-list-item' with 'linklist',
+            use_masonry: use_masonry,
+            description: section.settings.show_description
+          %}
+        {% endfor %}
+      {%- else -%}
+        {%- paginate collections by collections_per_page -%}
+          {%- for collection in collections -%}
+            {%-
+              include 'collection-list-item',
+              use_masonry: use_masonry,
+              description: section.settings.show_description
+            -%}
+          {%- endfor -%}
+
+          {% include 'pagination' %}
+        {%- endpaginate -%}
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Collection list page",
+  "settings": [
+    {
+      "type": "select",
+      "id": "layout",
+      "label": "Layout",
+      "options": [
+        {
+          "value": "default",
+          "label": "Default"
+        },
+        {
+          "value": "masonry",
+          "label": "Masonry"
+        }
+      ],
+      "default": "default"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_description",
+      "label": "Show description",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "collections_per_row",
+      "label": "Collections per row",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "collections_number_of_rows",
+      "label": "Rows",
+      "min": 2,
+      "max": 6,
+      "step": 1,
+      "default": 6
+    }
+  ]
+}
+
+{% endschema %}

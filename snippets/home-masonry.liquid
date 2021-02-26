@@ -1,0 +1,70 @@
+{%- assign feature_count = section.blocks.size -%}
+{%- assign featureIndex = 0 -%}
+
+{%- if feature_count == 0 -%}
+  {%- assign feature_count = 6 -%}
+{%- endif -%}
+
+<div
+  class="
+    home-masonry
+    {% if alternative %}
+      home-masonry-alternative
+    {% endif %}
+    home-masonry-feature-count-{{ feature_count }}
+    {% unless alternative %}
+      home-masonry-layout-{{ section.settings.layout }}
+    {% endunless %}
+    {% if section.settings.gutters %}
+      home-masonry-gutters
+    {% endif %}
+    {% if section.settings.hover %}
+      home-masonry-hover
+    {% endif %}
+    {% if section.settings.hover-animation %}
+      home-masonry-hover-animation
+    {% endif %}
+  "
+>
+  {% if alternative %}
+    <div class="home-masonry-alternative-logo">
+      {% if section.settings.logo %}
+        {%
+          include 'rimg',
+          img: section.settings.logo,
+          class: 'logo-regular',
+          size: '200x100'
+        %}
+      {% else %}
+        <h1
+          {% if section.settings.color != blank %}
+            style="color: {{ section.settings.color }}"
+          {% endif %}
+        >
+          {{ shop.name }}
+        </h1>
+      {% endif %}
+    </div>
+  {% endif %}
+
+  {%- unless section.blocks.size == 0 -%}
+    {%- for block in section.blocks -%}
+      {%-
+        include 'home-masonry-feature',
+        gutters: section.settings.gutters,
+        hover: section.settings.hover,
+        hover_animation: section.settings.hover-animation
+      -%}
+    {%- endfor -%}
+  {%- else -%}
+    {%- for i in (1..feature_count) -%}
+      {%-
+        include 'home-masonry-feature',
+        gutters: section.settings.gutters,
+        hover: section.settings.hover,
+        hover_animation: section.settings.hover-animation
+        onboarding: true
+      -%}
+    {%- endfor -%}
+  {%- endunless -%}
+</div>

@@ -1,0 +1,60 @@
+{% comment %}
+  A helper snippet for detecting if a link has a mega nav
+  or dropdown associated with it.
+
+  @param first_tier_link
+
+  @param uses_blocks
+{% endcomment %}
+
+{% assign is_dropdown = false %}
+{% assign is_meganav = true %}
+
+{% if first_tier_link.links == blank %}
+  {% assign is_meganav = false %}
+{% else %}
+  {% assign is_dropdown = true %}
+{% endif %}
+
+{% for second_tier_link in first_tier_link.links %}
+  {% if second_tier_link.links == blank %}
+    {% assign is_meganav = false %}
+  {% else %}
+    {% assign is_dropdown = true %}
+  {% endif %}
+{% endfor %}
+
+{% if is_meganav %}
+  {% assign is_dropdown = false %}
+{% endif %}
+
+{% if uses_blocks %}
+  {% assign found_mega_item_handle = false %}
+  {% if section != blank and section.blocks != blank %}
+    {% for block in section.blocks %}
+      {% if block.type == 'mega_menu' %}
+        {% assign menu_item_handle = block.settings.menu_item | handle %}
+        {% if first_tier_link.handle == menu_item_handle %}
+          {% assign found_mega_item_handle = true %}
+        {% endif %}
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+
+  {% if found_mega_item_handle %}
+    {% if is_dropdown %}
+      {% assign is_meganav = true %}
+      {% assign is_dropdown = false %}
+    {% endif %}
+  {% elsif found_mega_item_handle == false %}
+    {% if is_meganav %}
+      {% assign is_meganav = false %}
+      {% assign is_dropdown = true %}
+    {% endif %}
+  {% else %}
+    {% if is_meganav %}
+      {% assign is_meganav = false %}
+      {% assign is_dropdown = true %}
+    {% endif %}
+  {% endif %}
+{% endif %}

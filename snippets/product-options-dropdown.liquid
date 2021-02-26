@@ -1,0 +1,29 @@
+{% unless product.options.size == 1 and product.variants[0].title == 'Default Title' %}
+  {% for option in product.options_with_values %}
+    {% assign option_index = forloop.index0 %}
+    {%- capture option_id -%}
+      single-option-{{ form_id }}-{{ option_index }}
+    {%- endcapture -%}
+
+    <label
+      class="product-option-column-1 product-option-row-{{ forloop.index }} selected-text"
+      for="{{ option_id }}"
+      data-select-text>
+      <strong>{{ option.name }}:</strong>
+    </label>
+    <select
+      class="single-option-selector"
+      id="{{ option_id }}"
+      data-option-select
+      data-option-select="{{ form_id }}"
+      data-option-index="{{ option_index }}">
+      {% for value in option.values %}
+        <option
+          value="{{ value | escape }}"
+          {% if option.selected_value == value %}selected="selected"{% endif %}>
+          {{ value }}
+        </option>
+      {% endfor %}
+    </select>
+  {% endfor %}
+{% endunless %}

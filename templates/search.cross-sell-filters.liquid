@@ -1,0 +1,36 @@
+{% layout none %}
+{% capture tags %}
+	{% assign collection = collections.all %}
+	{% if collection.all_tags.size > 0 %}
+        {% for tag in collection.all_tags %}
+	        { 
+               "tag" : {{ tag | json }},
+               "tag-handle" : {{ tag | handleize | json }}
+            }{% unless forloop.last %},{% endunless %}
+        {% endfor %}  
+    {% endif %}
+{% endcapture %}
+
+{% capture producttypes %}
+    {% for product_type in shop.types %}    
+        {
+			"type" : {{product_type | json }},
+        	"type-handle" : {{product_type | handleize | json }}
+		}{% unless forloop.last %},{% endunless %}
+    {% endfor %}
+{% endcapture %}
+
+{% capture vendors %}
+    {% for product_vendor in shop.vendors %}     
+        {
+			"vendor" : {{product_vendor | json }},
+        	"vendor-handle" : {{product_vendor | handleize | json }}
+		}{% unless forloop.last %},{% endunless %}
+    {% endfor %}
+{% endcapture %}
+
+{
+  "tags": [{{ tags }}],
+  "types": [{{ producttypes }}],
+  "vendors": [{{ vendors }}]
+}

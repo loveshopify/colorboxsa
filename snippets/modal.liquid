@@ -1,0 +1,42 @@
+{% comment %}
+  @param modal_id {String}
+    Unique modal handler
+
+  @param modal_contents {String}
+    String containing contents of modal should be wrapped in '<script type="application/json"></script>'
+    Then handled through JS to be added as needed to [data-modal-contents]
+
+  @param modal_class {String}
+    Extra class to add to modal
+
+  @param modal_mobile_friendly {Bool}
+    Determines if the modal should stay open on mobile
+{% endcomment %}
+
+<section
+  class="modal-wrapper {% if modal_class != blank %}{{ modal_class }}{% endif %}"
+  data-modal-id="{{ modal_id }}"
+  {% if modal_mobile_friendly %}
+    data-modal-mobile-friendly
+  {% endif %}
+  data-modal-wrapper
+>
+  <div class="modal-inner" data-modal-inner>
+    <div class="modal-close" data-modal-close>
+      {%-
+        include 'icons',
+        id: 'close',
+      -%}
+    </div>
+
+    <div class="modal-contents" data-modal-contents></div>
+  </div>
+
+  <span class="spinner">
+    <span></span>
+    <span></span>
+    <span></span>
+  </span>
+
+  {{ modal_contents }}
+</section>

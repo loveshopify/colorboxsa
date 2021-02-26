@@ -1,0 +1,22 @@
+<h1 class="page-title">{{ 'collections.listing.header' | t }}</h1>
+
+{% include 'breadcrumbs' %}
+
+{% assign using-linklist = false %}
+{% if linklists[settings.collection-listing-linklist] and linklists[settings.collection-listing-linklist].links.size > 0 %}
+  {% assign using-linklist = true %}
+{% endif %}
+
+<div class="collections-list rows-of-{{ settings.collections-per-row }}">
+  {% if using-linklist %}
+    {% for link in linklists[settings.collection-listing-linklist].links %}{% include 'collection-list-item' with 'linklist' %}{% endfor %}
+  {% else %}
+    {% assign collections_per_page = settings.collections-per-row | times: settings.collections-number-of-rows %}
+    {% paginate collections by collections_per_page %}
+      {% for collection in collections %}
+        {% include 'collection-list-item' %}
+      {% endfor %}
+      {% include 'pagination' %}
+    {% endpaginate %}
+  {% endif %}
+</div>

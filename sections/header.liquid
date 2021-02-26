@@ -1,0 +1,717 @@
+<header class="main-header" role="banner">
+  
+  {% if section.settings.is_announcement %}
+  	<div class="announcement_bar" style="background-color: {{ section.settings.ann_bg }};"><h2>{{ section.settings.ann_text }}</h2></div>
+  {% endif %}
+  <div class="header-tools-wrapper" style="background-color: {{ section.settings.bg_color }};">
+    <div class="header-tools">
+
+     <div class="aligned-left">
+
+        <p class="navigation-toggle"><span class="navigation-toggle-icon">Open menu</span> <span class="navigation-toggle-text">{{ 'layout.header.menu' | t }}</span></p>
+       
+        <!--  {% if settings.currency-switcher %}
+          <div class="currency-wrapper">
+            <p class="select-currency">{{ 'layout.header.select_currency' | t }}</p>
+            <div class="select-wrapper currency-switcher">
+              <span class="selected-currency"></span>
+              <select id="currencies" name="currencies">
+                {% capture codes %},USD,EUR,GBP,CAD,ARS,AUD,BBD,BDT,BSD,BHD,BRL,BOB,BND,BGN,ILS,MMK,KYD,CLP,CNY,COP,CRC,HRK,CZK,DKK,DOP,XCD,EGP,XPF,FJD,GHS,GTQ,GYD,GEL,HKD,HUF,ISK,INR,IDR,NIS,JMD,JPY,JOD,KZT,KES,KWD,LVL,LTL,MXN,MYR,MUR,MDL,MAD,MNT,MZN,ANG,NZD,NGN,NOK,OMR,PKR,PYG,PEN,PHP,PLN,QAR,RON,RUB,SAR,RSD,SCR,SGD,SYP,ZAR,KRW,LKR,SEK,CHF,TWD,THB,TZS,TTD,TRY,UAH,AED,UYU,VEB,VND,ZMK,{% endcapture %}
+                {% assign supported_codes = settings.currency-switcher-supported-currencies | split: ' ' %}
+                <option value="{{ shop.currency }}" selected="selected">{{ shop.currency }}</option>
+                {% for code in supported_codes %}
+                  {% if code != shop.currency and codes contains code %}
+                  <option value="{{ code }}">{{ code }}</option>
+                  {% endif %}
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+        {% endif %} -->
+      </div>
+
+
+      <div class="aligned-right">
+        {% comment %}<a class="user-link" href="/account" style="background-color: {{ section.settings.bg_color }} !important;">
+          <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 418.2 418.2" style="enable-background:new 0 0 418.2 418.2;" xml:space="preserve"><g><g><g><path d="M402.518,386.2l-18.4-60.8c-10.4-36.8-39.6-65.2-76-74.8l-5.2-1.6c-0.4-0.4-1.2-0.4-2-0.8c-6.8-1.6-14,0.4-19.2,5.6 l-0.4,0.4c-21.2,25.6-46.4,38.8-72.4,38.8c-32.8,0-57.6-20.4-72.4-37.6c-4.8-5.6-12.4-8-19.6-6c-0.8,0-1.6,0.4-2,0.8l-4.8,1.6 c-36.8,9.6-66,38-76.4,74.8l-18.4,61.2c-2,7.6-0.4,15.2,4,21.2c4.4,6,11.2,9.2,18.8,9.2h342c8-0.4,14.8-4,19.2-10.4 C403.718,401,404.918,393.4,402.518,386.2z M386.118,397.8c-1.6,2-4,3.6-6.4,3.6h-341.6c-2.4,0-4.8-1.2-6-3.2 c-1.6-2-2-4.8-1.6-7.2l18.4-60.8c8.8-31.2,33.6-55.6,65.6-63.6l4.8-1.6c0.8,0,1.2-0.4,1.6-0.4c1.6-0.4,2.8,0.4,3.6,1.2 c24.4,28,54.4,43.2,84.4,43.2c30.4,0,60-15.2,84.4-43.2c0.8-0.8,2-1.6,4-1.6c0.4,0,0.8,0.4,1.6,0.4l5.2,1.6 c31.2,8,56.4,32.4,65.2,63.6l18.4,60.8C388.118,393.4,387.718,395.8,386.118,397.8z"/> <path d="M52.518,215l11.2,2.8c31.2,7.6,62.8,12.8,93.6,15.2c14.8,14.8,32.8,23.2,51.6,23.2s36.8-8.8,51.6-23.6 c31.6-2.8,62.4-8,91.2-14.8l11.2-2.8h0.4c4.8-1.6,8.8-5.2,10.4-9.6c1.6-4.4,1.2-9.6-1.2-14l-30.4-51.2 c-10.8-18.8-19.2-37.6-24.8-56l-2-7.2c-11.2-34.8-38.8-61.2-73.2-71.2l-5.2-1.6c-19.2-5.6-40-5.6-59.6,0l-4.4,1.6 c-35.2,10-62.8,36.8-73.6,71.6l-2,6.8c-6.8,20.8-14.8,39.6-24.8,56l-30,51.2c-2.8,4.4-2.8,10-0.8,14.8 C43.718,210.6,47.718,214.2,52.518,215z M208.918,240.6c-38.4,0-72-46.8-75.6-102.4c59.6,11.6,88.8-12.8,102-31.2 c12.4,14.4,29.6,20,49.6,16.4c0,1.6,0,3.2,0,4.8C284.918,188.2,249.318,240.6,208.918,240.6z M86.518,148.2 c10.4-17.6,19.2-37.6,26.4-59.6l2-6.8c9.2-29.6,32.8-52,62.8-60.8l4.4-1.6c16.4-4.8,34-4.8,50,0l5.2,1.6 c29.6,8.4,52.8,31.2,62.4,60.4l2,6.8c6,19.2,15.2,39.2,26.4,59.2l30.4,51.2c0,0,0,0-0.4,0l-10.8,2.8c-23.2,5.6-47.6,10-72.8,12.8 c15.6-23.2,25.6-54,25.6-87.2c0-5.6-0.4-10.8-1.2-16c-0.4-2.4-1.6-4.4-3.6-5.6s-4.4-1.6-6.4-0.8c-21.6,6.4-36.4,1.2-47.2-16.4 c-1.6-2.8-4.4-4-7.6-3.6c-3.2-0.4-6.4,1.2-7.6,4.4c-7.6,14.8-32.4,47.6-100,30.8c-2.4-0.4-4.8,0-6.8,1.6c-2,1.6-3.2,4-3.2,6.4 c0,33.2,10,64.4,26,87.6c-24.4-2.4-50-6.8-74.8-12.8l-11.2-2.8L86.518,148.2z"/> </g></g></g></svg>
+        </a>
+        <a class="checkout-link" title="Wish list" href="/pages/wish-list">
+          <?xml version="1.0" encoding="utf-8"?><svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 122.88 109.57" style="enable-background:new 0 0 122.88 109.57" xml:space="preserve"><g><path d="M65.46,19.57c-0.68,0.72-1.36,1.45-2.2,2.32l-2.31,2.41l-2.4-2.33c-0.71-0.69-1.43-1.4-2.13-2.09 c-7.42-7.3-13.01-12.8-24.52-12.95c-0.45-0.01-0.93,0-1.43,0.02c-6.44,0.23-12.38,2.6-16.72,6.65c-4.28,4-7.01,9.67-7.1,16.57 c-0.01,0.43,0,0.88,0.02,1.37c0.69,19.27,19.13,36.08,34.42,50.01c2.95,2.69,5.78,5.27,8.49,7.88l11.26,10.85l14.15-14.04 c2.28-2.26,4.86-4.73,7.62-7.37c4.69-4.5,9.91-9.49,14.77-14.52c3.49-3.61,6.8-7.24,9.61-10.73c2.76-3.42,5.02-6.67,6.47-9.57 c2.38-4.76,3.13-9.52,2.62-13.97c-0.5-4.39-2.23-8.49-4.82-11.99c-2.63-3.55-6.13-6.49-10.14-8.5C96.5,7.29,91.21,6.2,85.8,6.82 C76.47,7.9,71.5,13.17,65.46,19.57L65.46,19.57z M60.77,14.85C67.67,7.54,73.4,1.55,85.04,0.22c6.72-0.77,13.3,0.57,19.03,3.45 c4.95,2.48,9.27,6.1,12.51,10.47c3.27,4.42,5.46,9.61,6.1,15.19c0.65,5.66-0.29,11.69-3.3,17.69c-1.7,3.39-4.22,7.03-7.23,10.76 c-2.95,3.66-6.39,7.44-10,11.17C97.2,74.08,91.94,79.12,87.2,83.66c-2.77,2.65-5.36,5.13-7.54,7.29L63.2,107.28l-2.31,2.29 l-2.34-2.25l-13.6-13.1c-2.49-2.39-5.37-5.02-8.36-7.75C20.38,71.68,0.81,53.85,0.02,31.77C0,31.23,0,30.67,0,30.09 c0.12-8.86,3.66-16.18,9.21-21.36c5.5-5.13,12.97-8.13,21.01-8.42c0.55-0.02,1.13-0.03,1.74-0.02C46,0.48,52.42,6.63,60.77,14.85 L60.77,14.85z"/></g></svg>
+        </a>
+        <div class="mini-cart-wrapper">
+          <a class="cart-count" href="/cart" style="color: white;"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="isolation:isolate" viewBox="423.572 33.01 9.246 8.825" width="9.246pt" height="8.825pt"><g><path d=" M 430.653 40.252 C 430.653 40.588 430.381 40.86 430.045 40.86 C 429.709 40.86 429.436 40.588 429.436 40.252 C 429.436 39.916 429.709 39.643 430.045 39.643 C 430.381 39.643 430.653 39.916 430.653 40.252 Z " fill="none" vector-effect="non-scaling-stroke" stroke-width="0.65" stroke="rgb(225,225,225)" stroke-linejoin="miter" stroke-linecap="square" stroke-miterlimit="3"></path><path d=" M 427.84 40.252 C 427.84 40.588 427.568 40.86 427.232 40.86 C 426.895 40.86 426.622 40.588 426.622 40.252 C 426.622 39.916 426.895 39.643 427.232 39.643 C 427.568 39.643 427.84 39.916 427.84 40.252 Z " fill="none" vector-effect="non-scaling-stroke" stroke-width="0.65" stroke="rgb(225,225,225)" stroke-linejoin="miter" stroke-linecap="square" stroke-miterlimit="3"></path><path d=" M 424.547 33.985 L 425.725 33.985 L 427.144 39.643 L 430.133 39.643" fill="none" vector-effect="non-scaling-stroke" stroke-width="0.65" stroke="rgb(225,225,225)" stroke-linejoin="miter" stroke-linecap="square" stroke-miterlimit="3"></path><path d=" M 426.223 35.971 L 431.843 35.971 L 430.78 38.886 L 426.967 38.886 L 426.223 35.971 Z " fill="none" vector-effect="non-scaling-stroke" stroke-width="0.65" stroke="rgb(225,225,225)" stroke-linejoin="miter" stroke-linecap="square" stroke-miterlimit="3"></path></g></svg> (<span class="cart-count-number">{{ cart.item_count }}</span>)</a>
+          {% comment %}
+          {% if cart.item_count > 0 %}
+          {% include 'mini-cart' %}
+          {% endif %}
+          {% endcomment %}
+        </div>
+        
+        {% endcomment %}
+        
+        <div class="customer-links" style="background-color: {{ section.settings.bg_color }} !important;">
+          {% if customer %}
+          <a href="/account"><span class="icon-sign"></span></a>
+
+
+          <div class="customer-links-inner">
+            <span class="arrow"></span>
+            <ul>
+
+              <li><a href="/account/orders">{{ 'customers.general.purchases' | t }}</a></li>
+              <li><a href="/account/addresses">{{ 'customers.addresses.header' | t }}</a></li>
+              <li>{{ 'layout.header.logout' | t | customer_logout_link }}</li>
+
+            </ul>
+          </div>
+          {% else %}
+     
+          <a title="Account login" href="/account/login" id="customer_login_link"><span class="icon-sign"></span></a>
+          
+          {% endif %}
+        </div>
+        
+
+
+  <!-- start wish list -->
+       <!--  <div id="wish">
+          {% if customer %} 
+          {% capture value %}{{ product.id }}{% endcapture %}
+          {% capture productID %}{{ product.id }}{% endcapture %}
+          {% for tag in customer.tags %}
+          {% capture tagID %}{{ tag }}{% endcapture %}
+          {% if tagID contains productID %}
+          {% assign value = 'x' | append:tag %}
+          {% endif %}
+          {% endfor %}
+
+          {% assign check = value.size | minus:productID.size | modulo:2 %}
+          {% if check == 0 %}{% assign display_button = true %}{% else %}{% assign display_button = false %}{% endif %}
+
+          {% if display_button %}
+          {% form 'customer' %}
+          <input type="hidden" name="contact[email]" value="{{ customer.email }}"/>
+          <input type="hidden" name="contact[tags]" value="{{ value }}" />
+          
+          {% endform %}
+          {% else %}
+          <p>This product is in your <a href="/pages/wish-list">wish list</a></p>
+          {% endif %}
+          {% else %}
+          <p>To add this product to your wish list you must <a href="/account/login">sign in</a> or <a href="/account/register">create an account</a>.</p>
+          {% endif %}
+        </div> -->
+        <!-- end wish list -->
+
+          <a class="checkout-link" title="Wish list" href="/pages/wish-list"  style="background-color: {{ section.settings.bg_color }} !important;"><span class="icon-wish"></span></a>
+        <div class="mini-cart-wrapper" style="background-color: {{ section.settings.bg_color }} !important;">
+          <a class="cart-count" href="/cart"><span class="icon-cart"></span> (<span class="cart-count-number">{{ cart.item_count }}</span>)</a>
+          {% comment %}
+          {% if cart.item_count > 0 %}
+          {% include 'mini-cart' %}
+          {% endif %}
+          {% endcomment %}
+        </div>
+        
+        
+        
+
+        <form class="search-form" action="/search" method="get">
+          <input class="search-input" name="q" type="text" placeholder="{{ 'layout.header.search_placeholder' | t }}" value="{{ search.terms }}" />
+          <input type="submit" value="&#xe606;" />
+        </form>
+
+      </div>
+
+    </div>
+  </div>
+
+  <div class="branding">
+    {% if settings.use-logo %}
+    <a class="logo {% if settings.use-retina-logo %}has-retina{% endif %}" href="/">
+      <img class="logo-regular" alt="{{ shop.name | escape }}" src="{{ section.settings.logo | img_url: '1000x' }}" style="width: 420px;">
+      {% if settings.use-retina-logo %}
+      <img class="logo-retina" alt="{{ shop.name | escape }}" src="{{ section.settings.logo | img_url: '1000x' }}" style="width: 420px;">
+      {% endif %}
+    </a>
+    {% else %}
+    <h1><a href="/">{{ shop.name }}</a></h1>
+    {% endif %}
+    <div class="navigation-wrapper hide--mobile">
+  <nav class="navigation">
+    <div class="branding {% if settings.use-logo %}has-logo{% endif %}">
+      {% if settings.use-logo %}
+        <a class="logo mobile-nav-logo {% if settings.use-logo %}has-retina{% endif %}" href="/">
+          <img class="logo-regular" alt="{{ shop.name | escape }}" src="{{ section.settings.logo | img_url: '1000x' }}" style="width: 420px;">
+          {% if settings.use-logo %}
+            <img class="logo-retina" alt="{{ shop.name | escape }}" src="{{ section.settings.logo | img_url: '1000x' }}" style="width: 420px;">
+          {% endif %}
+        </a>
+      {% else %}
+        <a class="logo mobile-nav-logo" href="/">{{ section.settings.logo | img_url: '400x' }}</a>
+      {% endif %}
+
+      {% if settings.use-sticky-header-logo %}
+        <a class="logo sticky-logo" href="/"><img alt="{{ shop.name | escape }}" src="{{ 'sticky-header-logo.png' | asset_url }}"></a>
+      {% endif %}
+      <span class="navigation-toggle">&#xe603;</span>
+    </div>
+
+    <ul class="header_dropdown_menu_wrapper">
+      <li class="mobile-link">
+        <form class="search-form" action="/search" method="get">
+          <input class="search-input" name="q" type="text" placeholder="{{ 'layout.header.search_placeholder' | t }}" value="{{ search.terms }}" />
+          <input type="submit" value="&#xe606;" />
+        </form>
+      </li>
+      {% for link in linklists.main-menu.links %}
+      {% assign child_list_handle = link.title | handle %}
+        {% include 'has-dropdown' %}
+          <li class="{% if hasSubmenu %}has-Submenu{% endif %}{% if hasDropdown %}has-dropdown{% elsif hasMegaNav %}has-mega-nav{% endif %} {% include 'for-looper' %}" {% if hasMegaNav %}data-mega-nav="true"{% endif %}>
+          <a data-linklist-trigger="{{ link.title | downcase | handle }}" href="{{ link.url }}">{{ link.title }} {% if hasDropdown or hasMegaNav %}<span class="enter-linklist">&#xe600;</span>{% endif %}</a>
+			{% if hasSubmenu %}
+            <ul class="dropdown sub-menu">
+            {% for child_link in linklists[child_list_handle].links %}
+            {% assign grand_child_list_handle = child_link.title | handle %}
+            {% if linklists[grand_child_list_handle] and linklists[grand_child_list_handle].links.size > 0 %}
+            <li class="has-dropdown child-submenu">
+              {{ child_link.title | link_to: child_link.url }}
+            </li>
+            {% else %}
+            <li class="child-submenu">
+              {{ child_link.title | link_to: child_link.url }}
+            </li>
+            {% endif %}
+            {% endfor %}        
+          </ul>
+            {% endif %}
+          {% if hasDropdown %}
+
+            <ul data-linklist="{{ linkHandle }}">
+              <li>
+                <span class="back"><span class="icon">&#xe601;</span> {{ 'layout.mobile_navigation.back' | t }}</span>
+              </li>
+              {% for link in linklists[linkHandle].links %}
+                <li>
+                  <a href="{{ link.url }}">{{ link.title }}</a>
+                </li>
+              {% endfor %}
+            </ul>
+
+          {% elsif hasMegaNav %}
+
+            <ul class="mobile-mega-nav" data-linklist="{{ linkHandle }}">
+              <li>
+                <span class="back"><span class="icon">&#xe601;</span> {{ 'layout.mobile_navigation.back' | t }}</span>
+              </li>
+
+              {% assign items = itemsLink | split: '|' %}
+              {% assign itemCount = 0 %}
+              {% for item in items %}
+
+                {% capture enabled %}{{ item }}{% endcapture %}
+                {% assign linklist = settings[enabled] %}
+
+                {% if linklists[linklist].links.size > 0 %}
+                  <li class="has-dropdown">
+                    <a data-linklist-trigger="{{ linklists[linklist].title | downcase | handle }}" href="{{ linklists[linklist].url }}">{{ linklists[linklist].title }} {% if hasMegaNav %}<span class="enter-linklist">&#xe600;</span>{% endif %}</a>
+                    <ul data-linklist="{{ linklists[linklist].title | downcase | handle }}">
+                      <li>
+                        <span class="back"><span class="icon">&#xe601;</span> {{ 'layout.mobile_navigation.back' | t }}</span>
+                      </li>
+                      {% for link in linklists[linklist].links %}
+                        <li>
+                          <a href="{{ link.url }}">{{ link.title }}</a>
+                        </li>
+                      {% endfor %}
+                    </ul>
+                  </li>
+                {% endif %}
+              {% endfor %}
+            </ul>
+
+            {% assign items = itemsLink | split: '|' %}
+            {% assign itemCount = 0 %}
+            {% for item in items %}
+              {% capture enabled %}{{ item }}{% endcapture %}
+              {% if settings[enabled] %}
+                {% assign itemCount = itemCount | plus: 1 %}
+              {% endif %}
+            {% endfor %}
+
+            {% if itemCount > 0 %}
+              <div class="mega-nav">
+
+                {% if settings.mega-nav-image %}
+                  <figure class="mega-nav-image">
+                    <img alt="{{ shop.name | escape }}" src="{{ imageLink | asset_url }}" data-image="{{ imageLink| asset_url }}" data-alt="{{ shop.name | escape }}">
+                  </figure>
+                {% endif %}
+
+                <div class="mega-nav-list-wrapper">
+                  {% for item in items %}
+
+                    {% capture enabled %}{{ item }}{% endcapture %}
+                  {{enabled}}
+                    {% assign linklist = settings[enabled] %}
+                    {{linklists[linklist]}}
+                    {% if linklists[linklist].links.size > 0 %}
+
+                      <ul class="mega-nav-list">
+                        <li class="mega-nav-list-title"><span class="navtitle{{link.title}}">{{ linklists[linklist].title }}</span></li>
+
+                        {% for link in linklists[linklist].links %}
+
+                          {% if settings.mega-nav-image %}
+                            {% if settings.mega-nav-image %}
+                              {% assign megaNavImageSrc = imageLink | asset_url %}
+                              {% assign megaNavImageAlt = shop.name %}
+                            {% else %}
+                              {% assign megaNavImageSrc = 'no-image.svg' | asset_url %}
+                              {% assign megaNavImageAlt = 'No image' %}
+                            {% endif %}
+                            {% assign item_type = 'none' %}
+                            {% if link.url contains '/collections/' %}
+                              {% assign item_type = 'collection' %}
+                            {% elsif link.url contains '/products/' %}
+                              {% assign item_type = 'product' %}
+                            {% endif %}
+
+                            {% if item_type == 'collection' %}
+                              {% capture megaNavImageAlt %}{{ collections[link.handle].title | escape }}{% endcapture %}
+                              {% if collections[link.handle].image %}
+                                {% capture megaNavImageSrc %}{{ collections[link.handle] | img_url: 'large' }}{% endcapture %}
+                              {% else %}
+                                {% capture megaNavImageSrc %}{{ collections[link.handle].products.first | img_url: 'large' }}{% endcapture %}
+                              {% endif %}
+                            {% elsif item_type == 'product' %}
+                              {% capture megaNavImageAlt %}{{ link.title | escape }}{% endcapture %}
+                              {% for product in collections['all'].products %}
+                                {% if product.handle == link.handle %}
+                                  {% capture megaNavImageSrc %}{{ product | img_url: 'large' }}{% endcapture %}
+                                {% endif %}
+                              {% endfor %}
+                            {% endif %}
+                          {% endif %}
+
+                          <li data-image-src="{{ megaNavImageSrc }}" data-image-alt="{{ megaNavImageAlt }}"><a href="{{ link.url }}">{{ link.title }}</a></li>
+                        {% endfor %}
+                      </ul>
+
+                    {% endif %}
+                  {% endfor %}
+                </div>
+
+              </div>
+            {% endif %}
+          {% endif %}
+
+        </li>
+      {% endfor %}
+      {% if shop.customer_accounts_enabled %}
+        <li class="mobile-link">
+          {% if customer %}
+            <a href="/account">{{ 'layout.header.my_account' | t }}</a>
+          {% else %}
+            {{ 'layout.header.account' | t | customer_login_link }}
+          {% endif %}
+        </li>
+      {% endif %}
+    </ul>
+
+    <a class="cart-count" href="/cart"><span class="cart-count-text">{{ 'layout.header.cart' | t }}</span> (<span class="cart-count-number">{{ cart.item_count }}</span>)</a>
+  </nav>
+</div>
+  </div>
+
+</header>
+<div class="navigation-wrapper hide--desktop">
+  <nav class="navigation">
+    <div class="branding {% if settings.use-logo %}has-logo{% endif %}">
+      {% if settings.use-logo %}
+        <a class="logo mobile-nav-logo {% if settings.use-logo %}has-retina{% endif %}" href="/">
+          <img class="logo-regular" alt="{{ shop.name | escape }}" src="{{ section.settings.logo | img_url: '400x' }}">
+          {% if settings.use-logo %}
+            <img class="logo-retina" alt="{{ shop.name | escape }}" src="{{ section.settings.logo | img_url: '400x' }}">
+          {% endif %}
+        </a>
+      {% else %}
+        <a class="logo mobile-nav-logo" href="/">{{ section.settings.logo | img_url: '400x' }}</a>
+      {% endif %}
+
+      {% if settings.use-sticky-header-logo %}
+        <a class="logo sticky-logo" href="/"><img alt="{{ shop.name | escape }}" src="{{ 'sticky-header-logo.png' | asset_url }}"></a>
+      {% endif %}
+      <span class="navigation-toggle">&#xe603;</span>
+    </div>
+
+    <ul>
+      <li class="mobile-link">
+        <form class="search-form" action="/search" method="get">
+          <input class="search-input" name="q" type="text" placeholder="{{ 'layout.header.search_placeholder' | t }}" value="{{ search.terms }}" />
+          <input type="submit" value="&#xe606;" />
+        </form>
+      </li>
+      {% for link in linklists.main-menu.links %}
+      {% assign child_list_handle = link.title | handle %}
+        {% include 'has-dropdown' %}
+          <li class="{% if hasSubmenu %}has-Submenu{% endif %}{% if hasDropdown %}has-dropdown{% elsif hasMegaNav %}has-mega-nav{% endif %} {% include 'for-looper' %}" {% if hasMegaNav %}data-mega-nav="true"{% endif %}>
+          <a data-linklist-trigger="{{ link.title | downcase | handle }}" href="{{ link.url }}">{{ link.title }} {% if hasDropdown or hasMegaNav %}<span class="enter-linklist">&#xe600;</span>{% endif %}</a>
+			{% if hasSubmenu %}
+            <ul class="dropdown sub-menu">
+            {% for child_link in linklists[child_list_handle].links %}
+            {% assign grand_child_list_handle = child_link.title | handle %}
+            {% if linklists[grand_child_list_handle] and linklists[grand_child_list_handle].links.size > 0 %}
+            <li class="has-dropdown child-submenu">
+              {{ child_link.title | link_to: child_link.url }}
+            </li>
+            {% else %}
+            <li class="child-submenu">
+              {{ child_link.title | link_to: child_link.url }}
+            </li>
+            {% endif %}
+            {% endfor %}        
+          </ul>
+            {% endif %}
+          {% if hasDropdown %}
+
+            <ul data-linklist="{{ linkHandle }}">
+              <li>
+                <span class="back"><span class="icon">&#xe601;</span> {{ 'layout.mobile_navigation.back' | t }}</span>
+              </li>
+              {% for link in linklists[linkHandle].links %}
+                <li>
+                  <a href="{{ link.url }}">{{ link.title }}</a>
+                </li>
+              {% endfor %}
+            </ul>
+
+          {% elsif hasMegaNav %}
+
+            <ul class="mobile-mega-nav" data-linklist="{{ linkHandle }}">
+              <li>
+                <span class="back"><span class="icon">&#xe601;</span> {{ 'layout.mobile_navigation.back' | t }}</span>
+              </li>
+
+              {% assign items = itemsLink | split: '|' %}
+              {% assign itemCount = 0 %}
+              {% for item in items %}
+
+                {% capture enabled %}{{ item }}{% endcapture %}
+                {% assign linklist = settings[enabled] %}
+
+                {% if linklists[linklist].links.size > 0 %}
+                  <li class="has-dropdown">
+                    <a data-linklist-trigger="{{ linklists[linklist].title | downcase | handle }}" href="{{ linklists[linklist].url }}">{{ linklists[linklist].title }} {% if hasMegaNav %}<span class="enter-linklist">&#xe600;</span>{% endif %}</a>
+                    <ul data-linklist="{{ linklists[linklist].title | downcase | handle }}">
+                      <li>
+                        <span class="back"><span class="icon">&#xe601;</span> {{ 'layout.mobile_navigation.back' | t }}</span>
+                      </li>
+                      {% for link in linklists[linklist].links %}
+                        <li>
+                          <a href="{{ link.url }}">{{ link.title }}</a>
+                        </li>
+                      {% endfor %}
+                    </ul>
+                  </li>
+                {% endif %}
+              {% endfor %}
+            </ul>
+
+            {% assign items = itemsLink | split: '|' %}
+            {% assign itemCount = 0 %}
+            {% for item in items %}
+              {% capture enabled %}{{ item }}{% endcapture %}
+              {% if settings[enabled] %}
+                {% assign itemCount = itemCount | plus: 1 %}
+              {% endif %}
+            {% endfor %}
+
+            {% if itemCount > 0 %}
+              <div class="mega-nav">
+
+                {% if settings.mega-nav-image %}
+                  <figure class="mega-nav-image">
+                    <img alt="{{ shop.name | escape }}" src="{{ imageLink | asset_url }}" data-image="{{ imageLink| asset_url }}" data-alt="{{ shop.name | escape }}">
+                  </figure>
+                {% endif %}
+
+                <div class="mega-nav-list-wrapper">
+                  {% for item in items %}
+
+                    {% capture enabled %}{{ item }}{% endcapture %}
+                  {{enabled}}
+                    {% assign linklist = settings[enabled] %}
+                    {{linklists[linklist]}}
+                    {% if linklists[linklist].links.size > 0 %}
+
+                      <ul class="mega-nav-list">
+                        <li class="mega-nav-list-title"><span class="navtitle{{link.title}}">{{ linklists[linklist].title }}</span></li>
+
+                        {% for link in linklists[linklist].links %}
+
+                          {% if settings.mega-nav-image %}
+                            {% if settings.mega-nav-image %}
+                              {% assign megaNavImageSrc = imageLink | asset_url %}
+                              {% assign megaNavImageAlt = shop.name %}
+                            {% else %}
+                              {% assign megaNavImageSrc = 'no-image.svg' | asset_url %}
+                              {% assign megaNavImageAlt = 'No image' %}
+                            {% endif %}
+                            {% assign item_type = 'none' %}
+                            {% if link.url contains '/collections/' %}
+                              {% assign item_type = 'collection' %}
+                            {% elsif link.url contains '/products/' %}
+                              {% assign item_type = 'product' %}
+                            {% endif %}
+
+                            {% if item_type == 'collection' %}
+                              {% capture megaNavImageAlt %}{{ collections[link.handle].title | escape }}{% endcapture %}
+                              {% if collections[link.handle].image %}
+                                {% capture megaNavImageSrc %}{{ collections[link.handle] | img_url: 'large' }}{% endcapture %}
+                              {% else %}
+                                {% capture megaNavImageSrc %}{{ collections[link.handle].products.first | img_url: 'large' }}{% endcapture %}
+                              {% endif %}
+                            {% elsif item_type == 'product' %}
+                              {% capture megaNavImageAlt %}{{ link.title | escape }}{% endcapture %}
+                              {% for product in collections['all'].products %}
+                                {% if product.handle == link.handle %}
+                                  {% capture megaNavImageSrc %}{{ product | img_url: 'large' }}{% endcapture %}
+                                {% endif %}
+                              {% endfor %}
+                            {% endif %}
+                          {% endif %}
+
+                          <li data-image-src="{{ megaNavImageSrc }}" data-image-alt="{{ megaNavImageAlt }}"><a href="{{ link.url }}">{{ link.title }}</a></li>
+                        {% endfor %}
+                      </ul>
+
+                    {% endif %}
+                  {% endfor %}
+                </div>
+
+              </div>
+            {% endif %}
+          {% endif %}
+
+        </li>
+      {% endfor %}
+      {% if shop.customer_accounts_enabled %}
+        <li class="mobile-link">
+          {% if customer %}
+            <a href="/account">{{ 'layout.header.my_account' | t }}</a>
+          {% else %}
+            {{ 'layout.header.account' | t | customer_login_link }}
+          {% endif %}
+        </li>
+      {% endif %}
+    </ul>
+
+    <a class="cart-count" href="/cart"><span class="cart-count-text">{{ 'layout.header.cart' | t }}</span> (<span class="cart-count-number">{{ cart.item_count }}</span>)</a>
+  </nav>
+</div>
+{% style %}
+  #shopify-section-header .header-tools .icon-wish {
+	background: url("{{ section.settings.wishlist_icon | img_url }}");
+  }
+  #shopify-section-header .header-tools .icon-sign{
+    background: url("{{ section.settings.user_icon | img_url }}");
+  }
+  #shopify-section-header .header-tools .icon-cart{
+	background: url("{{ section.settings.cart_icon | img_url }}");
+  }
+  #shopify-section-header .branding{
+    background: url("{{ section.settings.header_brand_image | img_url: '2000x' }}");
+	background-repeat: no-repeat;
+	background-size: cover;
+  }
+  #shopify-section-header .announcement_bar{
+	width: 100%;
+    height: 30px;
+    background: {{ section.settings.announcement_color }};
+    border-bottom: 1px solid #e4e4e4;
+  }
+  #shopify-section-header .announcement_bar h2{
+    width: 100%;
+    height: 100%;
+    font-size: 17px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+	margin: 0 !important;
+  }
+{% endstyle %}
+
+<script>
+  var currentObject=0;
+  $('.has-mega-nav').click(function(e){ 
+    if(currentObject !=0){
+      currentObject.css( "display", "none" );
+    }
+    currentObject = $('.has-mega-nav:hover > .mega-nav');
+    $('.has-mega-nav:hover > .mega-nav').css( "display", "block" );
+  });
+  $( ".has-mega-nav > .mega-nav" ).mouseleave(function() {
+     currentObject.css( "display", "none" );
+  });
+
+</script>
+
+
+
+{% schema %}
+{
+  "name": "Header",
+  "settings": [
+	{
+		"type": "checkbox",
+		"id": "is_announcement",
+		"label": "Enable announcement bar",
+		"default": false
+    },
+    {
+      "type": "color",
+      "id": "announcement_color",
+      "label": "Announcement background color",
+      "default": "#223748"
+    },
+    {
+      "type": "text",
+      "id": "ann_text",
+      "label": "Announcement label",
+	  "default": "default text"
+    },
+    {
+      "type": "header",
+      "content": "Logo"
+    },
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo image",
+      "info": "200px tall recommended"
+    },
+	{
+      "type": "image_picker",
+      "id": "user_icon",
+      "label": "User image"
+    },
+	{
+      "type": "image_picker",
+      "id": "wishlist_icon",
+      "label": "Wish-list image"
+    },
+	{
+      "type": "image_picker",
+      "id": "cart_icon",
+      "label": "Cart image"
+    },
+	{
+      "type": "color",
+      "id": "bg_color",
+      "label": "Header tool background color",
+      "default": "#223748"
+    },
+	{
+      "type": "checkbox",
+      "id": "ann_bg",
+      "label": "Enable background image",
+	  "default": false
+    },
+	{
+      "type": "image_picker",
+      "id": "header_brand_image",
+      "label": "Header brand image"
+    },
+    {
+      "type": "header",
+      "content": "Header"
+    },
+    {
+      "type": "select",
+      "id": "header_layout",
+      "label": "Logo layout",
+      "info": "Logo layouts are only active on screens wider than 1080px",
+      "options": [
+        {
+          "value": "default",
+          "label": "Default"
+        },
+        {
+          "value": "compact-center",
+          "label": "Compact center"
+        },
+        {
+          "value": "compact-left",
+          "label": "Compact left"
+        }
+      ],
+      "default": "default"
+    },
+    {
+      "type": "checkbox",
+      "id": "header_full_width",
+      "label": "Enable full width header ",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "header_border",
+      "label": "Show header border",
+      "info": "This will appear on all pages except the home page."
+    },
+    {
+      "type": "checkbox",
+      "id": "sticky_header",
+      "label": "Enable sticky header"
+    },
+    {
+      "type": "checkbox",
+      "id": "sticky_header_logo",
+      "label": "Show logo image in sticky header"
+    },
+    {
+      "type": "header",
+      "content": "Navigation"
+    },
+    {
+      "type": "link_list",
+      "id": "menu",
+      "label": "Menu",
+      "default": "main-menu"
+    },
+    {
+      "type": "header",
+      "content": "Mini Cart"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_checkout_lock_icon",
+      "label": "Show lock icon on checkout button in mini cart",
+      "default": false
+    }
+  ],
+  "blocks": [
+    {
+      "type": "mega_menu",
+      "name": "Mega menu",
+      "settings": [
+        {
+          "type": "text",
+          "id": "menu_item",
+          "label": "Menu item ([Learn more](http:\/\/support.pixelunion.net\/article\/317-setti#navigation))",
+          "info": "Enter menu item to apply a mega menu dropdown"
+        },
+        {
+          "type": "image_picker",
+          "id": "menu_image",
+          "label": "Featured image",
+          "info": "480 x 1000px recommended"
+        }
+      ]
+    }
+  ]
+}
+
+{% endschema %}

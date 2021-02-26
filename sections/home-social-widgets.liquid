@@ -1,0 +1,201 @@
+<script
+  type="application/json"
+  data-section-type="dynamic-social-widgets"
+  data-section-id="{{ section.id }}"
+>
+</script>
+
+{%- assign widgetCount = 0 -%}
+{%- assign instagramPhotoCount = 0 -%}
+{%- assign hasInstagram = false -%}
+{%- assign hasTwitter = false -%}
+{%- assign onboard = false -%}
+
+{%- for block in section.blocks -%}
+  {%- case block.type -%}
+    {%- when 'instagram' -%}
+      {%- assign hasInstagram = true -%}
+    {%- when 'twitter' -%}
+      {%- assign hasTwitter = true -%}
+  {%- endcase -%}
+{%- endfor -%}
+
+{%- if hasInstagram and hasTwitter -%}
+  {%- assign widgetCount = 2 -%}
+  {%- assign instagramPhotoCount = 3 -%}
+{%- elsif hasInstagram or hasTwitter -%}
+  {%- assign widgetCount = 1 -%}
+  {%- assign instagramPhotoCount = 6 -%}
+{%- else -%}
+  {%- assign widgetCount = 2 -%}
+  {%- assign instagramPhotoCount = 0 -%}
+  {%- assign onboard = true -%}
+{%- endif -%}
+
+<section
+  class="
+    home-social-widgets
+    home-social-widget-count-{{ widgetCount }}
+    {% if onboard %}home-social-widgets-onboard{% endif %}"
+>
+
+  {%- if section.settings.title != blank -%}
+    <h1 class="section-title">{{ section.settings.title | escape }}</h1>
+  {%- endif -%}
+
+  {%- unless onboard -%}
+    {%- for block in section.blocks -%}
+      {%- case block.type -%}
+        {%- when 'instagram' -%}
+          {%- assign username = block.settings.username | remove: '@' | strip -%}
+          {%- assign accessToken = block.settings.access-token -%}
+          {%- capture link -%}
+            <a href="http://instagram.com/{{ username }}" target="_blank">@{{ username }}</a>
+          {%- endcapture -%}
+
+          <section class="home-social-widget home-instagram-widget" data-instagram {{ block.shopify_attributes }}>
+            <div class="home-instagram-photos"
+              data-instagram-photos
+              data-instagram-token="{{ accessToken }}"
+              data-instagram-photo-count="{{ instagramPhotoCount }}">
+              {%- for i in (1..instagramPhotoCount) -%}
+                <a class="instagram-photo" href="#">
+                  {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+                </a>
+              {%- endfor -%}
+            </div>
+            <div class="home-instagram-follow">{{ 'general.social.follow_on_instagram_html' | t: instagram_link: link }}</div>
+          </section>
+        {%- when 'twitter' -%}
+          {%- assign username = block.settings.username | remove: '@' | strip -%}
+          {%- capture link -%}
+            <a href="http://twitter.com/{{ username }}">@{{ username }}</a>
+          {%- endcapture -%}
+
+          <section class="home-social-widget home-twitter-widget" data-twitter {{ block.shopify_attributes }}>
+            <div class="home-twitter-tweet-wrapper"
+              data-twitter-tweets
+              data-twitter-username="{{ username }}"
+              {% if block.settings.show-retweets %}data-twitter-show-retweets{% endif %}
+              {% if block.settings.show-images %}data-twitter-show-images{% endif %}>
+              <div class="home-twitter-tweet" data-tweet>
+                <p class="tweet">{{ 'onboarding.social_widgets.twitter_tweet' | t }}</p>
+                <p class="timePosted">
+                  <span class="twitter-icon">&#xF12E;</span>
+                  <a href="">{{ 'onboarding.social_widgets.twitter_tweet_published_at' | t }}</a>
+                </p>
+              </div>
+            </div>
+            <div class="home-twitter-follow">{{ 'general.social.follow_on_twitter_html' | t: twitter_link: link }}</div>
+          </section>
+      {%- endcase -%}
+    {%- endfor -%}
+  {%- else -%}
+    {%- assign instagramUsername = 'onboarding.social_widgets.instagram_username' | t -%}
+    {%- assign twitterUsername = 'onboarding.social_widgets.twitter_username' | t -%}
+    {%- capture instagramLink -%}
+      <a href="">@{{ instagramUsername }}</a>
+    {%- endcapture -%}
+    {%- capture twitterLink -%}
+      <a href="">@{{ twitterUsername }}</a>
+    {%- endcapture -%}
+
+    <section class="home-social-widget home-instagram-widget">
+      <div class="home-instagram-photos">
+        {%- for i in (1..3) -%}
+          <a class="instagram-photo" href="#">
+            {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+          </a>
+        {%- endfor -%}
+      </div>
+      <div class="home-instagram-follow">
+        {{ 'general.social.follow_on_instagram_html' | t: instagram_link: instagramLink }}
+      </div>
+    </section>
+
+    <section class="home-social-widget home-twitter-widget">
+      <div class="home-twitter-tweet-wrapper">
+        <div class="home-twitter-tweet">
+          <p class="tweet">{{ 'onboarding.social_widgets.twitter_tweet' | t }}</p>
+          <p class="timePosted">
+            <span class="twitter-icon">&#xF12E;</span>
+            <a href="">{{ 'onboarding.social_widgets.twitter_tweet_published_at' | t }}</a>
+          </p>
+        </div>
+      </div>
+      <div class="home-twitter-follow">
+        {{ 'general.social.follow_on_twitter_html' | t: twitter_link: twitterLink }}
+      </div>
+    </section>
+  {%- endunless -%}
+</section>
+
+{% schema %}
+{
+  "name": "Instagram and Twitter",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Twitter and Instagram"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "instagram",
+      "name": "Instagram feed",
+      "settings": [
+        {
+          "type": "text",
+          "id": "username",
+          "label": "Username",
+          "default": "Username"
+        },
+        {
+          "type": "text",
+          "id": "access-token",
+          "label": "Access token ([?](http:\/\/instagram.pixelunion.net))"
+        }
+      ],
+      "limit": 1
+    },
+    {
+      "type": "twitter",
+      "name": "Twitter feed",
+      "settings": [
+        {
+          "type": "text",
+          "id": "username",
+          "label": "Username",
+          "default": "Username"
+        },
+        {
+          "type": "checkbox",
+          "id": "show-images",
+          "label": "Show images",
+          "default": false
+        },
+        {
+          "type": "checkbox",
+          "id": "show-retweets",
+          "label": "Show retweets",
+          "default": true
+        }
+      ],
+      "limit": 1
+    }
+  ],
+  "presets": [
+    {
+      "category": "Social Media",
+      "name": "Instagram and Twitter",
+      "blocks": [
+        { "type": "instagram" },
+        { "type": "twitter" }
+      ]
+    }
+  ]
+}
+
+{% endschema %}

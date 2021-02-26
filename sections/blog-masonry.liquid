@@ -1,0 +1,83 @@
+<script
+  type="application/json"
+  data-section-type="static-blog-masonry"
+  data-section-id="{{ section.id }}"
+>
+</script>
+
+{% assign emphasis_first_post = false %}
+{% if section.settings.emphasis_first_post %}
+  {% assign emphasis_first_post = true %}
+{% endif %}
+
+<section>
+  <h1 class="page-title">{{ blog.title }}</h1>
+
+  {% include 'breadcrumbs' %}
+
+  <div class="blog-wrapper-masonry">
+    {% paginate blog.articles by section.settings.articles_per_page %}
+
+      <div class="blog-posts-masonry masonry-grid" data-masonry-grid>
+        <div class="masonry-grid-sizer" data-masonry-sizer></div>
+
+        {% for article in blog.articles %}
+          {% assign is_emphasized = false %}
+
+          {%- if emphasis_first_post -%}
+            {% comment %}
+              Don't emphasize post if:
+                - is not first page
+                - if tags are active
+                - is not first in loop
+            {% endcomment %}
+            {%- if paginate.current_page == 1 and current_tags == blank and forloop.first -%}
+              {% assign is_emphasized = true %}
+            {%- endif -%}
+          {%- endif -%}
+
+          {%
+            include 'section-blog-post-masonry',
+            is_emphasized: is_emphasized
+          %}
+        {% else %}
+          <div class="blog-post-masonry masonry-grid-item" data-masonry-item>
+            <span class="empty">
+              {{ 'blogs.blog.empty' | t }}
+            </span>
+          </div>
+
+        {% endfor %}
+      </div>
+
+      {% if paginate.previous or paginate.next %}
+        {% include 'pagination' %}
+      {% endif %}
+
+    {% endpaginate %}
+  </div>
+</section>
+
+{% schema %}
+
+{
+  "name": "Blog",
+  "settings": [
+    {
+      "type": "range",
+      "id": "articles_per_page",
+      "label": "Posts per page",
+      "min": 3,
+      "max": 12,
+      "step": 3,
+      "default": 9
+    },
+    {
+      "type": "checkbox",
+      "id": "emphasis_first_post",
+      "label": "Emphasize first post"
+    }
+  ]
+}
+
+{% endschema %}

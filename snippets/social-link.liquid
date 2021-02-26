@@ -1,0 +1,20 @@
+{% comment %}
+  @param id String
+         A unique ID for the link, used as a classname and to look up the icon.
+
+  @param url String
+         The URL to link to.
+
+  @param title String {Optional}
+         A user-facing name for the social platform.
+{% endcomment %}
+
+<li>
+  <a
+    class="social-link social-link-{{ id }}"
+    {% if title != blank %}title="{{ title }}"{% endif %}
+    href="{{ url }}"
+    target="_blank">
+    {% include 'social-icon', id: id %} {{ title }}
+  </a>
+</li>

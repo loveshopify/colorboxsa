@@ -1,0 +1,57 @@
+{% layout none %}
+
+{% assign enable_zoom = settings.quickshop_enable_zoom %}
+{% assign enable_cart_redirection = settings.quickshop_enable_cart_redirection %}
+{% assign images_layout = settings.quickshop_images_layout %}
+{% assign show_vendor = settings.show_vendor %}
+{% assign show_social_media_icons = settings.quickshop_show_social_media_icons %}
+{% assign show_payment_button = settings.quickshop_show_payment_button %}
+
+{% assign product_json = product | json %}
+{% assign product_json_sha256 = product_json | sha256 %}
+
+{% capture settings_string %}
+  {{ enable_zoom }}
+  {{ enable_cart_redirection }}
+  {{ images_layout }}
+  {{ show_vendor }}
+  {{ show_social_media_icons }}
+  {{ show_payment_button }}
+{% endcapture %}
+{% assign settings_sha256 = settings_string | sha256 %}
+
+<template data-product-options>
+  {
+    "product": {{ product_json }},
+    "product_settings": {
+      "addToCartText": {{ 'products.product.add_to_cart' | t | json }},
+      "enableHistory": false,
+      "linkedOptions": false,
+      "processingText": {{ 'products.product.processing' | t | json }},
+      "setQuantityText": {{ 'products.product.set_quantity' | t | json }},
+      "soldOutText": {{ 'products.product.sold_out' | t | json }},
+      "unavailableText": {{ 'products.product.unavailable' | t | json }}
+    },
+    "images_layout": {{ images_layout | json }},
+    "enable_zoom": {{ enable_zoom | json }},
+    "enable_cart_redirection": {{ enable_cart_redirection | json }},
+    "enable_fixed_positioning": false,
+    "product_sha256": {{ product_json_sha256 | json }},
+    "settings_sha256": {{ settings_sha256 | json }}
+  }
+</template>
+
+<template data-product-html>
+  {%
+    include 'product',
+    product: product,
+    enable_zoom: enable_zoom,
+    images_layout: images_layout,
+    enable_linked_options: enable_linked_options,
+    show_vendor: show_vendor,
+    show_social_media_icons: show_social_media_icons,
+    show_payment_button: show_payment_button,
+    link_to: true,
+    lazy: false
+  %}
+</template>

@@ -1,0 +1,38 @@
+
+<aside class="blog-sidebar">
+
+  <div class="blog-recent-posts">
+    <h3 class="section-title">{{ 'blogs.blog.recent_posts' | t }}</h3>
+
+    {% for article in blogs[blog.handle].articles | limit: 3 %}
+      <article class="blog-recent-post">
+        <h4 class="blog-recent-post-title">{{ article.title | link_to: article.url }}</h4>
+        <span class="blog-recent-post-date">{{ article.created_at | date: format: 'long_month' | link_to: article.url }}</span>
+      </article>
+    {% endfor %}
+  </div>
+
+  {% if settings.blog-tag-filter and blog.tags.size > 0 %}
+    <div class="blog-tag-filter">
+      <h3 class="blog-tag-filter-title section-title">{{ 'blogs.blog.sort_by_tag' | t }}</h3>
+
+      <div class="select-wrapper">
+        <span class="selected-text"></span>
+        <select data-url="{{ blog.handle }}">
+          <option value="all">{{ 'blogs.blog.all_tags' | t }}</option>
+          {% for tag in blogs[blog.handle].tags %}
+            {% if current_tags contains tag %}
+              <option value="{{ tag | handle }}" selected="selected">{{ tag }}</option>
+            {% else %}
+              <option value="{{ tag | handle }}">{{ tag }}</option>
+            {% endif %}
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+  {% endif %}
+
+  {% if settings.blog-rss-icon %}
+    <a class="blog-subscribe" href="{{ blog.url }}.atom">{{ 'blogs.blog.subscribe' | t }}</a>
+  {% endif %}
+</aside>

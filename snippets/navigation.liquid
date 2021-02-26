@@ -1,0 +1,185 @@
+
+<div class="navigation-wrapper">
+  <nav class="navigation">
+
+    <div class="branding {% if settings.use-logo %}has-logo{% endif %}">
+      {% if settings.use-logo %}
+        <a class="logo mobile-nav-logo {% if settings.use-logo %}has-retina{% endif %}" href="/">
+          <img class="logo-regular" alt="{{ shop.name | escape }}" src="{{ 'logo.png' | asset_url }}">
+          {% if settings.use-logo %}
+            <img class="logo-retina" alt="{{ shop.name | escape }}" src="{{ 'logo-retina.png' | asset_url }}">
+          {% endif %}
+        </a>
+      {% else %}
+        <a class="logo mobile-nav-logo" href="/">{{ shop.name }}</a>
+      {% endif %}
+
+      {% if settings.use-sticky-header-logo %}
+        <a class="logo sticky-logo" href="/"><img alt="{{ shop.name | escape }}" src="{{ 'sticky-header-logo.png' | asset_url }}"></a>
+      {% endif %}
+      <span class="navigation-toggle">&#xe603;</span>
+    </div>
+
+    <ul>
+      <li class="mobile-link">
+        <form class="search-form" action="/search" method="get">
+          <input class="search-input" name="q" type="text" placeholder="{{ 'layout.header.search_placeholder' | t }}" value="{{ search.terms }}" />
+          <input type="submit" value="&#xe606;" />
+        </form>
+      </li>
+      {% for link in linklists.main-menu.links %}
+        {% include 'has-dropdown' %}
+          <li class="{% if hasDropdown %}has-dropdown{% elsif hasMegaNav %}has-mega-nav{% endif %} {% include 'for-looper' %}" {% if hasMegaNav %}data-mega-nav="true"{% endif %}>
+          <a data-linklist-trigger="{{ link.title | downcase | handle }}" href="{{ link.url }}">{{ link.title }} {% if hasDropdown or hasMegaNav %}<span class="enter-linklist">&#xe600;</span>{% endif %}</a>
+
+          {% if hasDropdown %}
+
+            <ul data-linklist="{{ linkHandle }}">
+              <li>
+                <span class="back"><span class="icon">&#xe601;</span> {{ 'layout.mobile_navigation.back' | t }}</span>
+              </li>
+              {% for link in linklists[linkHandle].links %}
+                <li>
+                  <a href="{{ link.url }}">{{ link.title }}</a>
+                </li>
+              {% endfor %}
+            </ul>
+
+          {% elsif hasMegaNav %}
+
+            <ul class="mobile-mega-nav" data-linklist="{{ linkHandle }}">
+              <li>
+                <span class="back"><span class="icon">&#xe601;</span> {{ 'layout.mobile_navigation.back' | t }}</span>
+              </li>
+
+              {% assign items = itemsLink | split: '|' %}
+              {% assign itemCount = 0 %}
+              {% for item in items %}
+
+                {% capture enabled %}{{ item }}{% endcapture %}
+                {% assign linklist = settings[enabled] %}
+
+                {% if linklists[linklist].links.size > 0 %}
+                  <li class="has-dropdown">
+                    <a data-linklist-trigger="{{ linklists[linklist].title | downcase | handle }}" href="{{ linklists[linklist].url }}">{{ linklists[linklist].title }} {% if hasMegaNav %}<span class="enter-linklist">&#xe600;</span>{% endif %}</a>
+                    <ul data-linklist="{{ linklists[linklist].title | downcase | handle }}">
+                      <li>
+                        <span class="back"><span class="icon">&#xe601;</span> {{ 'layout.mobile_navigation.back' | t }}</span>
+                      </li>
+                      {% for link in linklists[linklist].links %}
+                        <li>
+                          <a href="{{ link.url }}">{{ link.title }}</a>
+                        </li>
+                      {% endfor %}
+                    </ul>
+                  </li>
+                {% endif %}
+              {% endfor %}
+            </ul>
+
+            {% assign items = itemsLink | split: '|' %}
+            {% assign itemCount = 0 %}
+            {% for item in items %}
+              {% capture enabled %}{{ item }}{% endcapture %}
+              {% if settings[enabled] %}
+                {% assign itemCount = itemCount | plus: 1 %}
+              {% endif %}
+            {% endfor %}
+
+            {% if itemCount > 0 %}
+              <div class="mega-nav">
+
+                {% if settings.mega-nav-image %}
+                  <figure class="mega-nav-image">
+                    <img alt="{{ shop.name | escape }}" src="{{ imageLink | asset_url }}" data-image="{{ imageLink| asset_url }}" data-alt="{{ shop.name | escape }}">
+                  </figure>
+                {% endif %}
+
+                <div class="mega-nav-list-wrapper">
+                  {% for item in items %}
+
+                    {% capture enabled %}{{ item }}{% endcapture %}
+                  {{enabled}}
+                    {% assign linklist = settings[enabled] %}
+                    {{linklists[linklist]}}
+                    {% if linklists[linklist].links.size > 0 %}
+
+                      <ul class="mega-nav-list">
+                        <li class="mega-nav-list-title"><span class="navtitle{{link.title}}">{{ linklists[linklist].title }}</span></li>
+
+                        {% for link in linklists[linklist].links %}
+
+                          {% if settings.mega-nav-image %}
+                            {% if settings.mega-nav-image %}
+                              {% assign megaNavImageSrc = imageLink | asset_url %}
+                              {% assign megaNavImageAlt = shop.name %}
+                            {% else %}
+                              {% assign megaNavImageSrc = 'no-image.svg' | asset_url %}
+                              {% assign megaNavImageAlt = 'No image' %}
+                            {% endif %}
+                            {% assign item_type = 'none' %}
+                            {% if link.url contains '/collections/' %}
+                              {% assign item_type = 'collection' %}
+                            {% elsif link.url contains '/products/' %}
+                              {% assign item_type = 'product' %}
+                            {% endif %}
+
+                            {% if item_type == 'collection' %}
+                              {% capture megaNavImageAlt %}{{ collections[link.handle].title | escape }}{% endcapture %}
+                              {% if collections[link.handle].image %}
+                                {% capture megaNavImageSrc %}{{ collections[link.handle] | img_url: 'large' }}{% endcapture %}
+                              {% else %}
+                                {% capture megaNavImageSrc %}{{ collections[link.handle].products.first | img_url: 'large' }}{% endcapture %}
+                              {% endif %}
+                            {% elsif item_type == 'product' %}
+                              {% capture megaNavImageAlt %}{{ link.title | escape }}{% endcapture %}
+                              {% for product in collections['all'].products %}
+                                {% if product.handle == link.handle %}
+                                  {% capture megaNavImageSrc %}{{ product | img_url: 'large' }}{% endcapture %}
+                                {% endif %}
+                              {% endfor %}
+                            {% endif %}
+                          {% endif %}
+
+                          <li data-image-src="{{ megaNavImageSrc }}" data-image-alt="{{ megaNavImageAlt }}"><a href="{{ link.url }}">{{ link.title }}</a></li>
+                        {% endfor %}
+                      </ul>
+
+                    {% endif %}
+                  {% endfor %}
+                </div>
+
+              </div>
+            {% endif %}
+          {% endif %}
+
+        </li>
+      {% endfor %}
+      {% if shop.customer_accounts_enabled %}
+        <li class="mobile-link">
+          {% if customer %}
+            <a href="/account">{{ 'layout.header.my_account' | t }}</a>
+          {% else %}
+            {{ 'layout.header.account' | t | customer_login_link }}
+          {% endif %}
+        </li>
+      {% endif %}
+    </ul>
+
+    <a class="cart-count" href="/cart"><span class="cart-count-text">{{ 'layout.header.cart' | t }}</span> (<span class="cart-count-number">{{ cart.item_count }}</span>)</a>
+  </nav>
+</div>
+<script>
+  var currentObject=0;
+  $('.has-mega-nav').click(function(e){ 
+    if(currentObject !=0){
+      currentObject.css( "display", "none" );
+    }
+    currentObject = $('.has-mega-nav:hover > .mega-nav');
+    $('.has-mega-nav:hover > .mega-nav').css( "display", "block" );
+  });
+  $( ".has-mega-nav > .mega-nav" ).mouseleave(function() {
+     currentObject.css( "display", "none" );
+  });
+
+</script>

@@ -1,0 +1,80 @@
+{% comment %}
+  @param related_products_position {string}
+    Determine where related products should be displayed
+
+  @param related_collection {object}
+    Collection to iterate through for products
+
+  @param use_masonry {boolean}
+    Determine whether to display as masonry grid
+
+  @param current_product_id {integer}
+    Current product
+{% endcomment %}
+
+{% assign product_limit = 4 %}
+
+{% if use_masonry %}
+  {% assign product_limit = 6 %}
+{% endif %}
+
+{% assign products = related_collection.products %}
+
+{% comment %}
+  Within a collection of 5 or less, popping the current product off
+  will result in one less product showing than {{ products.size }}
+{% endcomment %}
+{% assign product_count = 0 %}
+{% assign is_current_product = false %}
+{% for prod in products limit: product_limit %}
+  {% if prod.id == current_product %}
+    {% assign is_current_product = true %}
+  {% else %}
+    {% unless is_current_product == false and forloop.last %}
+      {% assign product_count = product_count | plus: 1 %}
+    {% endunless %}
+  {% endif %}
+{% endfor %}
+
+{% if products.size > 1 and product_count > 0 %}
+
+  <div class="related-products-wrapper">
+
+    <h2 class="section-title">{{ 'products.related_products.header' | t }}</h2>
+
+    <div
+      class="related-products {% if use_masonry %}rows-of-3{% else %}rows-of-4{% endif %}"
+      {% if use_masonry %}data-masonry-products{% endif %}
+    >
+      {% if use_masonry %}
+        <div class="product-grid-masonry-sizer" data-masonry-products-sizer></div>
+      {% endif %}
+
+      {% assign product_limit = product_limit | plus: 1 %}
+      {% assign is_current_product = false %}
+
+      {% for prod in products limit: product_limit %}
+        {% if prod.id == current_product_id %}
+          {% assign is_current_product = true %}
+        {% else %}
+          {% unless is_current_product == false and forloop.last %}
+            {% if use_masonry or related_products_position == 'below' %}
+              {% include 'product-list-item' %}
+            {% else %}
+              <a title="{{ prod.title }}" href="{{ prod.url }}">
+                {%
+                  include 'rimg',
+                  img: prod.featured_image,
+                  alt: prod.title,
+                  size: '480x480',
+                  lazy: true
+                %}
+              </a>
+            {% endif %}
+          {% endunless %}
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+
+{% endif %}

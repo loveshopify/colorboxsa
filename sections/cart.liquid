@@ -1,0 +1,207 @@
+<script
+  type="application/json"
+  data-section-type="static-cart"
+  data-section-id="{{ section.id }}"
+  data-section-data
+>
+  {
+    "hasShippingCalculator": {{ section.settings.shipping-calculator }}
+  }
+</script>
+
+<section
+  class="cart"
+  {% if section.settings.shipping-calculator %}data-shipping-calculator{% endif %}
+  data-section-id="{{ section.id }}"
+  data-section-type="cart">
+  <h1 class="page-title">{{ 'cart.general.header' | t }}</h1>
+
+  {% include 'breadcrumbs' %}
+
+  {% if cart.item_count > 0 %}
+
+    <form class="cart-form" action="/cart" method="post">
+
+      <table class="cart-items">
+        <thead>
+          <tr>
+            <th class="first">{{ 'general.general.product' | t }}</th>
+            <th>{{ 'general.general.price' | t }}</th>
+            <th>{{ 'general.general.quantity' | t }}</th>
+            <th class="last" colspan="2">{{ 'general.general.total' | t }}</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {% for item in cart.items %}
+            <tr class="cart-item variant-{{ item.variant.id }} {% include 'for-looper' %}" data-variant="{{ item.variant.id }}" data-title="{{ item.product.title }}" data-url="{{ item.product.url }}">
+              <td class="product-item first">
+                <a class="image" href="{{ item.product.url }}">
+                  {%
+                    include 'rimg',
+                    img: item.image,
+                    size: '160x160'
+                  %}
+                </a>
+
+                <div class="product-item-details">
+                  {% if settings.product-vendor %}
+                    <span class="cart-brand">{{ item.vendor | link_to_vendor }}</span>
+                  {% endif %}
+                  <span class="cart-title">{{ item.product.title | link_to: item.product.url }}</span>
+                  {% unless item.variant.title == 'Default Title' %}
+                    <span class="cart-variant">{{ item.variant.title }}</span>
+                  {% endunless %}
+
+                  {% if item.properties %}
+                    <div class="cart-item-properties">
+                      {% for property in item.properties %}
+                        {% unless property.last == blank %}
+                          <div class="cart-item-property">
+                            <span class="cart-item-property-label">{{ property.first }}:</span>
+                            {% if property.last contains '/uploads/' %}
+                              <a class="cart-item-property-image" href="{{ property.last }}">{{ property.last | split: '/' | last }}</a>
+                            {% else %}
+                              <span class="cart-item-property-value">{{ property.last }}</span>
+                            {% endif %}
+                          </div>
+                        {% endunless %}
+                      {% endfor %}
+                    </div>
+                  {% endif %}
+                </div>
+
+                <a class="remove" href="/cart/change?line={{ forloop.index }}&amp;quantity=0">&#xe603;</a>
+              </td>
+              <td class="price" data-title="{{ 'general.general.price' | t }}"><span class="money">{% include 'money', value: item.price %}</span></td>
+              <td class="quantity" data-title="{{ 'general.general.quantity' | t }}"><input type="text" name="updates[]" id="updates_{{ item.id }}" value="{{ item.quantity }}"></td>
+              {% assign total = item.quantity | times: item.price %}
+              <td class="total last" data-title="{{ 'general.general.total' | t }}"><span class="money">{% include 'money', value: total %}</span></td>
+            </tr>
+          {% endfor %}
+        </tbody>
+
+      </table>
+
+      <div class="cart-tools {% if section.settings.shipping-calculator %}has-shipping-calculator{% endif %} {% if section.settings.special-instructions %}has-special-instructions{% endif %}">
+
+        {% if section.settings.special-instructions %}
+          <div class="cart-instructions">
+            <h2>{{ 'cart.general.special_instructions' | t }}</h2>
+            <textarea placeholder="{{ section.settings.special-instructions-placeholder | escape }}" name="note">{{ cart.note }}</textarea>
+          </div>
+        {% endif %}
+
+ 
+        
+        <div class="cart-totals">
+          <p class="cart-price"><span class="money">{% include 'money', value: cart.total_price %}</span></p>
+          {% if section.settings.show-shipping-note %}
+            <p class="cart-message">{{ section.settings.shipping-note | escape }}</p>
+          {% endif %}
+          
+                  <div align="right"; text-align="right">
+  <script async src="https://widgets.payflex.co.za/your-merchant-name/partpay-widget-0.1.1.js?type=calculator&min=10&max=20000&amount={{ cart.total_price | money_without_currency | remove: ',' | remove: ' ' }}" type="application/javascript"></script>
+		</div> 
+          
+          <div class="cart-buttons-container">
+            <input class="cart-update button secondary" type="submit" name="update" value="{{ 'general.general.update' | t }}">
+            <button
+              class="cart-checkout button"
+              type="submit"
+              name="checkout"
+              value="{{ 'cart.general.submit' | t }}"
+            >
+              {% if section.settings.enable_checkout_lock_icon %}
+                {% include 'icons',
+                  id: 'checkout-lock',
+                %}
+              {% endif %}
+              <span>{{ 'cart.general.submit' | t }}</span>
+            </button>
+          </div>
+          
+          
+          {% if additional_checkout_buttons %}
+            <div class="additional-checkout-buttons">{{ content_for_additional_checkout_buttons }}</div>
+          {% endif %}
+        </div>
+        
+
+      </div>
+
+    </form>
+
+    {% if section.settings.shipping-calculator %}
+      {% include 'shipping-calculator' %}
+    {% endif %}
+
+  {% else %}
+
+    {% capture continueLink %}
+      <a href="{{ shop.url }}/collections/all">{{ 'cart.general.continue_link' | t }}</a>
+    {% endcapture %}
+    <p class="empty">{{ 'cart.general.empty_html' | t: continue_link: continueLink }}</p>
+
+  {% endif %}
+</section>
+
+{% schema %}
+{
+  "name": "Cart",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "enable_checkout_lock_icon",
+      "label": "Show lock icon on checkout button",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Order Notes"
+    },
+    {
+      "type": "checkbox",
+      "id": "special-instructions",
+      "label": "Enable"
+    },
+    {
+      "type": "text",
+      "id": "special-instructions-placeholder",
+      "label": "Placeholder text",
+      "default": "Write any special instructions for your shipment here."
+    },
+    {
+      "type": "header",
+      "content": "Shipping note"
+    },
+    {
+      "type": "checkbox",
+      "id": "show-shipping-note",
+      "label": "Enable"
+    },
+    {
+      "type": "text",
+      "id": "shipping-note",
+      "label": "Text",
+      "default": "Use this field to state if shipping and taxes are included in the cart price."
+    },
+    {
+      "type": "header",
+      "content": "Shipping rate calculator"
+    },
+    {
+      "type": "checkbox",
+      "id": "shipping-calculator",
+      "label": "Enable"
+    },
+    {
+      "type": "text",
+      "id": "shipping_calculator_default_country",
+      "label": "Default country",
+      "default": "United States"
+    }
+  ]
+}
+
+{% endschema %}

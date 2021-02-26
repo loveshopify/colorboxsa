@@ -1,0 +1,63 @@
+{% assign article_class = 'blog-post-masonry' %}
+{% assign article_class = article_class | append: ' masonry-grid-item' %}
+{% assign image_size = '500x500' %}
+
+{% if is_emphasized %}
+  {% assign article_class = article_class | append: ' masonry-grid-item-wide' %}
+  {% assign image_size = '1000x500' %}
+{% endif %}
+
+<article class="{{ article_class }}" data-masonry-item>
+  {%- if article.image -%}
+    {% assign image_url = article.image %}
+    {% assign image_alt = article.image.alt %}
+    {%- if image_alt == blank -%}
+      {% assign image_alt = article.title %}
+    {%- endif -%}
+
+    <a
+      class="blog-post-masonry-image"
+      href="{{ article.url }}"
+      {%
+        include 'rimg',
+        img: image_url,
+        alt: image_alt,
+        size: image_size,
+        background: true,
+        lazy: true
+      %}
+    >
+      {%
+        include 'rimg',
+        img: image_url,
+        alt: image_alt,
+        size: image_size,
+        lazy: true
+      %}
+    </a>
+  {%- endif -%}
+
+  <div class="blog-post-masonry-content">
+    <span class="blog-post-masonry-content-date">
+      {{ article.published_at | date: format: 'short_month' }}
+    </span>
+
+    <h2 class="blog-post-masonry-title">
+      <a href="{{ article.url }}">
+        {{ article.title }}
+      </a>
+    </h2>
+
+    <div class="blog-post-masonry-text rte">
+        {% if article.excerpt != blank %}
+          {{ article.excerpt }}
+        {% endif %}
+
+        <p>
+          <a href="{{ article.url }}">
+            {{ 'blogs.article_item.read_more' | t }}
+          </a>
+        </p>
+    </div>
+  </div>
+</article>

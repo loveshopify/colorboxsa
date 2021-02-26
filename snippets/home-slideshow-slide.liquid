@@ -1,0 +1,32 @@
+<article
+  class="home-slideshow-slide home-slideshow-slide-{{ slideIndex }} home-slideshow-slide-alignment-{{ contentAlignment }}"
+  data-slideshow-slide data-slide-index="{{ slideIndex | minus: 1 }}" {{ block.shopify_attributes }}>
+    <figure class="home-slideshow-slide-image">
+      {%- if url != blank -%}
+        <a href="{{ url }}">
+          {{ image }}
+        </a>
+      {%- else -%}
+        {{ image }}
+      {%- endif -%}
+    </figure>
+
+    {% if heading != blank or subheading != blank or cta != blank %}
+      <div class="home-slideshow-slide-content">
+        <div class="home-slideshow-slide-content-inner">
+          {% if heading != blank %}
+            <h1 class="home-slideshow-slide-heading" style="{%- if overlayColor -%}color: {{ overlayColor }};{%- endif -%}">{{ heading }}</h1>
+          {% endif %}
+
+          {% if subheading != blank %}
+            <p class="home-slideshow-slide-subheading" style="{%- if overlayColor -%}color: {{ overlayColor }};{%- endif -%}">{{ subheading }}</p>
+          {% endif %}
+
+          {% if cta != blank %}
+            <a class="home-slideshow-slide-cta button" href="{{ url }}">{{ cta }}</a>
+          {% endif %}
+        </div>
+      </div>
+    {% endif %}
+  </figure>
+</article>

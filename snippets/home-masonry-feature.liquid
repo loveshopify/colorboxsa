@@ -1,0 +1,184 @@
+{% assign feature_index = feature_index | plus: 1 %}
+{% assign onboard_image = 'collection-' | append: feature_index %}
+{% assign block_id = 'masonry-' | append: block.id %}
+
+{%- capture image -%}
+  {%- if block.settings.image -%}
+    {%
+      include 'rimg',
+      img: block.settings.image,
+      size: '1440x',
+      lazy: true,
+      crop: 'center'
+    %}
+  {%- else -%}
+    {{ onboard_image | placeholder_svg_tag: 'placeholder-svg home-masonry-feature-placeholder' }}
+  {%- endif -%}
+{%- endcapture -%}
+
+{%- capture background_image -%}
+  {%- if block.settings.image -%}
+    {%
+      include 'rimg',
+      img: block.settings.image,
+      size: '1440x',
+      lazy: true,
+      background: true,
+      crop: 'center'
+    %}
+  {%- endif -%}
+{%- endcapture -%}
+
+{% unless onboarding %}
+  {%- assign heading = block.settings.title | escape -%}
+  {%- assign subheading = block.settings.subheading | escape -%}
+  {%- assign url = block.settings.url -%}
+  {%- assign video_url = block.settings.video_url -%}
+  {%- assign color = block.settings.color -%}
+  {%- assign mobile = block.settings.mobile -%}
+{% else %}
+  {%- assign heading = 'onboarding.masonry.feature_title' | t -%}
+  {%- assign subheading = 'onboarding.masonry.feature_subtitle' | t -%}
+  {%- assign mobile = true -%}
+{% endunless %}
+
+{% if block.type == 'video_feature' %}
+  {%- capture video_html -%}
+    {% if video_url != blank %}
+      {% if video_url.type == "youtube" %}
+        <iframe
+          src="//www.youtube.com/embed/{{ video_url.id }}?rel=0&showinfo=0&vq=720&autoplay=1"
+          frameborder="0"
+          allowfullscreen
+          sandbox="allow-scripts allow-same-origin allow-presentation"></iframe>
+      {% endif %}
+      {% if video_url.type == "vimeo" %}
+        <iframe
+          src="//player.vimeo.com/video/{{ video_url.id }}?byline=0&portrait=0&badge=0&autopause=00&autoplay=1"
+          frameborder="0"
+          allowfullscreen
+          sandbox="allow-scripts allow-same-origin allow-presentation"></iframe>
+      {% endif %}
+    {% else %}
+      <iframe
+        src="//www.youtube.com/embed/_9VUPq3SxOc?rel=0&showinfo=0&vq=7200&autoplay=1"
+        frameborder="0"
+        sandbox="allow-scripts allow-same-origin allow-presentation"></iframe>
+    {% endif %}
+  {%- endcapture -%}
+{% endif %}
+
+<article
+  class="
+    home-masonry-feature
+    home-masonry-feature-{{ feature_index }}
+    {% if gutters %}
+      home-masonry-feature-gutters
+    {% endif %}
+    {% if hover %}
+      home-masonry-feature-hover
+    {% endif %}
+    {% if hover_animation %}
+      home-masonry-feature-hover-animation
+    {% endif %}
+    color-{{ color }}
+    {% if mobile %}
+      home-masonry-feature-mobile
+    {% endif %}
+    {% if url %}
+      home-masonry-feature-has-url
+    {% endif %}
+    {% if heading != blank or subheading != blank or block.type == 'video_feature' %}
+      home-masonry-feature-has-content
+    {% endif %}
+  "
+  {% if url != blank %}
+    data-masonry-url="{{ url }}"
+  {% endif %}
+  {{ block.shopify_attributes }}
+>
+  {%- if image -%}
+    <figure
+      class="home-masonry-feature-image"
+      {{ background_image }}
+    >
+      {% if block.settings.show_overlay %}
+        <div class="masonry-block--{{ block.id }} overlay">
+      {% endif %}
+      {%- if url -%}
+        <a href="{{ url }}">
+          {{ image }}
+        </a>
+      {%- else -%}
+        {{ image }}
+      {%- endif -%}
+      {% if block.settings.show_overlay %}
+        </div>
+      {% endif %}
+    </figure>
+  {%- endif -%}
+
+  {%- if heading != blank or subheading != blank or video_url != blank -%}
+    <div class="home-masonry-feature-text">
+      {%- if heading != blank -%}
+        <p class="home-masonry-feature-title">
+          {%- if url != blank -%}
+            <a href="{{ url }}">
+              {{ heading }}
+            </a>
+          {%- else -%}
+            {{ heading }}
+          {%- endif -%}
+        </p>
+      {%- endif -%}
+
+      {%- if subheading != blank -%}
+        <p class="home-masonry-feature-subtitle">
+          {%- if url != blank -%}
+            <a href="{{ url }}">
+              {{ subheading }}
+            </a>
+          {%- else -%}
+            {{ subheading }}
+          {%- endif -%}
+        </p>
+      {%- endif -%}
+
+      {%- if block.type == 'video_feature' -%}
+        <span
+          class="home-masonry-feature-video-trigger"
+          data-masonry-video="{{ block_id }}">
+          {%-
+            include 'icons',
+            id: 'play',
+          -%}
+        </span>
+      {%- endif -%}
+    </div>
+
+    {%- if block.type == 'video_feature' -%}
+      {%- capture modal_contents -%}
+        <script type="application/json" data-masonry-video="{{ block_id }}">
+          {{ video_html | json }}
+        </script>
+      {%- endcapture -%}
+
+      {%-
+        include 'modal',
+        modal_id: block_id,
+        modal_contents: modal_contents,
+        modal_mobile_friendly: block.settings.mobile,
+        modal_class: 'home-masonry-video-modal'
+      -%}
+    {%- endif -%}
+  {%- endif -%}
+
+</article>
+
+<style>
+  {% assign opacity = block.settings.opacity | times: 0.01 %}
+  {% assign overlay = block.settings.overlay_color | color_modify: 'alpha', opacity %}
+  .masonry-block--{{ block.id }}.overlay {
+    background-color: {{ overlay }};
+  }
+</style>

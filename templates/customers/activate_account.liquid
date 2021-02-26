@@ -1,0 +1,31 @@
+<h1 class="page-title">{{ 'customers.activate_account.header' | t }}</h1>
+
+{% include 'breadcrumbs' %}
+
+<div class="customer-wrapper">
+
+  {% form 'activate_customer_password', class: 'activate-account' %}
+
+    <p>{{ 'customers.activate_account.message' | t }}</p>
+
+    {% if form.errors %}
+      <div class="error-message">{{ form.errors | default_errors }}</div>
+    {% endif %}
+
+    <div class="input-wrapper">
+      <label>{{ 'general.general.password' | t }}</label>
+      <input type="password" name="customer[password]" />
+    </div>
+
+    <div class="input-wrapper">
+      <label>{{ 'general.general.repeat_password' | t }}</label>
+      <input type="password" name="customer[password_confirmation]" />
+    </div>
+
+    <input type="submit" value="{{ 'customers.activate_account.submit' | t }}">
+
+    <a class="active-account-decline" href="/account/register">{{ 'customers.activate_account.decline_activation' | t }}</a>
+
+  {% endform %}
+
+</div>

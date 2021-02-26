@@ -1,0 +1,21 @@
+{% if link.url contains 'facebook' %}
+  social-icon facebook
+{% elsif link.url contains 'twitter' %}
+  social-icon twitter
+{% elsif link.url contains 'pinterest' %}
+  social-icon pinterest
+{% elsif link.url contains 'instagram' %}
+  social-icon instagram
+{% elsif link.url contains 'google' %}
+  social-icon google-plus
+{% elsif link.url contains 'kickstarter' %}
+  social-icon kickstarter
+{% elsif link.url contains 'vimeo' %}
+  social-icon vimeo
+{% elsif link.url contains 'youtube' %}
+  social-icon youtube
+{% elsif link.url contains 'rss' or link.url contains '.atom' or link.url contains 'feed' or link.url contains '.xml' %}
+  social-icon rss
+{% elsif link.url contains 'tumblr' %}
+  social-icon tumblr
+{% endif %}

@@ -1,0 +1,129 @@
+<header class="main-header" role="banner">
+
+  <div class="header-tools-wrapper">
+    <div class="header-tools">
+
+     <div class="aligned-left">
+
+        <p class="navigation-toggle"><span class="navigation-toggle-icon">Open menu</span> <span class="navigation-toggle-text">{{ 'layout.header.menu' | t }}</span></p>
+       
+        <!--  {% if settings.currency-switcher %}
+          <div class="currency-wrapper">
+            <p class="select-currency">{{ 'layout.header.select_currency' | t }}</p>
+            <div class="select-wrapper currency-switcher">
+              <span class="selected-currency"></span>
+              <select id="currencies" name="currencies">
+                {% capture codes %},USD,EUR,GBP,CAD,ARS,AUD,BBD,BDT,BSD,BHD,BRL,BOB,BND,BGN,ILS,MMK,KYD,CLP,CNY,COP,CRC,HRK,CZK,DKK,DOP,XCD,EGP,XPF,FJD,GHS,GTQ,GYD,GEL,HKD,HUF,ISK,INR,IDR,NIS,JMD,JPY,JOD,KZT,KES,KWD,LVL,LTL,MXN,MYR,MUR,MDL,MAD,MNT,MZN,ANG,NZD,NGN,NOK,OMR,PKR,PYG,PEN,PHP,PLN,QAR,RON,RUB,SAR,RSD,SCR,SGD,SYP,ZAR,KRW,LKR,SEK,CHF,TWD,THB,TZS,TTD,TRY,UAH,AED,UYU,VEB,VND,ZMK,{% endcapture %}
+                {% assign supported_codes = settings.currency-switcher-supported-currencies | split: ' ' %}
+                <option value="{{ shop.currency }}" selected="selected">{{ shop.currency }}</option>
+                {% for code in supported_codes %}
+                  {% if code != shop.currency and codes contains code %}
+                  <option value="{{ code }}">{{ code }}</option>
+                  {% endif %}
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+        {% endif %} -->
+      </div>
+
+
+      <div class="aligned-right">
+        
+        <div class="customer-links">
+          {% if customer %}
+          <a href="/account"><span class="icon-sign"></span></a>
+
+
+          <div class="customer-links-inner">
+            <span class="arrow"></span>
+            <ul>
+
+              <li><a href="/account/orders">{{ 'customers.general.purchases' | t }}</a></li>
+              <li><a href="/account/addresses">{{ 'customers.addresses.header' | t }}</a></li>
+              <li>{{ 'layout.header.logout' | t | customer_logout_link }}</li>
+
+            </ul>
+          </div>
+          {% else %}
+       <!--   <span class="icon-sign">{{   | t | customer_login_link }}</span> -->
+          <a title="Account login" href="/account/login" id="customer_login_link"><span class="icon-sign"></span></a>
+          
+          {% endif %}
+        </div>
+      
+
+
+  <!-- start wish list -->
+       <!--  <div id="wish">
+          {% if customer %} 
+          {% capture value %}{{ product.id }}{% endcapture %}
+          {% capture productID %}{{ product.id }}{% endcapture %}
+          {% for tag in customer.tags %}
+          {% capture tagID %}{{ tag }}{% endcapture %}
+          {% if tagID contains productID %}
+          {% assign value = 'x' | append:tag %}
+          {% endif %}
+          {% endfor %}
+
+          {% assign check = value.size | minus:productID.size | modulo:2 %}
+          {% if check == 0 %}{% assign display_button = true %}{% else %}{% assign display_button = false %}{% endif %}
+
+          {% if display_button %}
+          {% form 'customer' %}
+          <input type="hidden" name="contact[email]" value="{{ customer.email }}"/>
+          <input type="hidden" name="contact[tags]" value="{{ value }}" />
+          
+          {% endform %}
+          {% else %}
+          <p>This product is in your <a href="/pages/wish-list">wish list</a></p>
+          {% endif %}
+          {% else %}
+          <p>To add this product to your wish list you must <a href="/account/login">sign in</a> or <a href="/account/register">create an account</a>.</p>
+          {% endif %}
+        </div> -->
+        <!-- end wish list -->
+
+          <a class="checkout-link" title="Wish list" href="/pages/wish-list"><span class="icon-wish"></span></a>
+        <div class="mini-cart-wrapper">
+          <a class="cart-count" href="/cart"><span class="icon-cart"></span> (<span class="cart-count-number">{{ cart.item_count }}</span>)</a>
+          {% comment %}
+          {% if cart.item_count > 0 %}
+          {% include 'mini-cart' %}
+          {% endif %}
+          {% endcomment %}
+        </div>
+               
+        
+
+        <form class="search-form" action="/search" method="get">
+          <input class="search-input" name="q" type="text" placeholder="{{ 'layout.header.search_placeholder' | t }}" value="{{ search.terms }}" />
+          <input type="submit" value="&#xe606;" />
+        </form>
+
+
+
+
+
+      </div>
+
+    </div>
+  </div>
+
+  <div class="branding">
+    {% if settings.use-logo %}
+    <a class="logo {% if settings.use-retina-logo %}has-retina{% endif %}" href="/">
+      <img class="logo-regular" alt="{{ shop.name | escape }}" src="{{ 'logo.png' | asset_url }}">
+      {% if settings.use-retina-logo %}
+      <img class="logo-retina" alt="{{ shop.name | escape }}" src="{{ 'logo-retina.png' | asset_url }}">
+      {% endif %}
+    </a>
+    {% else %}
+    <h1><a href="/">{{ shop.name }}</a></h1>
+    {% endif %}
+  </div>
+
+</header>
+<script>
+
+</script>

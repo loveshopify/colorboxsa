@@ -1,0 +1,53 @@
+{% assign pxs_newsletter_snippet_tags = 'prospect' %}
+
+{%- if template contains 'password' %}
+  {% assign pxs_newsletter_snippet_tags = pxs_newsletter_snippet_tags | append: ', password page' %}
+{%- else -%}
+  {% assign pxs_newsletter_snippet_tags = pxs_newsletter_snippet_tags | append: ', newsletter' %}
+{%- endif -%}
+
+<div class="pxs-newsletter-form">
+  {% form 'customer', id: pxs_newsletter_form_id %}
+    {% if form.posted_successfully? %}
+      <p class="pxs-newsletter-snippet-success">
+        {{ pxs_newsletter_form_success }}
+      </p>
+    {% else %}
+      <input
+        type="hidden"
+        name="contact[tags]"
+        value="{{ newsletter_tags }}"
+      />
+
+      <div class="pxs-newsletter-form-fields">
+        <div class="pxs-newsletter-form-field">
+          <label
+            class="pxs-newsletter-form-label"
+            for="pxs-newsletter-form-email"
+          >
+            {{ pxs_newsletter_form_placeholder }}
+          </label>
+
+          <input
+            class="pxs-newsletter-form-input"
+            name="contact[email]"
+            id="pxs-newsletter-form-email"
+            type="email"
+            placeholder="{{ pxs_newsletter_form_placeholder }}"
+            aria-label="{{ pxs_newsletter_form_placeholder }}"
+          />
+        </div>
+
+        <div class="pxs-newsletter-form-field">
+          <button
+            class="pxs-newsletter-form-button"
+            name="subscribe"
+            type="submit"
+          >
+            {{ pxs_newsletter_form_submit }}
+          </button>
+        </div>
+      </div>
+    {% endif %}
+  {% endform %}
+</div>

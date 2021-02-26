@@ -1,0 +1,106 @@
+<script
+  type="application/json"
+  data-section-type="dynamic-blog"
+  data-section-id="{{ section.id }}"
+></script>
+
+{% assign post_count = section.settings.number_of_rows | times: section.settings.number_of_columns %}
+{% assign onboard = true %}
+{% assign blog = blogs[section.settings.blog] %}
+
+{% if section.settings.blog != 'none' and blog.articles.size > 0 %}
+  {% assign onboard = false %}
+{% endif %}
+
+<section
+  class="home-blog home-blog-columns-{{ section.settings.number_of_columns }}"
+  data-section-id="{{ section.id }}"
+  data-section-type="home-blog">
+
+  {%- if section.settings.title != blank -%}
+    <h2 class="section-title">{{ section.settings.title | escape }}</h2>
+  {%- endif -%}
+
+  <div class="home-blog-list" {% if blog.articles.size > 1 or onboard %}data-blog-container{% endif %}>
+    {%- unless onboard -%}
+      {%- for article in blog.articles limit: post_count -%}
+        {%- assign publishedAt = article.published_at | time_tag: '%b %d, %Y' -%}
+        {%- assign title = article.title -%}
+        {%- capture image -%}
+          {%- if article.image -%}
+            {%
+              include 'rimg',
+              img: article.image,
+              alt: article.title,
+              size: '1024x1024',
+              lazy: true
+            %}
+          {%- endif -%}
+        {%- endcapture -%}
+        {%- assign excerpt = article.excerpt -%}
+        {%- assign url = article.url -%}
+
+        {%- if excerpt == blank -%}
+          {%- assign excerpt = article.content | strip_html | truncatewords: 65 -%}
+        {%- endif -%}
+
+        {%- include 'home-blog-post' -%}
+      {%- endfor -%}
+    {%- else -%}
+      {%- for i in (1..post_count) -%}
+        {%- assign publishedAt = 'now' | time_tag: '%b %d, %Y' -%}
+        {%- assign title = 'onboarding.home_blog.post_title' | t -%}
+        {%- assign image = 'image' | placeholder_svg_tag: 'placeholder-svg' -%}
+        {%- assign excerpt = 'onboarding.home_blog.post_excerpt' | t -%}
+
+        {%- include 'home-blog-post' -%}
+      {%- endfor -%}
+    {%- endunless -%}
+  </div>
+
+</section>
+
+{% schema %}
+{
+  "name": "Blog posts",
+  "class": "home-blog-posts-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Blog posts"
+    },
+    {
+      "type": "blog",
+      "id": "blog",
+      "label": "Blog"
+    },
+    {
+      "type": "range",
+      "id": "number_of_rows",
+      "label": "Number of rows",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "default": 1
+    },
+    {
+      "type": "range",
+      "id": "number_of_columns",
+      "label": "Columns",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "default": 3
+    }
+  ],
+  "presets": [
+    {
+      "category": "Blog",
+      "name": "Blog posts"
+    }
+  ]
+}
+
+{% endschema %}

@@ -1,0 +1,395 @@
+{%- assign metarobots_found = false -%}
+{%- assign allowUrlFound = false -%}
+{%- assign allowQueryStringUrls = '' -%}
+{%- if shop.metafields.seo.allow_url_normal != empty -%}
+	{%- assign allow_urls_normal = shop.metafields.seo.allow_url_normal | split: ',' -%}
+    {%- for allow_url_normal in allow_urls_normal -%}
+      {%- if request.path == allow_url_normal -%}
+        {%- assign allowUrlFound = true -%}
+      {%- endif -%}
+      {%- if allow_url_normal contains '?' -%}
+        {%- assign allowQueryStrings = allow_url_normal | prepend: ',' -%}
+        {%- assign allowQueryStringUrls = allowQueryStringUrls | append: allowQueryStrings -%}
+      {%- endif -%}
+    {%- endfor -%}
+{%- endif -%}
+{%- if allowUrlFound == false -%}
+    {%- if shop.metafields.ninja_seo_site.all != blank and shop.metafields.ninja_seo_site.all > 0 -%}
+        {%- if shop.metafields.ninja_seo_site.all == 1 or shop.metafields.ninja_seo_site.all == 2 -%}
+            <meta name="robots" content="noindex,nofollow" />
+            {%- assign metarobots_found = true -%}
+        {%- elsif shop.metafields.ninja_seo_site.all == 3 -%}
+            <meta name="robots" content="noindex" />
+            {%- assign metarobots_found = true -%}
+        {%- elsif shop.metafields.ninja_seo_site.all == 4 -%}
+            <meta name="robots" content="nofollow" />
+            {%- assign metarobots_found = true -%}
+        {%- endif -%}
+    {%- elsif shop.metafields.ninja_seo_site.pagination != blank and shop.metafields.ninja_seo_site.pagination > 0 and current_page > 1 -%}
+        {%- if shop.metafields.ninja_seo_site.pagination == 1 or shop.metafields.ninja_seo_site.pagination == 2 -%}
+            <meta name="robots" content="noindex,nofollow" />
+            {%- assign metarobots_found = true -%}
+        {%- elsif shop.metafields.ninja_seo_site.pagination == 3 -%}
+            <meta name="robots" content="noindex" />
+            {%- assign metarobots_found = true -%}
+        {%- elsif shop.metafields.ninja_seo_site.pagination == 4 -%}
+            <meta name="robots" content="nofollow" />
+            {%- assign metarobots_found = true -%}
+        {%- endif -%}
+    {%- elsif request.page_type == 'product' and product.metafields.seo.hidden == blank or product.metafields.seo.hidden == 0 -%}
+        {%- if product.metafields.seo.orbislabsRobots == 2 -%}
+            <meta name="robots" content="noindex,nofollow" />
+            {%- assign metarobots_found = true -%}
+        {%- elsif product.metafields.seo.orbislabsRobots == 3 -%}
+            <meta name="robots" content="noindex" />
+            {%- assign metarobots_found = true -%}
+        {%- elsif product.metafields.seo.orbislabsRobots == 4 -%}
+            <meta name="robots" content="nofollow" />
+            {%- assign metarobots_found = true -%}
+        {%- elsif shop.metafields.ninja_seo_collection.zeroqty != blank and shop.metafields.ninja_seo_collection.zeroqty > 0 -%}
+            {%- if product.available == false -%}
+                {%- if shop.metafields.ninja_seo_collection.zeroqty == 1 or shop.metafields.ninja_seo_collection.zeroqty == 2 -%}
+                    <meta name="robots" content="noindex,nofollow" />
+                    {%- assign metarobots_found = true -%}
+                {%- elsif shop.metafields.ninja_seo_collection.zeroqty == 3 -%}
+                    <meta name="robots" content="noindex" />
+                    {%- assign metarobots_found = true -%}
+                {%- elsif shop.metafields.ninja_seo_collection.zeroqty == 4 -%}
+                    <meta name="robots" content="nofollow" />
+                    {%- assign metarobots_found = true -%}
+                {%- endif -%}
+            {%- elsif product.selected_variant != blank and product.selected_variant.inventory_management == "shopify" and product.selected_variant.inventory_management != "continue" and product.selected_variant.inventory_quantity == 0 -%}
+                {%- if shop.metafields.ninja_seo_collection.zeroqty == 1 or shop.metafields.ninja_seo_collection.zeroqty == 2 -%}
+                    <meta name="robots" content="noindex,nofollow" />
+                    {%- assign metarobots_found = true -%}
+                {%- elsif shop.metafields.ninja_seo_collection.zeroqty == 3 -%}
+                    <meta name="robots" content="noindex" />
+                    {%- assign metarobots_found = true -%}
+                {%- elsif shop.metafields.ninja_seo_collection.zeroqty == 4 -%}
+                    <meta name="robots" content="nofollow" />
+                    {%- assign metarobots_found = true -%}
+                {%- endif -%}
+            {%- endif -%}
+        {%- elsif shop.metafields.ninja_seo_collection.duplicateproducturls != blank and shop.metafields.ninja_seo_collection.duplicateproducturls > 0 -%}
+            {% if request.path contains '/collections/' %}
+                {%- if shop.metafields.ninja_seo_collection.duplicateproducturls == 1 or shop.metafields.ninja_seo_collection.duplicateproducturls == 2 -%}
+                    <meta name="robots" content="noindex,nofollow" />
+                    {%- assign metarobots_found = true -%}
+                {%- elsif shop.metafields.ninja_seo_collection.duplicateproducturls == 3 -%}
+                    <meta name="robots" content="noindex" />
+                    {%- assign metarobots_found = true -%}
+                {%- elsif shop.metafields.ninja_seo_collection.duplicateproducturls == 4 -%}
+                    <meta name="robots" content="nofollow" />
+                    {%- assign metarobots_found = true -%}
+                {%- endif -%}
+            {% endif %}
+        {%- endif -%}
+    {%- elsif request.page_type == 'collection' or request.page_type == 'list-collections' and collection.metafields.seo.hidden == blank or collection.metafields.seo.hidden == 0 -%}
+        {%- if shop.metafields.ninja_seo_collection.tags != blank and shop.metafields.ninja_seo_collection.tags > 0 and current_tags -%}
+            {%- if shop.metafields.ninja_seo_collection.tags == 1 or shop.metafields.ninja_seo_collection.tags == 2 -%}
+                <meta name="robots" content="noindex,nofollow" />
+                {%- assign metarobots_found = true -%}
+            {%- elsif shop.metafields.ninja_seo_collection.tags == 3 -%}
+                <meta name="robots" content="noindex" />
+                {%- assign metarobots_found = true -%}
+            {%- elsif shop.metafields.ninja_seo_collection.tags == 4 -%}
+                <meta name="robots" content="nofollow" />
+                {%- assign metarobots_found = true -%}
+            {%- endif -%}
+        {%- elsif collection.current_vendor and shop.metafields.ninja_seo_collection.vendors != blank and shop.metafields.ninja_seo_collection.vendors > 0 -%}
+            {%- if shop.metafields.ninja_seo_collection.vendors == 1 or shop.metafields.ninja_seo_collection.vendors == 2 -%}
+                <meta name="robots" content="noindex,nofollow" />
+                {%- assign metarobots_found = true -%}
+            {%- elsif shop.metafields.ninja_seo_collection.vendors == 3 -%}
+                <meta name="robots" content="noindex" />
+                {%- assign metarobots_found = true -%}
+            {%- elsif shop.metafields.ninja_seo_collection.vendors == 4 -%}
+                <meta name="robots" content="nofollow" />
+                {%- assign metarobots_found = true -%}
+            {%- endif -%}
+        {%- elsif collection.current_type and shop.metafields.ninja_seo_collection.types != blank and shop.metafields.ninja_seo_collection.types > 0 -%}
+            {%- if shop.metafields.ninja_seo_collection.types == 1 or shop.metafields.ninja_seo_collection.types == 2 -%}
+                <meta name="robots" content="noindex,nofollow" />
+                {%- assign metarobots_found = true -%}
+            {%- elsif shop.metafields.ninja_seo_collection.types == 3 -%}
+                <meta name="robots" content="noindex" />
+                {%- assign metarobots_found = true -%}
+            {%- elsif shop.metafields.ninja_seo_collection.types == 4 -%}
+                <meta name="robots" content="nofollow" />
+                {%- assign metarobots_found = true -%}
+            {%- endif -%}
+        {%- elsif request.path == '/collections/all' and shop.metafields.ninja_seo_collection.allpage != blank and shop.metafields.ninja_seo_collection.allpage > 0 -%}
+            {%- if shop.metafields.ninja_seo_collection.allpage == 1 or shop.metafields.ninja_seo_collection.allpage == 2 -%}
+                <meta name="robots" content="noindex,nofollow" />
+                {%- assign metarobots_found = true -%}
+            {%- elsif shop.metafields.ninja_seo_collection.allpage == 3 -%}
+                <meta name="robots" content="noindex" />
+                {%- assign metarobots_found = true -%}
+            {%- elsif shop.metafields.ninja_seo_collection.allpage == 4 -%}
+                <meta name="robots" content="nofollow" />
+                {%- assign metarobots_found = true -%}
+            {%- endif -%}
+        {%- elsif collection.handle == blank and shop.metafields.ninja_seo_collection.root != blank and shop.metafields.ninja_seo_collection.root > 0 -%}
+            {%- if shop.metafields.ninja_seo_collection.root == 1 or shop.metafields.ninja_seo_collection.root == 2 -%}
+                <meta name="robots" content="noindex,nofollow" />
+                {%- assign metarobots_found = true -%}
+            {%- elsif shop.metafields.ninja_seo_collection.root == 3 -%}
+                <meta name="robots" content="noindex" />
+                {%- assign metarobots_found = true -%}
+            {%- elsif shop.metafields.ninja_seo_collection.root == 4 -%}
+                <meta name="robots" content="nofollow" />
+                {%- assign metarobots_found = true -%}
+            {%- endif -%}
+        {%- elsif collection.metafields.seo.orbislabsRobots == 2 -%}
+            <meta name="robots" content="noindex,nofollow" />
+            {%- assign metarobots_found = true -%}
+        {%- elsif collection.metafields.seo.orbislabsRobots == 3 -%}
+            <meta name="robots" content="noindex" />
+            {%- assign metarobots_found = true -%}
+        {%- elsif collection.metafields.seo.orbislabsRobots == 4 -%}
+            <meta name="robots" content="nofollow" />
+            {%- assign metarobots_found = true -%}
+        {%- endif -%}
+    {%- elsif request.page_type == 'page' and page.metafields.seo.hidden == blank or page.metafields.seo.hidden == 0 -%}
+        {%- if page.metafields.seo.orbislabsRobots == 2 -%}
+            <meta name="robots" content="noindex,nofollow" />
+            {%- assign metarobots_found = true -%}
+        {%- elsif page.metafields.seo.orbislabsRobots == 3 -%}
+            <meta name="robots" content="noindex" />
+            {%- assign metarobots_found = true -%}
+        {%- elsif page.metafields.seo.orbislabsRobots == 4 -%}
+            <meta name="robots" content="nofollow" />
+            {%- assign metarobots_found = true -%}
+        {%- endif -%}
+    {%- elsif request.page_type == 'search' -%}
+        {%- if shop.metafields.ninja_seo_site.search != blank and shop.metafields.ninja_seo_site.search > 0 -%}
+            {%- if shop.metafields.ninja_seo_site.search == 1 or shop.metafields.ninja_seo_site.search == 2 -%}
+                <meta name="robots" content="noindex,nofollow" />
+                {%- assign metarobots_found = true -%}
+            {%- elsif shop.metafields.ninja_seo_site.search == 3 -%}
+                <meta name="robots" content="noindex" />
+                {%- assign metarobots_found = true -%}
+            {%- elsif shop.metafields.ninja_seo_site.search == 4 -%}
+                <meta name="robots" content="nofollow" />
+                {%- assign metarobots_found = true -%}
+            {%- endif -%}
+        {%- endif -%}
+    {%- elsif request.page_type == 'cart' -%}
+        {%- if shop.metafields.ninja_seo_site.cart != blank and shop.metafields.ninja_seo_site.cart > 0 -%}
+            {%- if shop.metafields.ninja_seo_site.cart == 1 or shop.metafields.ninja_seo_site.cart == 2 -%}
+                <meta name="robots" content="noindex,nofollow" />
+                {%- assign metarobots_found = true -%}
+            {%- elsif shop.metafields.ninja_seo_site.cart == 3 -%}
+                <meta name="robots" content="noindex" />
+                {%- assign metarobots_found = true -%}
+            {%- elsif shop.metafields.ninja_seo_site.cart == 4 -%}
+                <meta name="robots" content="nofollow" />
+                {%- assign metarobots_found = true -%}
+            {%- endif -%}
+        {%- endif -%}
+    {%- elsif request.page_type == 'customers/login' -%}
+        {%- if shop.metafields.ninja_seo_site.login != blank and shop.metafields.ninja_seo_site.login > 0 -%}
+            {%- if shop.metafields.ninja_seo_site.login == 1 or shop.metafields.ninja_seo_site.login == 2 -%}
+                <meta name="robots" content="noindex,nofollow" />
+                {%- assign metarobots_found = true -%}
+            {%- elsif shop.metafields.ninja_seo_site.login == 3 -%}
+                <meta name="robots" content="noindex" />
+                {%- assign metarobots_found = true -%}
+            {%- elsif shop.metafields.ninja_seo_site.login == 4 -%}
+                <meta name="robots" content="nofollow" />
+                {%- assign metarobots_found = true -%}
+            {%- endif -%}
+        {%- endif -%}
+    {%- elsif request.page_type == 'customers/register' -%}
+        {%- if shop.metafields.ninja_seo_site.register != blank and shop.metafields.ninja_seo_site.register > 0 -%}
+            {%- if shop.metafields.ninja_seo_site.register == 1 or shop.metafields.ninja_seo_site.register == 2 -%}
+                <meta name="robots" content="noindex,nofollow" />
+                {%- assign metarobots_found = true -%}
+            {%- elsif shop.metafields.ninja_seo_site.register == 3 -%}
+                <meta name="robots" content="noindex" />
+                {%- assign metarobots_found = true -%}
+            {%- elsif shop.metafields.ninja_seo_site.register == 4 -%}
+                <meta name="robots" content="nofollow" />
+                {%- assign metarobots_found = true -%}
+            {%- endif -%}
+        {%- endif -%}
+    {%- elsif request.page_type == '404' -%}
+        {%- if shop.metafields.ninja_seo_site.notfound != blank and shop.metafields.ninja_seo_site.notfound > 0 -%}
+            {%- if shop.metafields.ninja_seo_site.notfound == 1 or shop.metafields.ninja_seo_site.notfound == 2 -%}
+                <meta name="robots" content="noindex,nofollow" />
+                {%- assign metarobots_found = true -%}
+            {%- elsif shop.metafields.ninja_seo_site.notfound == 3 -%}
+                <meta name="robots" content="noindex" />
+                {%- assign metarobots_found = true -%}
+            {%- elsif shop.metafields.ninja_seo_site.notfound == 4 -%}
+                <meta name="robots" content="nofollow" />
+                {%- assign metarobots_found = true -%}
+            {%- endif -%}
+        {%- endif -%}
+    {%- elsif request.page_type == 'blog' and blog.metafields.seo.hidden == blank or blog.metafields.seo.hidden == 0 -%}
+        {%- if shop.metafields.ninja_seo_blogs.tags != blank and shop.metafields.ninja_seo_blogs.tags > 0 and current_tags -%}
+            {%- if shop.metafields.ninja_seo_blogs.tags == 1 or shop.metafields.ninja_seo_blogs.tags == 2 -%}
+                <meta name="robots" content="noindex,nofollow" />
+                {%- assign metarobots_found = true -%}
+            {%- elsif shop.metafields.ninja_seo_blogs.tags == 3 -%}
+                <meta name="robots" content="noindex" />
+                {%- assign metarobots_found = true -%}
+            {%- elsif shop.metafields.ninja_seo_blogs.tags == 4 -%}
+                <meta name="robots" content="nofollow" />
+                {%- assign metarobots_found = true -%}
+            {%- endif -%}
+        {%- elsif blog.metafields.seo.orbislabsRobots == 2 -%}
+            <meta name="robots" content="noindex,nofollow" />
+            {%- assign metarobots_found = true -%}
+        {%- elsif blog.metafields.seo.orbislabsRobots == 3 -%}
+            <meta name="robots" content="noindex" />
+            {%- assign metarobots_found = true -%}
+        {%- elsif blog.metafields.seo.orbislabsRobots == 4 -%}
+            <meta name="robots" content="nofollow" />
+            {%- assign metarobots_found = true -%}
+        {%- endif -%}
+    {%- elsif request.page_type == 'article' and article.metafields.seo.hidden == blank or article.metafields.seo.hidden == 0 -%}
+        {%- if article.metafields.seo.orbislabsRobots == 2 -%}
+            <meta name="robots" content="noindex,nofollow" />
+            {%- assign metarobots_found = true -%}
+        {%- elsif article.metafields.seo.orbislabsRobots == 3 -%}
+            <meta name="robots" content="noindex" />
+            {%- assign metarobots_found = true -%}
+        {%- elsif article.metafields.seo.orbislabsRobots == 4 -%}
+            <meta name="robots" content="nofollow" />
+            {%- assign metarobots_found = true -%}
+        {%- endif -%}
+    {%- endif -%}
+    {%- if metarobots_found == false -%}
+        {%- assign noindex_urls_normal = shop.metafields.seo.noindex_url_normal | split: ',' -%}
+        {%- assign noindex_urls_contains = shop.metafields.seo.noindex_url_contains | split: ',' -%}
+        {%- assign queryStringUrls = '' -%}
+        {%- for noindex_url_normal in noindex_urls_normal -%}
+          {%- if request.path == noindex_url_normal -%}
+              {%- assign metarobots_found = true -%}
+          {%- endif -%}
+          {%- if noindex_url_normal contains '?' -%}
+            {%- assign queryStrings = noindex_url_normal | prepend: ',' -%}
+            {%- assign queryStringUrls = queryStringUrls | append: queryStrings -%}
+          {%- endif -%}
+          {%- if metarobots_found == true -%}
+            <meta name="robots" content="noindex,nofollow" />
+            {%- break -%}
+          {%- endif -%}
+        {%- endfor -%}
+        {%- if metarobots_found == false -%}
+          {%- for noindex_url_contains in noindex_urls_contains -%}
+            {%- if request.path contains noindex_url_contains -%}
+                <meta name="robots" content="noindex,nofollow" />
+                {%- assign metarobots_found = true -%}
+                {%- break -%}
+            {%- endif -%}
+          {%- endfor -%}
+        {%- endif -%}
+    {%- endif -%}
+    {%- if metarobots_found == false -%}
+        {%- if noindex_urls_contains == empty -%}
+            {%- assign queryStringUrls = queryStringUrls | remove_first: ',' -%}
+        {%- endif -%}
+        {%- assign noindex_urls_contains = noindex_urls_contains | join:',' -%}
+        {%- assign urlsToCheck = noindex_urls_contains | append:queryStringUrls -%}
+        {% if urlsToCheck != empty %}
+          {%- assign allowUrlsToCheck = allowQueryStringUrls | remove_first: ',' -%}
+          <script>
+              var queryString = window.location.search;
+
+              if(queryString != '') {
+                var pathName = window.location.pathname;
+                var url = pathName + queryString;
+                var urlsToCheck = '{{ urlsToCheck }}'
+                var urlsToCheck = urlsToCheck.split(',');
+                var allowUrlsToCheck = '{{ allowUrlsToCheck }}'
+                if(allowUrlsToCheck != '') {
+                  var allowUrlsToCheck = allowUrlsToCheck.split(',');
+                }
+
+                if(document.readyState === "complete" || (document.readyState !== "loading" && !document.documentElement.doScroll)) {
+                    var processNoIndex = true;
+                } else {
+                    var processNoIndex = true;
+                }
+
+                if(processNoIndex == true) {
+                    var allowFound = false;
+                    var applyNoIndex = false;
+
+                    if(allowUrlsToCheck != '') {
+                      for (i = 0; i < allowUrlsToCheck.length; i++) {
+                          var allowCheckQueryString = url.includes(allowUrlsToCheck[i]);
+
+                          if(allowCheckQueryString == true) {
+                              allowFound = true;
+                              break;
+                          }
+                      }
+                    }
+
+                    if(allowFound == false) {
+                        for (i = 0; i < urlsToCheck.length; i++) {
+                          var checkQueryString = url.includes(urlsToCheck[i]);
+
+                          if(checkQueryString == true) {
+                            applyNoIndex = true;
+                            break;
+                          }
+                        }
+
+                        if(applyNoIndex == true) {
+                            var metaRobots = document.getElementsByName("robots");
+                            for(var i=metaRobots.length-1;i>=0;i--)
+                            {
+                                metaRobots[i].parentNode.removeChild(metaRobots[i]);
+                            }
+
+                            var meta = document.createElement('meta');
+                            meta.name = "robots";
+                            meta.content = "noindex, nofollow";
+                            document.getElementsByTagName('head')[0].appendChild(meta);
+                        }
+                    } else {
+                      var metaRobots = document.getElementsByName("robots");
+                      for(var i=metaRobots.length-1;i>=0;i--)
+                      {
+                        metaRobots[i].parentNode.removeChild(metaRobots[i]);
+                      }
+                    }
+                }
+              }
+          </script>
+        {% endif %}
+    {%- endif -%}
+{%- endif -%}
+{% if allowQueryStringUrls != empty %}
+  {%- assign allowUrlsToCheck = allowQueryStringUrls | remove_first: ',' -%}
+  <script>
+    var allowUrlsToCheck = '{{ allowUrlsToCheck }}'
+    if(allowUrlsToCheck != '') {
+      var allowUrlsToCheck = allowUrlsToCheck.split(',');
+      var pathName = window.location.pathname;
+      var queryString = window.location.search;
+      var url = pathName + queryString;
+
+      for (i = 0; i < allowUrlsToCheck.length; i++) {
+        var allowCheckQueryString = url.includes(allowUrlsToCheck[i]);
+
+        if(allowCheckQueryString == true) {
+          allowFound = true;
+          break;
+        }
+      }
+
+      if(allowFound == true) {
+        var metaRobots = document.getElementsByName("robots");
+        for(var i=metaRobots.length-1;i>=0;i--)
+        {
+          metaRobots[i].parentNode.removeChild(metaRobots[i]);
+        }
+      }
+    }
+  </script>
+{% endif %}

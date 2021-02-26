@@ -1,0 +1,14 @@
+{% if conversiosearchselector %}
+  {% assign selector = conversiosearchselector %}  
+{% else -%}
+  {% assign selector = 'input[name="q"]' %}
+{% endif -%}
+<script>
+if (typeof window.ConversioData === 'undefined') {
+  window.ConversioData = {};
+}
+
+window.ConversioData.search = {
+  searchFieldSelector: '{{ selector }}'
+};
+</script>

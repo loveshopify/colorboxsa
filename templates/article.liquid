@@ -1,0 +1,97 @@
+
+<h2 class="page-title">{{ blog.title }}</h2>
+
+{% include 'breadcrumbs' %}
+
+{% include 'blog-sidebar' %}
+
+<div class="blog-post-wrapper">
+
+  {% include 'article-list-item' %}
+
+  {% if blog.next_article or blog.previous_article %}
+    <div class="single-post-pagination">
+      {% if blog.previous_article %}<a class="previous" href="{{ blog.previous_article }}">&#xe601;</a>{% endif %}
+      {% if blog.next_article %}<a class="next" href="{{ blog.next_article }}">&#xe600;</a>{% endif %}
+    </div>
+  {% endif %}
+
+  {% if article.comments_enabled? %}
+
+    <div class="post-comments">
+
+      {% if article.comments_count > 0 %}
+        <div class="post-comments-list">
+
+          <h3>{{ 'blogs.article_item.comment_count' | t: count: article.comments_count }}</h3>
+
+          {% paginate article.comments by 10 %}
+            {% for comment in article.comments %}
+              <div class="post-comment {% include 'for-looper' %}" id="comment-{{ comment.id }}">
+                <span class="post-comment-date">{{ comment.created_at | date: format: 'short_month' }}</span>
+                <div class="rte">{{ comment.content }}</div>
+                <div class="post-comment-details">
+                  {% if settings.article-comment-author-avatar %}
+                    <img class="post-comment-author-avatar" src="//www.gravatar.com/avatar/{{ comment.email | remove: ' ' | strip_newlines | downcase | md5 }}" />
+                  {% endif %}
+                  <span class="post-comment-author-name">{{ comment.author }}</span>
+                </div>
+              </div>
+            {% endfor %}
+
+            {% if paginate.previous or paginate.next %}
+              {% include 'pagination' %}
+            {% endif %}
+
+          {% endpaginate %}
+        </div>
+      {% endif %}
+
+      <div class="post-comments-submit">
+        <h3>{{ 'blogs.article_item.leave_a_comment' | t }}</h3>
+
+        {% form article %}
+
+          {% if form.posted_successfully? %}
+            <p>
+            {% if blog.moderated? %}
+              {{ 'blogs.article_item.comment_pending' | t }}
+            {% else %}
+              {{ 'blogs.article_item.comment_success' | t }}
+            {% endif %}
+            </p>
+          {% endif %}
+
+          {% if form.errors %}
+            <p class="error-message">{{ 'blogs.article_item.comment_error' | t }}</p>
+          {% endif %}
+
+          <div class="input-wrapper {% if form.errors contains "author" %}error{% endif %}">
+            <label>{{ 'general.general.name' | t }} {{ form.errors.messages["author"] }}</label>
+            <input type="text" placeholder="Name" value="{{ form.author }}" name="comment[author]">
+          </div>
+
+          <div class="input-wrapper {% if form.errors contains "email" %}error{% endif %}">
+            <label>{{ 'general.general.email' | t }} {{ form.errors.messages["email"] }}</label>
+            <input type="email" placeholder="{{ 'general.general.email_placeholder' | t }}" value="{{ form.email }}" name="comment[email]">
+          </div>
+
+          <div class="input-wrapper {% if form.errors contains "body" %}error{% endif %}">
+            <label>{{ 'general.general.message' | t }} {{ form.errors.messages["body"] }}</label>
+            <textarea name="comment[body]">{{ form.body }}</textarea>
+          </div>
+
+          <div class="input-wrapper">
+            <input type="submit" value="{{ 'blogs.article_item.submit' | t }}">
+          </div>
+
+        {% endform %}
+      </div>
+
+    </div>
+  {% endif %}
+</div>
+
+{% if settings.blog-promo %}
+  {% include 'blog-promo' %}
+{% endif %}

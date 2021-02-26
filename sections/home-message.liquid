@@ -1,0 +1,85 @@
+{%- assign heading = section.settings.heading | escape -%}
+
+{%- for block in section.blocks -%}
+  {%- case block.type -%}
+  {%- when 'rich-text' -%}
+    {%- assign caption = block.settings.rich_text -%}
+  {%- when 'page' -%}
+    {%- assign caption = pages[block.settings.page].content -%}
+  {%- endcase -%}
+{%- endfor -%}
+
+{%- if section.blocks.size == 0 -%}
+  {%- assign heading = 'onboarding.message.title' | t -%}
+  {%- assign caption = 'onboarding.message.caption' | t -%}
+{%- endif -%}
+
+<section
+  class="home-message"
+  data-section-id="{{ section.id }}"
+  data-section-type="home-message">
+  <div class="home-message-content {% if section.settings.border %}home-message-content-border{% endif %}">
+    {% if heading != blank %}
+      <h2>{{ heading }}</h2>
+    {% endif %}
+
+    {% if caption != blank %}
+      <div class="rte">{{ caption }}</div>
+    {% endif %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Rich text",
+  "max_blocks": 1,
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "border",
+      "label": "Show border",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Rich text"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "rich-text",
+      "name": "Rich text",
+      "settings": [
+        {
+          "type": "richtext",
+          "id": "rich_text",
+          "label": "Text",
+          "default": "<p>Use this section to welcome customers to your store, say a bit about your brand, or share news and seasonal promotions</p>"
+        }
+      ]
+    },
+    {
+      "type": "page",
+      "name": "Page",
+      "settings": [
+        {
+          "type": "page",
+          "id": "page",
+          "label": "Page"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "category": "Text",
+      "name": "Rich text",
+      "blocks": [
+        { "type": "rich-text" }
+      ]
+    }
+  ]
+}
+{% endschema %}

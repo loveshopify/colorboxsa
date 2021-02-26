@@ -1,0 +1,116 @@
+
+{% assign masonryFeatures = 'masonry-feature-1|masonry-feature-2|masonry-feature-3|masonry-feature-4|masonry-feature-5|masonry-feature-6' | split: '|' %}
+
+{% assign featureCount = 0 %}
+{% for masonryFeature in masonryFeatures %}
+  {% if settings[masonryFeature] %}
+    {% assign featureCount = featureCount | plus: 1 %}
+  {% endif %}
+{% endfor %}
+
+{% if featureCount > 0 %}
+  <div class="alternative-masonry-features-wrapper {% if settings.masonry-features-animation %}has-animation{% endif %}">
+
+    <div class="alterative-index-layout-logo">
+      {% if settings.alternative-index-layout-logo %}
+        <img class="logo-regular" alt="{{ shop.name | escape }}" src="{{ 'alternative-index-layout-logo.png' | asset_url }}">
+      {% else %}
+        <h1>{{ shop.name }}</h1>
+      {% endif %}
+    </div>
+
+    <section class="alternative-masonry-features has-{{ featureCount }}-features">
+
+      {% assign featureNumber = 0 %}
+      {% for masonryFeature in masonryFeatures %}
+        {% if settings[masonryFeature] %}
+          {% assign featureNumber = featureNumber | plus: 1 %}
+
+          {% capture enableMobile %}{{ masonryFeature }}-mobile{% endcapture %}
+          {% capture enableImage %}{{ masonryFeature }}-show-image{% endcapture %}
+          {% capture image %}{{ masonryFeature }}-image{% endcapture %}
+          {% capture url %}{{ masonryFeature }}-url{% endcapture %}
+          {% capture title %}{{ masonryFeature }}-title{% endcapture %}
+          {% capture subtitle %}{{ masonryFeature }}-subtitle{% endcapture %}
+          {% capture textColor %}{{ masonryFeature }}-text-color{% endcapture %}
+
+          <article class="alternative-masonry-feature feature-{{ featureNumber }} color-{{ settings[textColor] }} enable-mobile-{{ settings[enableMobile] }} {% unless settings[enableImage] %}no-image{% endunless %} {% if settings[url] != blank %}has-link{% endif %}" data-url="{{ settings[url] }}">
+            <figure>
+
+              {% if settings[enableImage] %}
+                {% capture imageAlt %}{{ settings[title] | default: shop.name | escape }}{% endcapture %}
+                {% if settings[url] != blank %}
+                  <a href="{{ settings[url] }}">
+                    {{ image | strip | append: '.jpg' | asset_url | img_tag, imageAlt }}
+                  </a>
+                {% else %}
+                  {{ image | strip | append: '.jpg' | asset_url | img_tag, imageAlt }}
+                {% endif %}
+              {% endif %}
+
+            </figure>
+
+            {% if settings[title] != blank or settings[subtitle] != blank %}
+              <div class="masonry-feature-text">
+
+                {% if settings[title] != blank %}
+                  <p class="masonry-feature-title">
+                    {% if settings[url] != blank %}
+                      <a href="{{ settings[url] }}">
+                        {{ settings[title] }}
+                      </a>
+                    {% else %}
+                      {{ settings[title] }}
+                    {% endif %}
+                  </p>
+                {% endif %}
+
+                {% if settings[subtitle] != blank %}
+                  <p class="masonry-feature-subtitle">
+                    {% if settings[url] != blank %}
+                      <a href="{{ settings[url] }}">
+                        {{ settings[subtitle] }}
+                      </a>
+                    {% else %}
+                      {{ settings[subtitle] }}
+                    {% endif %}
+                  </p>
+                {% endif %}
+
+              </div>
+            {% endif %}
+
+          </article>
+
+        {% endif %}
+      {% endfor %}
+
+    </section>
+  </div>
+
+{% else %}
+
+  <div class="masonry-features-wrapper onboarding">
+    <section class="masonry-features has-6-features">
+      {% for i in (1..6) %}
+        <article class="masonry-feature feature-{{i}} color-black enable-mobile-true">
+          <figure class="no-image">
+            <div class="masonry-feature-text">
+              <p class="masonry-feature-title">
+                <a href="{{ shop.url }}/admin/themes/{{ theme.id }}/settings">
+                  {{ 'onboarding.masonry_features.feature_title' | t: number: i }}
+                </a>
+              </p>
+              <p class="masonry-feature-subtitle">
+                <a href="{{ shop.url }}/admin/themes/{{ theme.id }}/settings">
+                  {{ 'onboarding.general.settings_page_link' | t }}
+                </a>
+              </p>
+            </div>
+          </figure>
+        </article>
+      {% endfor %}
+    </section>
+  </div>
+
+{% endif %}

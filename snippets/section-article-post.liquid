@@ -1,0 +1,70 @@
+{% assign postMeta = false %}
+{% if section.settings.tags and article.tags.size > 0 %}
+  {% assign postMeta = true %}
+{% elsif section.settings.author %}
+  {% assign postMeta = true %}
+{% elsif section.settings.share-buttons %}
+  {% assign postMeta = true %}
+{% endif %}
+
+<article class="blog-post {% if article.image %}has-featured-image{% endif %}">
+
+  {% if article.image %}
+    {% if template == 'article' %}
+      {%
+        include 'rimg',
+        img: article.image,
+        alt: article.title,
+        class: 'highlight',
+        size: '1024x1024',
+        lazy: true
+      %}
+    {% else %}
+      <a href="{{ article.url }}">
+        {%
+          include 'rimg',
+          img: article.image,
+          alt: article.title,
+          class: 'highlight',
+          size: '1024x1024',
+          lazy: true
+        %}
+      </a>
+    {% endif %}
+  {% endif %}
+
+  <div class="blog-post-inner">
+    <h1 class="post-title">{{ article.title }}</h1>
+
+    <span class="post-date">{{ article.published_at | date: format: 'short_month' }}</span>
+
+    <div class="rte post-content">
+      {{ article.content }}
+    </div>
+
+    {% if postMeta %}
+      <aside class="post-meta">
+        {% if section.settings.share-buttons %}
+          {% include 'share-buttons' %}
+        {% endif %}
+        {% if article.tags.size > 0 and section.settings.tags %}
+          <div class="post-tags">
+            <span class="title">{{ 'blogs.article_item.tags' | t }}</span>
+            {% for tag in article.tags %}
+              <a href="{{ blog.url }}/tagged/{{ tag | handle }}">{{ tag }}</a>{% unless forloop.last %}, {% endunless %}
+            {% endfor %}
+          </div>
+        {% endif %}
+        {% if section.settings.author %}
+          <div class="post-author">
+            {% if section.settings.author-avatar %}
+              <img class="post-author-avatar" src="http://www.gravatar.com/avatar/{{ article.user.email | remove: ' ' | strip_newlines | downcase | md5 }}" />
+            {% endif %}
+            <span class="post-author-name" data-title="{{ 'blogs.article_item.written_by' | t }}">{{ article.author }}</span>
+          </div>
+        {% endif %}
+      </aside>
+    {% endif %}
+  </div>
+
+</article>

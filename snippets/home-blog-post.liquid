@@ -1,0 +1,25 @@
+<article class="home-blog-post">
+  <p class="home-blog-post-date">
+    <a href="{{ url }}">
+      {{ publishedAt }}
+    </a>
+  </p>
+
+  <h4 class="home-blog-post-title">
+    <a href="{{ url }}">
+      {{ title }}
+    </a>
+  </h4>
+
+  {%- if image -%}
+    <a class="home-blog-post-image" href="{{ url }}">
+      {{ image }}
+    </a>
+  {%- endif -%}
+
+  <p class="home-blog-post-excerpt">{{ excerpt }}</p>
+
+  <p class="home-blog-post-read-more">
+    <a href="{{ url }}">{{ 'blogs.article_item.read_more' | t }}</a>
+  </p>
+</article>

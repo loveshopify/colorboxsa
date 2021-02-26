@@ -1,0 +1,39 @@
+{% assign enable_zoom = settings.quickshop_enable_zoom %}
+{% assign enable_cart_redirection = settings.quickshop_enable_cart_redirection %}
+{% assign images_layout = settings.quickshop_images_layout %}
+{% assign show_vendor = settings.show_vendor %}
+{% assign show_social_media_icons = settings.quickshop_show_social_media_icons %}
+{% assign show_payment_button = settings.quickshop_show_payment_button %}
+
+{% capture settings_string %}
+  {{ enable_zoom }}
+  {{ enable_cart_redirection }}
+  {{ images_layout }}
+  {{ show_vendor }}
+  {{ show_social_media_icons }}
+  {{ show_payment_button }}
+{% endcapture %}
+
+{% assign settings_sha256 = settings_string | sha256 %}
+
+{% include 'product-success-labels' %}
+
+<section
+  class="quickshop"
+  data-quickshop
+  data-quickshop-settings-sha256="{{ settings_sha256 }}"
+>
+  <div class="quickshop-content" data-quickshop-content>
+    <button class="quickshop-close" data-quickshop-close>
+      <img src="{{ 'close-icon.svg' | asset_url }}">
+    </button>
+
+    <div class="quickshop-product" data-quickshop-product-inject></div>
+  </div>
+
+  <span class="spinner quickshop-spinner">
+    <span></span>
+    <span></span>
+    <span></span>
+  </span>
+</section>

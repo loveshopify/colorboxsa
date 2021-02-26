@@ -1,0 +1,137 @@
+<script
+  type="application/json"
+  data-section-type="dynamic-testimonials"
+  data-section-id="{{ section.id }}"
+>
+</script>
+
+{%- assign section_class = 'home-testimonials' -%}
+{%- assign section_class = section_class | append: ' style-' | append: section.settings.style -%}
+{%- assign section_class = section_class | append: ' rows-of-' | append: section.settings.per_row -%}
+
+<section
+  class="{{ section_class }}"
+>
+
+  {%- if section.settings.title != blank -%}
+    <h2 class="section-title">{{ section.settings.title | escape }}</h2>
+  {%- endif -%}
+
+  <div class="home-testimonials-list" {% if section.blocks.size > 0 %}data-testimonials-container{% endif %}>
+    {%- for block in section.blocks -%}
+      <article class="home-testimonials-item" {{ block.shopify_attributes }} data-testimonial-item>
+        <span class="home-testimonials-icon">
+          {%-
+            include 'icons',
+            id: 'quote'
+          %}
+        </span>
+
+        {%- if block.settings.quote != blank -%}
+          <div class="home-testimonials-content rte">
+            <p>
+              {{- block.settings.quote | escape -}}
+            </p>
+          </div>
+        {%- endif -%}
+
+        {%- if block.settings.title != blank -%}
+          <span class="home-testimonials-name">
+            {{- block.settings.title | escape -}}
+          </span>
+        {%- endif -%}
+
+        {%- if block.settings.role != blank -%}
+          <span class="home-testimonials-role">
+            {{- block.settings.role | escape -}}
+          </span>
+        {%- endif -%}
+      </article>
+    {%- endfor -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Testimonials",
+  "class": "home-testimonials-section",
+  "max_blocks": 8,
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Testimonials"
+    },
+    {
+      "type": "range",
+      "id": "per_row",
+      "label": "Testimonials per row",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "select",
+      "id": "style",
+      "label": "Testimonials style",
+      "options": [
+        {
+          "value": "filled",
+          "label": "Filled"
+        },
+        {
+          "value": "bordered",
+          "label": "Bordered"
+        }
+      ],
+      "default": "filled"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "testimonial",
+      "name": "Testimonial",
+      "settings": [
+        {
+          "type": "textarea",
+          "id": "quote",
+          "label": "Quote",
+          "default": "Showcase up to six testimonials to build trust with potential customers."
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Name",
+          "default": "Name"
+        },
+        {
+          "type": "text",
+          "id": "role",
+          "label": "Role",
+          "default": "Role"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "category": "Text",
+      "name": "Testimonials",
+      "blocks": [
+        {
+          "type": "testimonial"
+        },
+        {
+          "type": "testimonial"
+        },
+        {
+          "type": "testimonial"
+        }
+      ]
+    }
+  ]
+}
+
+{% endschema %}

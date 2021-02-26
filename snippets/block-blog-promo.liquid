@@ -1,0 +1,38 @@
+
+<div class="blog-promo">
+  {% if block.settings.image %}
+    <a href="{{ block.settings.url }}">
+      {%
+        include 'rimg',
+        img: block.settings.image,
+        size: '570x570'
+        lazy: true
+      %}
+    </a>
+  {% endif %}
+
+  {% if block.settings.heading != blank or block.settings.subtitle != blank %}
+    <div class="blog-promo-details">
+      {% if block.settings.heading != blank %}
+        <h3 class="blog-promo-title">
+          {% if block.settings.url != blank %}
+            {{ block.settings.heading | escape | link_to: block.settings.url }}
+          {% else %}
+            {{ block.settings.heading | escape }}
+          {% endif %}
+        </h3>
+      {% endif %}
+
+      {% if block.settings.subtitle != blank %}
+        <p class="blog-promo-subtitle">
+          {% if block.settings.url != blank %}
+            {{ block.settings.subtitle | escape | link_to: block.settings.url }}
+          {% else %}
+            {{ block.settings.subtitle | escape }}
+          {% endif %}
+        </p>
+      {% endif %}
+    </div>
+  {% endif %}
+
+</div>

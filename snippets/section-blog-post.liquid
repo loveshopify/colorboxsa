@@ -1,0 +1,79 @@
+{% assign postMeta = false %}
+{% if section.settings.article-tags and article.tags.size > 0 %}
+  {% assign postMeta = true %}
+{% elsif section.settings.article-author %}
+  {% assign postMeta = true %}
+{% elsif section.settings.article-share-buttons %}
+  {% assign postMeta = true %}
+{% endif %}
+
+<article class="blog-post {% if article.image %}has-featured-image{% endif %}">
+
+  {% if article.image %}
+    {% if template == 'article' %}
+      {%
+        include 'rimg',
+        img: article.image,
+        alt: article.title,
+        class: 'highlight',
+        size: '1024x1024',
+        lazy: true
+      %}
+    {% else %}
+      <a href="{{ article.url }}">
+        {%
+          include 'rimg',
+          img: article.image,
+          alt: article.title,
+          class: 'highlight',
+          size: '1024x1024',
+          lazy: true
+        %}
+      </a>
+    {% endif %}
+  {% endif %}
+
+  <div class="blog-post-inner">
+    <h2 class="post-title"><a href="{{ article.url }}">{{ article.title }}</a></h2>
+
+    <span class="post-date">{{ article.published_at | date: format: 'short_month' }}
+      {% if article.comments_enabled? and article.comments.size > 0 and section.settings.article-comment-count %}
+        &bull; {{ 'blogs.article_item.comment_count' | t: count: article.comments_count | link_to: article.url }}
+      {% endif %}
+    </span>
+
+    <div class="rte post-content">
+      {% if article.excerpt != blank %}
+        {{ article.excerpt }}
+        <p>
+          <a href="{{ article.url }}">{{ 'blogs.article_item.read_more' | t }}</a>
+        </p>
+      {% endif %}
+    </div>
+
+    {% if postMeta %}
+      <aside class="post-meta">
+        {% if settings.article-share-buttons %}
+          {% include 'share-buttons' %}
+        {% endif %}
+        {% if article.tags.size > 0 and section.settings.article-tags %}
+          <div class="post-tags">
+            <span class="title">{{ 'blogs.article_item.tags' | t }}</span>
+            {% for tag in article.tags %}
+              <a href="{{ blog.url }}/tagged/{{ tag | handle }}">{{ tag }}</a>{% unless forloop.last %}, {% endunless %}
+            {% endfor %}
+          </div>
+        {% endif %}
+        {% if section.settings.article-author %}
+          <div class="post-author">
+            {% if settings.article-author-avatar %}
+              <img class="post-author-avatar" src="http://www.gravatar.com/avatar/{{ article.user.email | remove: ' ' | strip_newlines | downcase | md5 }}" />
+            {% endif %}
+            <span class="post-author-name" data-title="{{ 'blogs.article_item.written_by' | t }}">{{ article.author }}</span>
+          </div>
+        {% endif %}
+      </aside>
+    {% endif %}
+  </div>
+
+</article>

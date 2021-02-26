@@ -1,0 +1,47 @@
+
+{% if settings.alternative-index-layout %}
+
+  {% layout 'alternative' %}
+
+{% else %}
+
+  {% if settings.display-introduction-message %}
+    {% include 'introduction-message' %}
+  {% endif %}
+
+  {% if settings.featured-collections %}
+    {% include 'featured-collections' %}
+  {% endif %}
+
+  {% if settings.featured-products %}
+    {% include 'featured-products' %}
+  {% endif %}
+
+	
+
+  {% if settings.instagram-widget or settings.twitter-widget %}
+    <div class="social-widget-wrapper">
+
+      {% if settings.social-widget-title != blank %}
+        <h2 class="section-title">{{ settings.social-widget-title }}</h2>
+      {% endif %}
+
+      {% if settings.social-widget-blurb != blank %}
+        <div class="social-widget-blurb rte">
+          {{ settings.social-widget-blurb }}
+        </div>
+      {% endif %}
+
+      {% if settings.instagram-widget %}
+        {% include 'instagram-widget' %}
+      {% endif %}
+
+      {% if settings.twitter-widget %}
+        {% include 'twitter-widget' %}
+      {% endif %}
+    </div>
+  {% endif %}
+
+{% endif %}
+
+{% include 'directed-edge' %}

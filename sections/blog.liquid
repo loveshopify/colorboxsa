@@ -1,0 +1,99 @@
+<script
+  type="application/json"
+  data-section-type="static-blog"
+  data-section-id="{{ section.id }}"
+>
+</script>
+
+<section
+  {% if section.settings.tag-filter %}data-tag-filter{% endif %}
+>
+
+  <h1 class="page-title">{{ blog.title }}</h1>
+
+  {% include 'breadcrumbs' %}
+
+  {% include 'section-blog-sidebar' %}
+
+  <div class="blog-wrapper">
+    {% paginate blog.articles by section.settings.articles_per_page %}
+
+      <div class="blog-posts">
+        {% for article in blog.articles %}
+          {% include 'section-blog-post' %}
+        {% else %}
+          <span class="empty">{{ 'blogs.blog.empty' | t }}</span>
+        {% endfor %}
+
+        {% if paginate.previous or paginate.next %}
+          {% include 'pagination' %}
+        {% endif %}
+      </div>
+
+    {% endpaginate %}
+
+    {%- for block in section.blocks -%}
+      {%- case block.type -%}
+      {%- when 'promotional-image' -%}
+        {% include 'block-blog-promo' %}
+      {%- endcase -%}
+    {%- endfor -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Blog",
+  "settings": [
+    {
+      "type": "range",
+      "id": "articles_per_page",
+      "label": "Posts per page",
+      "min": 2,
+      "max": 10,
+      "step": 1,
+      "default": 4
+    },
+    {
+      "type": "checkbox",
+      "id": "tag-filter",
+      "label": "Show tag filter"
+    },
+    {
+      "type": "checkbox",
+      "id": "rss-icon",
+      "label": "Show subscribe link"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "promotional-image",
+      "name": "Promotional image",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading"
+        },
+        {
+          "type": "text",
+          "id": "subtitle",
+          "label": "Subheading"
+        },
+        {
+          "type": "url",
+          "id": "url",
+          "label": "Link"
+        }
+      ],
+      "limit": 1
+    }
+  ]
+}
+
+{% endschema %}

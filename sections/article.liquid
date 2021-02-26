@@ -1,0 +1,185 @@
+<script
+  type="application/json"
+  data-section-id="{{ section.id }}"
+  data-section-type="static-article"
+>
+</script>
+
+<section
+  class="article">
+  <h2 class="page-title">{{ blog.title }}</h2>
+
+  {% include 'breadcrumbs' %}
+
+  {% include 'section-blog-sidebar' %}
+
+  <div class="blog-post-wrapper">
+    {% include 'section-article-post' %}
+
+    {% if blog.next_article or blog.previous_article %}
+      <div class="single-post-pagination">
+        {% if blog.previous_article %}<a class="previous" href="{{ blog.previous_article }}">&#xe601;</a>{% endif %}
+        {% if blog.next_article %}<a class="next" href="{{ blog.next_article }}">&#xe600;</a>{% endif %}
+      </div>
+    {% endif %}
+
+    {% if article.comments_enabled? %}
+
+      <div class="post-comments">
+
+        {% if article.comments_count > 0 %}
+          <div class="post-comments-list">
+
+            {% if section.settings.comment-count %}
+              <h3>{{ 'blogs.article_item.comment_count' | t: count: article.comments_count }}</h3>
+            {% endif %}
+
+            {% paginate article.comments by 10 %}
+              {% for comment in article.comments %}
+                <div class="post-comment {% include 'for-looper' %}" id="comment-{{ comment.id }}">
+                  <span class="post-comment-date">{{ comment.created_at | date: format: 'short_month' }}</span>
+                  <div class="rte">{{ comment.content }}</div>
+                  <div class="post-comment-details">
+                    {% if section.settings.comment-author-avatar %}
+                      <img class="post-comment-author-avatar" src="http://www.gravatar.com/avatar/{{ comment.email | remove: ' ' | strip_newlines | downcase | md5 }}" />
+                    {% endif %}
+                    <span class="post-comment-author-name">{{ comment.author }}</span>
+                  </div>
+                </div>
+              {% endfor %}
+
+              {% if paginate.previous or paginate.next %}
+                {% include 'pagination' %}
+              {% endif %}
+
+            {% endpaginate %}
+          </div>
+        {% endif %}
+
+        <div class="post-comments-submit">
+          <h3>{{ 'blogs.article_item.leave_a_comment' | t }}</h3>
+
+          {% form article %}
+
+            {% if form.posted_successfully? %}
+              <p>
+              {% if blog.moderated? %}
+                {{ 'blogs.article_item.comment_pending' | t }}
+              {% else %}
+                {{ 'blogs.article_item.comment_success' | t }}
+              {% endif %}
+              </p>
+            {% endif %}
+
+            {% if form.errors %}
+              <p class="error-message">{{ 'blogs.article_item.comment_error' | t }}</p>
+            {% endif %}
+
+            <div class="input-wrapper {% if form.errors contains "author" %}error{% endif %}">
+              <label>{{ 'general.general.name' | t }} {{ form.errors.messages["author"] }}</label>
+              <input type="text" placeholder="Name" value="{{ form.author }}" name="comment[author]">
+            </div>
+
+            <div class="input-wrapper {% if form.errors contains "email" %}error{% endif %}">
+              <label>{{ 'general.general.email' | t }} {{ form.errors.messages["email"] }}</label>
+              <input type="email" placeholder="{{ 'general.general.email_placeholder' | t }}" value="{{ form.email }}" name="comment[email]">
+            </div>
+
+            <div class="input-wrapper {% if form.errors contains "body" %}error{% endif %}">
+              <label>{{ 'general.general.message' | t }} {{ form.errors.messages["body"] }}</label>
+              <textarea name="comment[body]">{{ form.body }}</textarea>
+            </div>
+
+            <div class="input-wrapper">
+              <input type="submit" value="{{ 'blogs.article_item.submit' | t }}">
+            </div>
+
+          {% endform %}
+        </div>
+
+      </div>
+    {% endif %}
+  </div>
+
+  {%- for block in section.blocks -%}
+    {%- case block.type -%}
+    {%- when 'promotional-image' -%}
+      {% include 'block-blog-promo' %}
+    {%- endcase -%}
+  {%- endfor -%}
+</section>
+
+
+
+{% schema %}
+{
+  "name": "Article",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "rss-icon",
+      "label": "Show subscribe link"
+    },
+    {
+      "type": "checkbox",
+      "id": "comment-count",
+      "label": "Show comment count"
+    },
+    {
+      "type": "checkbox",
+      "id": "tags",
+      "label": "Show tags"
+    },
+    {
+      "type": "checkbox",
+      "id": "author",
+      "label": "Show post author"
+    },
+    {
+      "type": "checkbox",
+      "id": "author-avatar",
+      "label": "Show post author avatar",
+      "info": "We pull author avatars from Gravatar. [More info](http:\/\/docs.shopify.com\/manual\/settings\/account\/staff-members#change-staff-account-picture)"
+    },
+    {
+      "type": "checkbox",
+      "id": "comment-author-avatar",
+      "label": "Show avatars on post comments"
+    },
+    {
+      "type": "checkbox",
+      "id": "share-buttons",
+      "label": "Show share icons"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "promotional-image",
+      "name": "Promotional image",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading"
+        },
+        {
+          "type": "text",
+          "id": "subtitle",
+          "label": "Subheading"
+        },
+        {
+          "type": "url",
+          "id": "url",
+          "label": "Link"
+        }
+      ],
+      "limit": 1
+    }
+  ]
+}
+{% endschema %}

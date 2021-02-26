@@ -1,0 +1,118 @@
+<script>
+        function BuyXSubmit(buyx_cart, selector) {
+            for (var i = 0; i < buyx_cart.items.length; i++) {
+                var item = buyx_cart.items[i];
+                var sel = selector.replace("{variant_id}", item.variant_id);
+                //console.log(jQuery(sel).length, parseInt(jQuery(sel).val()), item.quantity)
+                if (jQuery(sel).length == 1) {
+                    if (parseInt(jQuery(sel).val()) != item.quantity) {
+                        alert("Please Update cart before checkout");
+                        return false
+                    }
+                }
+            }
+            return true
+        }
+</script>
+
+{% if cart.item_count == 0 %}
+{% else %}
+  <script>
+
+        function BuyXCartCheck(buyx_cart) {
+            if (buyx_cart.items.length == 0) {
+              return
+            }
+            for (var i = 0, len = buyx_cart.items.length; i < len; i++) {
+                delete buyx_cart.items[i].image;
+                delete buyx_cart.items[i].product_description;
+            }
+          	//console.log(JSON.stringify(buyx_cart))
+            var buyx_shop_domain = Shopify.shop //"{{shop.permanent_domain}}"
+            jQuery.ajax({
+                cache: false,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                type: "POST",
+                url: 'https://buyxgetone.herokuapp.com/api/v2/cart-check-offers',
+                data: JSON.stringify({
+                    shop_slug: buyx_shop_domain.replace(".myshopify.com", ""),
+                    cart: buyx_cart
+                }),
+                success: function(res) {
+                    if (typeof BuyXComplete == "function") {
+                        res = BuyXComplete(res)
+                    }
+                  
+                    if ((res.cart_changes.length + res.cart_adds.length) == 0) {
+                        if (res.msgs.length != 0) {
+                            jQuery(".buyx-msg").html(res.msgs.join("<br>"))
+                        }
+
+                    } else {
+                      
+                      var unique_values = {}
+                      var use_variant_ids = true
+                      for (var i = 0; i < buyx_cart.items.length; i++) {
+                        if ( typeof unique_values[buyx_cart.items[i].variant_id] == "undefined") {
+                          unique_values[buyx_cart.items[i].variant_id] = true
+                        } else {
+                          use_variant_ids = false
+                        }
+                      }
+
+                      if (use_variant_ids) {
+                        var updates = {}
+                        for (var i = 0; i < res.cart_changes.length; i++) {
+                          updates[res.cart_changes[i].variant_id] = res.cart_changes[i].quantity                          
+                        }
+                        jQuery.ajax({
+                          cache: false,
+                          type: "POST",
+                          dataType: "json",
+                          async: false,
+                          url: '/cart/update.js',
+                          data: {updates: updates},
+                          success: function(done_data) {}
+                        })
+                      } else {
+                        var line_increment = 0
+
+                        for (var i = 0; i < res.cart_changes.length; i++) {
+                            res.cart_changes[i].line += line_increment;
+                            if (res.cart_changes[i].quantity == 0) {
+                                line_increment--;
+                            }
+                            jQuery.ajax({
+                                cache: false,
+                                type: "POST",
+                                dataType: "json",
+                                async: false,
+                                url: '/cart/change.js',
+                                data: res.cart_changes[i],
+                                success: function(done_data) {}
+                            })
+                        }
+                      }
+
+                      for (var i = 0; i < res.cart_adds.length; i++) {
+                        jQuery.ajax({
+                          cache: false,
+                          type: "POST",
+                          dataType: "json",
+                          async: false,
+                          url: '/cart/add.js',
+                          data: res.cart_adds[i],
+                          success: function(done_data) {}
+                        })
+                      }
+
+                      window.location.reload();
+                    }
+                }
+            })
+        }
+
+        BuyXCartCheck({{cart | json}})
+  </script>
+{% endif %}

@@ -1,0 +1,62 @@
+{% assign index = false %}
+{% if template == 'blog' %}{% assign index = true %}{% endif %}
+
+{% assign postMeta = false %}
+{% if settings.article-tags and article.tags.size > 0 %}
+  {% assign postMeta = true %}
+{% elsif settings.article-author %}
+  {% assign postMeta = true %}
+{% elsif settings.article-share-buttons %}
+  {% assign postMeta = true %}
+{% endif %}
+
+<article class="blog-post">
+
+  <div class="blog-post-inner">
+    {% if index %}
+      <h2 class="post-title"><a href="{{ article.url }}">{{ article.title }}</a></h2>
+    {% else %}
+      <h1 class="post-title">{{ article.title }}</h1>
+    {% endif %}
+
+    <span class="post-date">{{ article.published_at | date: format: 'short_month' }}
+      {% if index and article.comments_enabled? and article.comments.size > 0 and settings.article-comment-count %}
+        &bull; {{ 'blogs.article_item.comment_count' | t: count: article.comments_count | link_to: article.url }}
+      {% endif %}
+    </span>
+
+    <div class="rte post-content">
+      {% if index and article.excerpt != blank %}
+        {% capture read_more %}<a href="{{ article.url }}">{{ 'blogs.article_item.read_more' | t }}</a>{% endcapture %}
+        {{ article.excerpt | append: read_more }}
+      {% else %}
+        {{ article.content }}
+      {% endif %}
+    </div>
+
+    {% if postMeta %}
+      <aside class="post-meta">
+        {% if settings.article-share-buttons %}
+          {% include 'share-buttons' %}
+        {% endif %}
+        {% if article.tags.size > 0 and settings.article-tags %}
+          <div class="post-tags">
+            <span class="title">{{ 'blogs.article_item.tags' | t }}</span>
+            {% for tag in article.tags %}
+              <a href="{{ blog.url }}/tagged/{{ tag | handle }}">{{ tag }}</a>{% unless forloop.last %}, {% endunless %}
+            {% endfor %}
+          </div>
+        {% endif %}
+        {% if settings.article-author %}
+          <div class="post-author">
+            {% if settings.article-author-avatar %}
+              <img class="post-author-avatar" src="//www.gravatar.com/avatar/{{ article.user.email | remove: ' ' | strip_newlines | downcase | md5 }}" />
+            {% endif %}
+            <span class="post-author-name" data-title="{{ 'blogs.article_item.written_by' | t }}">{{ article.author }}</span>
+          </div>
+        {% endif %}
+      </aside>
+    {% endif %}
+  </div>
+
+</article>

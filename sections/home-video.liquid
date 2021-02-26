@@ -1,0 +1,234 @@
+<script
+  type="application/json"
+  data-section-id="{{ section.id }}"
+  data-section-type="dynamic-video-with-text-overlay"
+>
+</script>
+
+{% assign section_class = 'home-video-with-text' %}
+{% assign section_class = section_class | append: ' content-align-' | append: section.settings.content_alignment %}
+{% assign section_class = section_class | append: ' layout-' | append: section.settings.layout %}
+{% assign section_class = section_class | append: ' overlay-style-' | append: section.settings.overlay_style %}
+
+<section
+  class="{{ section_class }}"
+>
+  <div class="home-video-with-text-video">
+    {% assign image_url = false %}
+    {% assign image_alt = '' %}
+    {% if section.settings.image != blank %}
+      {% assign image_url = section.settings.image %}
+      {% if section.settings.image.alt != blank %}
+        {% assign image_alt = section.settings.image.alt | escape %}
+      {% elsif section.settings.title != blank %}
+        {% assign image_alt = section.settings.title | escape %}
+      {% endif %}
+    {% endif %}
+
+    {% comment %}
+      Always show overlay to block clicks on desktop, even if no image
+    {% endcomment %}
+    <div
+      class="home-video-with-text-overlay"
+      {% if image_url %}
+        {%
+          include 'rimg',
+          img: image_url,
+          alt: image_alt,
+          size: '1400x700',
+          crop: 'center',
+          background: true,
+          lazy: true
+        %}
+      {% endif %}
+      data-video-overlay
+    >
+      {% if image_url %}
+        {%
+          include 'rimg',
+          img: image_url,
+          alt: image_alt,
+          size: '1400x700',
+          crop: 'center',
+          lazy: true
+        %}
+      {% endif %}
+
+      <span
+        class="
+          home-video-with-text-icon
+          home-video-with-text-icon-mobile
+        "
+        href="#"
+        title="{{ 'general.general.play_video' }}"
+        data-play-video
+      >
+        {%-
+          include 'icons',
+          id: 'play'
+        %}
+      </span>
+
+      <div class="home-video-with-text-overlay-color"></div>
+    </div>
+
+    {% if section.settings.video_url != blank %}
+      {% if section.settings.video_url.type == "youtube" %}
+        <iframe
+          src="https://www.youtube.com/embed/{{ section.settings.video_url.id }}?rel=0&showinfo=0&vq=720"
+          width="850"
+          height="480"
+          frameborder="0"
+          allowfullscreen
+          sandbox="allow-scripts allow-same-origin allow-presentation"></iframe>
+      {% endif %}
+      {% if section.settings.video_url.type == "vimeo" %}
+        <iframe
+          src="https://player.vimeo.com/video/{{ section.settings.video_url.id }}?byline=0&portrait=0&badge=0&autopause=0"
+          width="850"
+          height="480"
+          frameborder="0"
+          allowfullscreen
+          sandbox="allow-scripts allow-same-origin allow-presentation"></iframe>
+      {% endif %}
+    {% else %}
+      <iframe
+        src="https://www.youtube.com/embed/_9VUPq3SxOc?rel=0&showinfo=0&vq=720"
+        width="850"
+        height="480"
+        frameborder="0"
+        sandbox="allow-scripts allow-same-origin allow-presentation"></iframe>
+    {% endif %}
+  </div>
+
+  <div
+    class="home-video-with-text-content"
+    data-video-overlay
+  >
+    {%- if section.settings.title != blank -%}
+      <h2 class="video-title">
+        {{ section.settings.title | escape }}
+      </h2>
+    {%- endif -%}
+
+    {%- if section.settings.subtitle != blank -%}
+      <p class="video-subtitle">
+        {{ section.settings.subtitle | escape }}
+      </p>
+    {%- endif -%}
+
+    <span
+      class="
+        home-video-with-text-icon
+        home-video-with-text-icon-desktop
+      "
+      href="#"
+      title="{{ 'general.general.play_video' }}"
+      data-play-video
+    >
+      {%-
+        include 'icons',
+        id: 'play'
+      %}
+    </span>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Video with text overlay",
+  "settings": [
+    {
+      "type": "select",
+      "id": "layout",
+      "label": "Layout",
+      "options": [
+        {
+          "value": "content-width",
+          "label": "Content width"
+        },
+        {
+          "value": "full-width",
+          "label": "Full width"
+        }
+      ],
+      "default": "full-width"
+    },
+    {
+      "type": "video_url",
+      "id": "video_url",
+      "label": "YouTube or Vimeo link",
+      "accept": [
+        "youtube",
+        "vimeo"
+      ],
+      "default": "https://www.youtube.com/watch?v=_9VUPq3SxOc"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Placeholder image",
+      "info": "1400 x 700px recommended"
+    },
+    {
+      "type": "select",
+      "id": "overlay_style",
+      "label": "Overlay style",
+      "options": [
+        {
+          "value": "dark",
+          "label": "Dark"
+        },
+        {
+          "value": "light",
+          "label": "Light"
+        },
+        {
+          "value": "accent",
+          "label": "Accent"
+        }
+      ],
+      "default": "dark"
+    },
+    {
+      "type": "select",
+      "id": "content_alignment",
+      "label": "Align text",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Video with text overlay"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subheading",
+      "default": "Enhance your page with with a video that relates to your style and story"
+    }
+  ],
+  "presets": [
+    {
+      "category": "Video",
+      "name": "Video with text overlay"
+    }
+  ]
+}
+
+{% endschema %}

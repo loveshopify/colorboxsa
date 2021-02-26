@@ -1,0 +1,120 @@
+<ul class="mobile-mega-nav navigation-submenu" data-linklist="{{ link.handle }}">
+  {% for link in link.links %}
+    <li class="has-dropdown">
+      <a
+        id="navigation-{{ link.handle }}"
+        class="navigation-menu-link mega-nav-list-title"
+        href="{{ link.url }}"
+        data-linklist-trigger="{{ link.handle }}-{{ forloop.index0 }}"
+      >
+        {{ link.title }}
+        {% if link.links.size > 0 %}
+          <span class="navigation-submenu-toggle" tabIndex="0" role="button" aria-controls="navigation-{{ link.handle }}" aria-expanded="false" data-subnav-toggle>
+            {{- arrow_right -}}
+          </span>
+        {% endif %}
+      </a>
+      {% if link.links.size > 0 %}
+        <ul
+          class="navigation-submenu"
+          data-linklist="{{ link.handle }}-{{ forloop.index0 }}"
+        >
+          {% for link in link.links %}
+            <li>
+              <a
+                class="navigation-menu-link"
+                href="{{ link.url }}"
+              >
+                {{ link.title }}
+              </a>
+            </li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    </li>
+  {% endfor %}
+</ul>
+
+<div class="mega-nav">
+  {% assign mega_nav_image = '' %}
+  {% for block in section.blocks %}
+    {% assign mega_nav_handle = block.settings.menu_item | handle %}
+    {% if mega_nav_handle == link.handle %}
+      {% assign mega_nav_image = block.settings.menu_image %}
+    {% endif %}
+  {% endfor %}
+
+  {% if mega_nav_image != blank  %}
+    <figure class="mega-nav-image">
+      {% capture mega_nav_image_attr %}
+        data-image="{{ mega_nav_image | img_url: '300x300' }}"
+        data-image-alt="{{ mega_nav_image.alt }}"
+      {% endcapture %}
+
+      <img {{ mega_nav_image_attr }} >
+    </figure>
+  {% endif %}
+
+  <div class="mega-nav-list-wrapper">
+    {% for link in link.links %}
+      {%- if link.type == 'collection_link' -%}
+        {%- assign collection = link.object -%}
+
+        {%- if collection.image -%}
+          {%- assign image = collection.image | img_url: '300x300' -%}
+        {%- elsif collection.products.first.featured_image -%}
+          {%- assign image = collection.products.first.featured_image | img_url: '300x300' -%}
+        {%- endif -%}
+      {%- elsif link.type == 'product_link' -%}
+        {%- assign product = link.object -%}
+
+        {%- if product.featured_image -%}
+          {%- assign image = product.featured_image | img_url: '300x300' -%}
+        {%- endif -%}
+      {%- endif -%}
+
+      <ul class="mega-nav-list">
+        <li
+          class="mega-nav-list-title"
+          data-image="{{ image }}"
+          data-image-alt="{{ image.alt }}"
+        >
+          <a class="mega-nav-list-title-link" href="{{ link.url }}">{{ link.title }}</a>
+        </li>
+
+        {% for link in link.links %}
+          {%- capture image -%}
+            {%- if mega_nav_image != blank -%}
+              {{ mega_nav_image | img_url: '300x300' }}
+            {%- else -%}
+              {%- include 'svg-placeholder-uri' placeholder: 'image' -%}
+            {%- endif -%}
+          {%- endcapture -%}
+
+          {%- if link.type == 'collection_link' -%}
+            {%- assign collection = link.object -%}
+
+            {%- if collection.image -%}
+              {%- assign image = collection.image | img_url: '300x300' -%}
+            {%- elsif collection.products.first.featured_image -%}
+              {%- assign image = collection.products.first.featured_image | img_url: '300x300' -%}
+            {%- endif -%}
+          {%- elsif link.type == 'product_link' -%}
+            {%- assign product = link.object -%}
+
+            {%- if product.featured_image -%}
+              {%- assign image = product.featured_image | img_url: '300x300' -%}
+            {%- endif -%}
+          {%- endif -%}
+
+          <li
+            data-image="{{ image }}"
+            data-image-alt="{{ image.alt }}"
+          >
+            <a href="{{ link.url }}">{{ link.title }}</a>
+          </li>
+        {% endfor %}
+      </ul>
+    {% endfor %}
+  </div>
+</div>

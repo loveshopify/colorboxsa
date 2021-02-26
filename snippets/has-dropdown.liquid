@@ -1,0 +1,29 @@
+{% capture linkHandle %}{{ link.title | handle }}{% endcapture %}
+{% capture megaNavTrigger1 %}{{ settings.mega-nav-trigger | handle }}{% endcapture %}
+{% capture megaNavTrigger2 %}{{ settings.mega-nav-trigger2 | handle }}{% endcapture %}
+{% capture megaNavTrigger3 %}{{ settings.mega-nav-trigger3 | handle }}{% endcapture %}
+{% assign hasDropdown = false %}
+{% assign hasMegaNav = false %}
+{% assign hasSubmenu = false %}
+{% if linkHandle == megaNavTrigger1 or linkHandle == megaNavTrigger2 or linkHandle == megaNavTrigger3  %}
+  {% assign hasMegaNav = true %}
+{% elsif linklists[linkHandle] and linklists[linkHandle].links.size > 0 %}
+  {% assign hasDropdown = true %}
+{% endif %}
+{% if linklists[child_list_handle] and linklists[child_list_handle].links.size > 0 %}
+{% assign hasSubmenu = true %}
+{% endif %}
+{% assign numLink ='' %}
+{% assign itemsLink ='mega-nav-1|mega-nav-2|mega-nav-3' %}
+{% assign imageLink ='mega-nav-image-default.jpg' %}
+
+{% if link.title == 'Apparel'  %}
+  {% assign numLink = '2' %}
+  {% assign itemsLink ='mega-nav-12|mega-nav-22|mega-nav-32' %}
+  {% assign imageLink ='mega-nav-image-default2.jpg' %}
+{% endif %}
+{% if link.title == 'Accessories'  %}
+  {% assign numLink = '3' %}
+  {% assign itemsLink ='mega-nav-13|mega-nav-23|mega-nav-33' %}
+  {% assign imageLink ='mega-nav-image-default3.jpg' %}
+{% endif %}

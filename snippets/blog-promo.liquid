@@ -1,0 +1,35 @@
+
+<div class="blog-promo">
+
+  {% assign blogPromoImageAlt = settings.blog-promo-cta | escape %}
+  {% if settings.blog-promo-url != blank %}
+    {{ 'blog-promo-image.jpg' | asset_url | img_tag, blogPromoImageAlt,'blog-promo-image' | link_to: settings.blog-promo-url }}
+  {% else %}
+    {{ 'blog-promo-image.jpg' | asset_url | img_tag, blogPromoImageAlt,'blog-promo-image' }}
+  {% endif %}
+
+  {% if settings.blog-promo-cta != blank or settings.blog-promo-subtitle != blank %}
+    <div class="blog-promo-details">
+      {% if settings.blog-promo-cta != blank %}
+        <h3 class="blog-promo-title">
+          {% if settings.blog-promo-url != blank %}
+            {{ settings.blog-promo-cta | link_to: settings.blog-promo-url }}
+          {% else %}
+            {{ settings.blog-promo-cta }}
+          {% endif %}
+        </h3>
+      {% endif %}
+
+      {% if settings.blog-promo-subtitle != blank %}
+        <p class="blog-promo-subtitle">
+          {% if settings.blog-promo-url != blank %}
+            {{ settings.blog-promo-subtitle | link_to: settings.blog-promo-url }}
+          {% else %}
+            {{ settings.blog-promo-subtitle }}
+          {% endif %}
+        </p>
+      {% endif %}
+    </div>
+  {% endif %}
+
+</div>

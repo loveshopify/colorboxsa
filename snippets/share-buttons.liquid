@@ -1,0 +1,49 @@
+{% if template contains 'article' or template contains 'blog' %}
+  {% capture permalinkURL %}{{ shop.url }}{{ article.url }}{% endcapture %}
+{% elsif template contains 'product' %}
+  {% capture permalinkURL %}{{ shop.url }}{{ product.url }}{% endcapture %}
+{% endif %}
+
+{% assign platforms = 0 %}
+{% if settings.share-widget-facebook %}{% assign platforms = platforms | plus: 1 %}{% endif %}
+{% if settings.share-widget-twitter %}{% assign platforms = platforms | plus: 1 %}{% endif %}
+{% if settings.share-widget-pinterest %}{% assign platforms = platforms | plus: 1 %}{% endif %}
+{% if settings.share-widget-fancy %}{% assign platforms = platforms | plus: 1 %}{% endif %}
+{% if settings.share-widget-google-plus %}{% assign platforms = platforms | plus: 1 %}{% endif %}
+{% if settings.share-widget-email %}{% assign platforms = platforms | plus: 1 %}{% endif %}
+
+{% if platforms > 0 %}
+  <div class="share-buttons">
+
+    <span class="section-title related-product-uncapital">{{ 'general.social.share' | t }}</span>
+
+    {% if settings.share-widget-facebook %}
+      <a target="_blank" href="//www.facebook.com/sharer.php?u={{ permalinkURL }}" class="share-facebook">&#xE003;</a>
+    {% endif %}
+
+    {% if settings.share-widget-twitter %}
+      <a target="_blank" href="//twitter.com/share?url={{ permalinkURL }}" class="share-twitter">&#xE036;</a>
+    {% endif %}
+
+    {% if template contains 'product' %}
+
+      {% if settings.share-widget-pinterest %}
+        <a target="_blank" href="//pinterest.com/pin/create/button/?url={{ permalinkURL }}&amp;media=http:{{ product | img_url: 'original' }}&amp;description={{ product.title | escape }}" class="share-pinterest">&#xE296;</a>
+      {% endif %}
+
+      {% if settings.share-widget-fancy %}
+        <a target="_blank" href="http://www.thefancy.com/fancyit?ItemURL={{ permalinkURL }}&amp;Title={{ product.title }}&amp;Category=Other&amp;ImageURL={{ product | img_url: 'original' }}" class="share-fancy">&#xE430;</a>
+      {% endif %}
+
+    {% endif %}
+
+    {% if settings.share-widget-google-plus %}
+      <a target="_blank" href="//plus.google.com/share?url={{ permalinkURL }}" class="share-google">&#xE03F;</a>
+    {% endif %}
+
+    {% if settings.share-widget-email %}
+      <a target="_blank" href="mailto:?subject={{page_title}}&amp;body={{ 'general.social.email_body' | t: link: permalinkURL }}" class="share-email">&#xE050;</a>
+    {% endif %}
+
+  </div>
+{% endif %}

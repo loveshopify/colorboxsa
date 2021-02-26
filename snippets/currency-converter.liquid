@@ -1,0 +1,35 @@
+<script
+  type="application/json"
+  data-currency-data
+>
+  {
+    "enable": {{ settings.enable_currency_converter | default: false }},
+    "shopCurrency": {{ shop.currency | json }},
+    "defaultCurrency": {{ settings.default_currency | default: shop.currency | json }},
+    "displayFormat": {{ settings.currency_display_format | json }},
+    "moneyFormat": {{ shop[settings.currency_display_format] | strip_html | json }},
+    "moneyFormatNoCurrency": {{ shop.money_format | strip_html | json }},
+    "moneyFormatCurrency": {{ shop.money_with_currency_format | strip_html | json }}
+  }
+</script>
+
+<div class="currency-wrapper">
+  <span class="select-currency">
+    {{ 'layout.header.select_currency' | t }}
+  </span>
+  <span class="select-wrapper currency-switcher">
+    <span class="selected-currency">{{- shop.currency -}}</span>
+    <select id="currencies" name="currencies" data-currency-converter>
+      {% capture codes %}
+        ,USD,EUR,GBP,CAD,ARS,AUD,BBD,BDT,BSD,BHD,BRL,BOB,BND,BGN,ILS,MMK,KYD,CLP,CNY,COP,CRC,HRK,CZK,DKK,DOP,XCD,EGP,XPF,FJD,GHS,GTQ,GYD,GEL,HKD,HUF,ISK,INR,IDR,NIS,JMD,JPY,JOD,KZT,KES,KWD,LVL,LTL,MXN,MYR,MUR,MDL,MAD,MNT,MZN,ANG,NZD,NGN,NOK,OMR,PKR,PYG,PEN,PHP,PLN,QAR,RON,RUB,SAR,RSD,SCR,SGD,SYP,ZAR,KRW,LKR,SEK,CHF,TWD,THB,TZS,TTD,TRY,UAH,AED,UYU,VEB,VND,ZMK,
+      {% endcapture %}
+      {% assign supported_codes = settings.currency_converter_supported_currencies | split: ' ' %}
+      <option value="{{ shop.currency }}" selected="selected">{{ shop.currency }}</option>
+      {%- for code in supported_codes -%}
+        {%- if code != shop.currency and codes contains code -%}
+          <option value="{{ code }}">{{ code }}</option>
+        {% endif %}
+      {%- endfor -%}
+    </select>
+  </span>
+</div>

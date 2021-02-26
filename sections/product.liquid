@@ -1,0 +1,148 @@
+
+{% include 'breadcrumbs' %}
+
+{% assign enable_zoom = section.settings.enable_zoom %}
+{% assign enable_cart_redirection = section.settings.enable_cart_redirection %}
+{% assign images_layout = section.settings.images_layout %}
+{% assign enable_linked_options = true %}
+{% assign show_vendor = settings.show_vendor %}
+{% assign show_social_media_icons = section.settings.show_social_media_icons %}
+{% assign enable_related_products = section.settings.enable_related_products %}
+{% assign related_products_position = section.settings.related_products_position %}
+{% assign show_payment_button = section.settings.show_payment_button %}
+
+{% if images_layout == 'masonry' %}
+  {% comment %}Related products in masonry grid must be below product{% endcomment %}
+  {% assign related_products_position = 'below' %}
+{% endif %}
+
+<script
+  type="application/json"
+  data-section-type="product"
+  data-section-id="{{ section.id }}"
+  data-section-data
+>
+  {
+    "product": {{ product | json }},
+    "product_settings": {
+      "addToCartText": {{ 'products.product.add_to_cart' | t | json }},
+      "enableHistory": true,
+      "linkedOptions": false,
+      "processingText": {{ 'products.product.processing' | t | json }},
+      "setQuantityText": {{ 'products.product.set_quantity' | t | json }},
+      "soldOutText": {{ 'products.product.sold_out' | t | json }},
+      "unavailableText": {{ 'products.product.unavailable' | t | json }}
+    },
+    "images_layout": {{ images_layout | json }},
+    "enable_zoom": {{ enable_zoom | json }},
+    "enable_cart_redirection": {{ enable_cart_redirection | json }},
+    "enable_fixed_positioning": true
+  }
+</script>
+
+{% include 'product-success-labels' %}
+<section class="product-container">
+  {%
+    include 'product',
+    product: product,
+    enable_zoom: enable_zoom,
+    images_layout: images_layout,
+    enable_linked_options: enable_linked_options,
+    show_vendor: show_vendor,
+    show_social_media_icons: show_social_media_icons,
+    show_payment_button: show_payment_button,
+    enable_related_products: enable_related_products,
+    related_products_position: related_products_position,
+    lazy: true
+  %}
+
+  {% assign use_masonry = false %}
+  {% if images_layout == 'masonry' %}
+    {% assign use_masonry = true %}
+  {% endif %}
+
+  {% if enable_related_products %}
+    {%
+      include 'related-products'
+      related_products_position: related_products_position,
+      related_collection: collection,
+      current_product_id: product_id,
+      use_masonry: use_masonry
+    %}
+  {% endif %}
+</section>
+
+{% schema %}
+{
+  "name": "Product pages",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_social_media_icons",
+      "label": "Show social media icons"
+    },
+    {
+      "type": "header",
+      "content": "Images"
+    },
+    {
+      "type": "select",
+      "id": "images_layout",
+      "label": "Layout",
+      "options": [
+        { "label": "Slideshow", "value": "slideshow" },
+        { "label": "List", "value": "list" },
+        { "label": "Masonry", "value": "masonry" }
+      ],
+      "default": "slideshow"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_zoom",
+      "label": "Enable zoom",
+      "info": "Zoom only works with the slideshow image layout"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_cart_redirection",
+      "label": "Enable cart redirection",
+      "info": "Automatically sends users to the Cart page after adding a product.",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_payment_button",
+      "label": "Show dynamic checkout button",
+      "info": "Each customer will see their preferred payment method from those available on your store, such as PayPal or Apple Pay. [Learn more](https://help.shopify.com/manual/using-themes/change-the-layout/dynamic-checkout)",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Related products"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_related_products",
+      "label": "Enable"
+    },
+    {
+      "type": "select",
+      "id": "related_products_position",
+      "label": "Alignment",
+      "info": "\"Right of product info\" only works with slideshow and list image layouts",
+      "options": [
+        {
+          "value": "below",
+          "label": "Below product info"
+        },
+        {
+          "value": "right",
+          "label": "Right of product info"
+        }
+      ],
+      "default": "below"
+    }
+  ]
+}
+
+{% endschema %}

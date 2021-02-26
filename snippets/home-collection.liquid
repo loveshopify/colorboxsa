@@ -1,0 +1,29 @@
+<article class="home-collection" {{ block.shopify_attributes }}>
+  <figure class="home-collection-image">
+
+    {{ image }}
+
+    <div class="home-collection-overlay-wrapper home-collection-overlay-color-{{ overlayColor }}" data-url="{{ collection.url }}">
+      <div class="home-collection-overlay">
+        <h3 class="home-collection-title">
+          <a href="{{ collection.url }}">{{ title }}</a>
+        </h3>
+        {%- if subheading != blank -%}
+          <span class="home-collection-subtitle">
+            <a href="{{ collection.url }}">
+              {{ subheading }}
+            </a>
+          </span>
+        {%- endif -%}
+      </div>
+    </div>
+
+  </figure>
+
+  {%- if description != blank -%}
+    <div class="home-collection-description">
+      {{ description }}
+    </div>
+  {%- endif -%}
+
+</article>

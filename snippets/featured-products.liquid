@@ -1,0 +1,40 @@
+{% if collections[settings.featured-products-collection].products.size > 0 %}
+  <section class="featured-products rows-of-{{ settings.featured-products-per-row }}">
+
+      {% if settings.featured-products-section-title != blank %}
+        <h2 class="section-title">{{ settings.featured-products-section-title }}</h2>
+      {% endif %}
+
+      <div class="featured-products-list">
+        {% assign limit = settings.featured-products-per-row | times: settings.featured-products-rows %}
+        {% for product in collections[settings.featured-products-collection].products limit: limit %}
+          {% include 'product-list-item' %}
+        {% endfor %}
+      </div>
+
+  </section>
+
+{% else %}
+
+  <section class="featured-products rows-of-4 onboarding">
+    <h2 class="section-title">{{ 'onboarding.featured_products.title' | t }}</h2>
+
+    <div class="featured-products-list">
+      {% for i in (1..4) %}
+        <article class="product-list-item" id="product-list-item-{{ item.id }}">
+
+          <figure class="product-list-item-thumbnail">
+            <a class="no-image" href="{{ shop.url }}/admin/themes/{{ theme.id }}/settings"></a>
+          </figure>
+
+          <div class="product-list-item-details">
+            <p class="product-list-item-vendor">{{ 'onboarding.featured_products.product_brand' | t }}</p>
+            <h2 class="product-list-item-title">{{ 'onboarding.featured_products.product_title' | t }}</h2>
+            <p class="product-list-item-price">{{ 'onboarding.featured_products.product_price' | t }}</p>
+          </div>
+        </article>
+      {% endfor %}
+    </div>
+  </section>
+
+{% endif %}

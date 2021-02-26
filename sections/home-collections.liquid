@@ -1,0 +1,179 @@
+<script
+  type="application/json"
+  data-section-type="dynamic-collections-list"
+  data-section-id="{{ section.id }}"
+></script>
+
+{% comment %}
+  Determine if there is an uneven amount of blocks
+  If there are no blocks, 3 onboarding blocks will be shown
+{% endcomment %}
+
+{% assign block_count = 3 %}
+{% if section.blocks.size != 0 %}
+  {% assign block_count = section.blocks.size %}
+{% endif %}
+
+{% assign has_remainder = true %}
+{% assign block_remainder = block_count | modulo: 2 %}
+{% if block_remainder == 0 %}
+  {% assign has_remainder = false %}
+{% endif %}
+
+{%- capture section_clases -%}
+  home-collections
+  home-collections-columns-{{ section.settings.columns_range }}
+
+  {% if has_remainder %}
+    home-collections-has-remainder
+  {% endif %}
+{%- endcapture -%}
+
+<section
+  class="{{ section_clases | strip_newlines }}"
+  data-section-id="{{ section.id }}"
+  data-section-type="home-collection-list"
+>
+
+  {%- if section.settings.title -%}
+    <h2 class="section-title">{{ section.settings.title | escape }}</h2>
+  {%- endif -%}
+
+  <div class="home-collections-content" data-collections>
+    {%- unless section.blocks.size == 0 -%}
+      {%- for block in section.blocks -%}
+        {%- case block.type -%}
+        {%- when 'collection' -%}
+          {%- assign collectionIndex = collectionIndex | plus: 1 -%}
+          {%- assign collectionImageIndex = collectionIndex | modulo: 6 | plus: 1 -%}
+          {%- assign collectionImage = 'collection-' | append: collectionImageIndex -%}
+          {%- assign collection = collections[block.settings.collection] -%}
+          {%- capture image -%}
+            {%- if block.settings.collection != blank -%}
+              {%- if collection.image -%}
+                {%
+                  include 'rimg',
+                  img: collection.image,
+                  size: '1024x1024',
+                  lazy: true
+                %}
+              {%- elsif collection.products.first.featured_image -%}
+                {%
+                  include 'rimg',
+                  img: collection.products.first.featured_image,
+                  size: '1024x1024',
+                  lazy: true
+                %}
+              {%- else -%}
+                {{ collectionImage | placeholder_svg_tag: 'placeholder-svg' }}
+              {%- endif -%}
+            {%- else -%}
+              {{ collectionImage | placeholder_svg_tag: 'placeholder-svg' }}
+            {%- endif -%}
+          {%- endcapture -%}
+
+          {%- capture title -%}
+            {%- if block.settings.collection -%}
+              {{ collection.title }}
+            {%- endif -%}
+          {%- endcapture -%}
+
+          {%- assign subheading = block.settings.subheading | escape -%}
+          {%- assign description = block.settings.description | escape -%}
+          {%- assign overlayColor = block.settings.overlay-color %}
+
+          {%- include 'home-collection' -%}
+        {%- endcase -%}
+      {%- endfor -%}
+    {%- else -%}
+      {%- for i in (1..block_count) -%}
+        {%- assign collectionIndex = collectionIndex | plus: 1 -%}
+        {%- assign collectionImageIndex = collectionIndex | modulo: 6 | plus: 1 -%}
+        {%- assign collectionImage = 'collection-' | append: collectionImageIndex -%}
+        {%- assign image = collectionImage | placeholder_svg_tag: 'placeholder-svg' -%}
+        {%- assign title = 'onboarding.home_collections.collection_title' | t -%}
+        {%- assign subheading = 'onboarding.home_collections.collection_subtitle' | t -%}
+        {%- assign description = 'onboarding.home_collections.collection_description' | t -%}
+        {%- assign overlayColor = 'black' %}
+
+        {%- include 'home-collection' -%}
+      {%- endfor -%}
+    {%- endunless -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Collection list",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Collection list"
+    },
+    {
+      "type": "range",
+      "id": "columns_range",
+      "label": "Columns",
+      "min": 1,
+      "max": 3,
+      "step": 1,
+      "default": 3
+    }
+  ],
+  "blocks": [
+    {
+      "type": "collection",
+      "name": "Collection",
+      "settings": [
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Collection"
+        },
+        {
+          "type": "select",
+          "id": "overlay-color",
+          "label": "Overlay text color",
+          "options": [
+            {
+              "value": "black",
+              "label": "Black"
+            },
+            {
+              "value": "white",
+              "label": "White"
+            }
+          ],
+          "default": "black"
+        },
+        {
+          "type": "text",
+          "id": "subheading",
+          "label": "Subheading",
+          "default": "Collection subtitle"
+        },
+        {
+          "type": "textarea",
+          "id": "description",
+          "label": "Caption",
+          "default": "Help guide customers to the products they're looking for by featuring collections on your homepage"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "category": "Collection",
+      "name": "Collection list",
+      "blocks": [
+        { "type": "collection" },
+        { "type": "collection" },
+        { "type": "collection" }
+      ]
+    }
+  ]
+}
+
+{% endschema %}

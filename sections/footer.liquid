@@ -1,0 +1,231 @@
+{% if settings.mailing-list %}
+   {% if settings.brand_logo %}
+	<div class="brand_log_wrapper">
+      <img align="center" alt="{{ settings.brand_logo | escape }}" src="{{ settings.brand_logo | img_url: "2000x" }}" />  
+    </div>
+   {% endif %}
+  <div class="mailing-list">
+    
+    <div class="mailing-list-wrapper">
+	
+    
+    {% if settings.footer-headers %}
+    <h4 class="section-title" style="color: #af9e59 !important;">Get our colourful news…</h4>
+    {% endif %}
+
+    {% if settings.mailing-list-platform == 'mailchimp' or settings.mailing-list-platform == 'campaign-monitor' %}
+    <form action="{{ settings.mailing-list-action-url }}" method="post" name="{% if settings.mailing-list-platform == 'mailchimp' %}mc-embedded-subscribe-form{% endif %}" target="_blank">
+
+      {% if settings.mailing-list-platform == 'mailchimp' %}
+      <input class="mailing-list-email" name="EMAIL" type="email" placeholder="your@email.com" value="">
+      {% endif %}
+
+      {% if settings.mailing-list-platform == 'campaign-monitor' %}
+      <input id="fieldEmail" class="mailing-list-email" name="{{ settings.campaign-monitor-name }}" type="email" placeholder="{{ 'general.general.email_placeholder' | t }}" required />
+      {% endif %}
+
+      <div class="mailing-list-submit">
+        <input class="submit" name="subscribe" type="submit" value="Send colour to my inbox">
+      </div>
+
+    </form>
+    {% else %}
+
+    {% form 'customer' %}
+    <input class="mailing-list-email" name="contact[email]" type="email" placeholder="your@email.com" value="">
+    <input type="hidden" id="contact_tags" name="contact[tags]" value="prospect,newsletter"/>
+    <div class="mailing-list-submit">
+      <input class="submit" name="subscribe" type="submit" value="{{ 'layout.footer.newsletter_subscribe' | t }}">
+    </div>
+    {% endform %}
+
+    <div class="modal-wrapper modal-mailing-list">
+      <div class="modal">
+        <h3 class="section-title">{{ settings.mailing-list-modal-title }}</h3>
+        <p>{{ settings.mailing-list-modal-description }}</p>
+        <span class='button dismiss'>{{ settings.mailing-list-modal-button-text }}</span>
+      </div>
+    </div>
+
+    {% endif %}
+    </div>
+
+  </div>
+
+
+<footer class="main-footer">
+  
+  
+  
+
+  {% assign linklistCount = 0 %}
+  {% for i in (1..3) %}
+  {% capture linklistOption %}footer-linklist-{{ i }}{% endcapture %}
+  {% capture linklist %}{{ settings[linklistOption] }}{% endcapture %}
+
+  {% if linklist.size > 0 %}
+  {% assign linklistCount = linklistCount | plus: 1 %}
+  {% endif %}
+  {% endfor %}
+
+  {% if settings.mailing-list or linklistCount > 0 or settings.footer-text-content != blank %}
+  <div class="upper-footer">
+   
+
+    {% if settings.footer-text-content != blank %}
+    <div class="footer-blurb">
+      {% if settings.footer-headers %}
+      <h4 class="section-title">{{ settings.footer-text-title }}</h4>
+      {% endif %}
+      <div class="rte">{{ settings.footer-text-content }}</div>
+
+
+  </div>
+  {% endif %}
+
+  {% for i in (1..3) %}
+
+  {% capture linklistOption %}footer-linklist-{{ i }}{% endcapture %}
+  {% capture linklist %}{{ settings[linklistOption] }}{% endcapture %}
+
+  {% if linklists[linklist].links.size > 0 %}
+  <div class="footer-linklist">
+    {% if settings.footer-headers %}
+    <h4 class="section-title" style="color: #af9e59 !important;">{{ linklists[linklist].title }}</h4>
+    {% endif %}
+
+  <!--  <ul>
+      {% for link in linklists[linklist].links %}
+      <li><a class="{% include 'social-check' %}" href="{{ link.url }}" {% if link.url contains 'http://' or link.url contains 'https://' %}target="_blank"{% endif %}>{{ link.title }}</a></li>
+      {% endfor %}
+    </ul>
+ -->
+    <ul class='list-footer-left'>
+       <li><a class="{% include 'social-check' %}" href="{{ linklists[linklist].links[0].url }}" {% if linklists[linklist].links[0].url contains 'http://' or linklists[linklist].links[0].url contains 'https://' %}target="_blank"{% endif %}>{{ linklists[linklist].links[0].title }}</a></li>
+       <li><a class="{% include 'social-check' %}" href="{{ linklists[linklist].links[1].url }}" {% if linklists[linklist].links[1].url contains 'http://' or linklists[linklist].links[1].url contains 'https://' %}target="_blank"{% endif %}>{{ linklists[linklist].links[1].title }}</a></li>
+     
+      
+      <li><a class="" href="/pages/terms-of-use" >Terms of Use</a></li>
+      
+  
+    </ul>
+     <ul class='list-footer-right'>
+       <li><a class="{% include 'social-check' %}" href="{{ linklists[linklist].links[2].url }}" {% if linklists[linklist].links[2].url contains 'http://' or linklists[linklist].links[2].url contains 'https://' %}target="_blank"{% endif %}>{{ linklists[linklist].links[2].title }}</a></li>
+       <li><a class="{% include 'social-check' %}" href="{{ linklists[linklist].links[3].url }}" {% if linklists[linklist].links[3].url contains 'http://' or linklists[linklist].links[3].url contains 'https://' %}target="_blank"{% endif %}>{{ linklists[linklist].links[3].title }}</a></li>
+     
+    </ul>
+  </div>
+   
+  {% endif %}
+
+  {% endfor %}
+
+  
+  {% endif %}
+    <div class="footer-center-col">
+      <div class="footer-logo">
+        <img class="logo-regular" alt="{{ shop.name | escape }}" src="{{ settings.change_footer_logo | img_url: '400x' }}">
+      </div>
+      <div class="Follow-us">
+             Follow us</div>
+            <ul id="socials" class="share-buttons">
+
+              {% comment %}
+            <li><a href="{{ settings.footer-fcb-text-title }}" target="_blank"><i class="fa fa-facebook"></i>
+              </a>
+            </li> 
+
+            <li><a href="{{ settings.footer-tw-text-title }}" target="_blank"><i class="fa fa-twitter"></i>
+              </a>
+            </li>
+            <li><a href="{{ settings.footer-pi-text-title }}" target="_blank"><i class="fa fa-pinterest"></i>
+              </a>
+            </li>
+            <li><a href="{{ settings.footer-in-text-title }}" target="_blank"><i class="fa fa-instagram"></i>
+              </a>
+            </li>
+              {% endcomment %}
+              {% if settings.facebook_img %}
+            <li><a href="{{ settings.footer-fcb-text-title }}" target="_blank"><img class="logo-regular" alt="{{ settings.facebook_img | escape }}" src="{{ settings.facebook_img | img_url: '100x' }}">
+              </a>
+            </li> 
+            {% endif %}
+            {% if settings.twitter_img %}
+            <li><a href="{{ settings.footer-tw-text-title }}" target="_blank"><img class="logo-regular" alt="{{ settings.twitter_img | escape }}" src="{{ settings.twitter_img | img_url: '100x' }}">
+              </a>
+            </li>
+            {% endif %}
+            {% if settings.pinterest_img %}
+            <li><a href="{{ settings.footer-pi-text-title }}" target="_blank"><img class="logo-regular" alt="{{ settings.pinterest_img | escape }}" src="{{ settings.pinterest_img | img_url: '100x' }}">
+              </a>
+            </li>
+            {% endif %}
+            {% if settings.instagram_img %}
+            <li><a href="{{ settings.footer-in-text-title }}" target="_blank"><img class="logo-regular" alt="{{ settings.instagram_img | escape }}" src="{{ settings.instagram_img | img_url: '100x' }}">
+              </a>
+            </li>
+            {% endif %}
+          </ul>
+      </div>
+    <!-- socials -->
+    <!-- start of copyright -->
+      {% capture year %}
+  {{ "now" | date: "%Y" }}
+  {% endcapture %}
+  <div class="copyright-wrapper">
+    <p class="copyright" role="contentinfo">Copyright © 
+  {{ 'now' | date: "%Y" }}
+
+   Colourbox.</p>
+<!--    <p class="copyright" role="contentinfo">{{ 'layout.footer.copyright_html' | t: year: year, shop_name: shop.name }}</p>
+    <!-- <p class="attribution">Grid theme by <a href="http://pixelunion.net">Pixel Union</a>. {{ powered_by_link | replace: "shopify.com", "shopify.com/?ref=pixel-union" }}.</p> -->
+  </div>
+    
+    
+  </div>
+{% endif %}
+ <!-- end -->
+<div class="sub-footer">
+
+<div class="payment-options">
+    {% comment %}<img align="center" alt="{{ shop.name | escape }}" src="{{ 'payfast_colour_EFT.png' | asset_url }}" />{% endcomment %}
+  <img align="center" alt="{{ settings.payment_image | escape }}" src="{{ settings.payment_image | img_url: "1000x" }}" />
+  	
+  </div>
+
+
+  {% if shop.enabled_payment_types.size > 0 and settings.footer-payment-options %}
+  {% comment %}<ul class="payment-options">
+    {% for type in shop.enabled_payment_types %}
+    <li class="payment-icon {{ type | replace: '_','-' }}"></li>
+    {% endfor %}
+  </ul>{% endcomment %}
+  {% endif %}
+
+
+</div>
+
+</footer>
+{% style %}
+  #shopify-section-footer{
+    background: url("{{ settings.footer_bg_img | img_url: '2000x' }}");
+	background-repeat: no-repeat;
+	background-size: cover;
+  }
+  #shopify-section-footer .brand_log_wrapper{
+    border-bottom: 1px solid #af9e59;
+    margin: 0 auto;
+    max-width: 1300px;
+  }
+  .mailing-list-wrapper {
+    border-top: none !important;
+  }
+  .upper-footer{
+	border-top: 1px solid #af9e59;
+  }
+  .payment-options{
+	border-top: 1px solid #af9e59;
+	padding-top: 30px;
+	padding-bottom: 30px;
+  }
+{% endstyle %}

@@ -1,0 +1,53 @@
+{% layout none %}
+
+{% paginate search.results by 48 %}
+{% assign totalresults = 0 | plus: 0 %}
+{% capture results %}
+  {% for item in search.results %}		
+		{% capture incollections %}
+
+		 	{% for coll in item.collections %}
+             { 
+              "id" : {{ coll.id | json }},
+              "handle" : {{ coll.handle | json }},
+              "title" : {{ coll.title | json }}
+			 }
+			 {% unless forloop.last %},{% endunless%}
+		 {% endfor %}
+		{% endcapture %}
+
+          
+          {{ item | json }}{% unless forloop.last %},{% endunless%}
+          
+
+       {% capture totalresults %}{{ totalresults | plus:1 }}{% endcapture %}
+
+  {% endfor %}
+{% endcapture %}
+
+{% capture allsearchterms %}
+		 
+		{% assign searchterms = search.terms | split: ' ' %}
+		{% for terms in searchterms %}
+          {% assign term = terms | split: ':' %}
+          { 
+              "term" : 
+                        {
+                            "key" : {{ term[0] | json }},
+                            "value" : {{ term[1] | json }}					
+                        }
+                        
+          } {% unless forloop.last %},{% endunless%}
+	    {% endfor%}
+	
+{% endcapture %}
+
+{
+  "total_results" : {{ search.results_count }},
+  "total_results_per_page" : 250,
+  "matches_on_page" : {{ totalresults }},
+  "search_performed" : {{ search.performed }},
+  "search_terms" : [{{ allsearchterms }}],
+  "results" : [{{ results }}]
+}
+{% endpaginate %}

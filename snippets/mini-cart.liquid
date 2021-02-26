@@ -1,0 +1,60 @@
+<div class="mini-cart {% if cart.item_count == 0 %}empty{% endif %}">
+  <div class="arrow"></div>
+
+  <div class="mini-cart-item-wrapper">
+    {% for item in cart.items %}
+      <article class="mini-cart-item" data-variant="{{ item.variant.id }}" data-url="{{ item.url }}" data-title="{{ item.product.title }}">
+
+        <figure class="mini-cart-item-image">
+          <a href="{{ item.url }}">
+            {%
+              include 'rimg',
+              img: item.image,
+              size: '100x100'
+            %}
+          </a>
+        </figure>
+
+        <div class="mini-cart-item-details">
+          <p class="mini-cart-item-quantity">{{ 'layout.mini_cart.quantity' | t }}: <span>{{ item.quantity }}</span></p>
+          <p class="mini-cart-item-title">
+            <a href="{{ item.url }}">
+              {{ item.product.title }} {% unless item.variant.title == 'Default Title' %}({{ item.variant.title }}){% endunless %}
+            </a>
+          </p>
+
+          {% if item.properties %}
+            {% for property in item.properties %}
+              {% unless property.last == blank %}
+                <p class="mini-cart-item-property">
+                  <span class="property-label">{{ property.first }}:</span>
+                  {% if property.last contains '/uploads/' %}
+                    <a class="property-image" href="{{ property.last }}">{{ property.last | split: '/' | last }}</a>
+                  {% else %}
+                    <span class="property-value">{{ property.last }}</span>
+                  {% endif %}
+                </p>
+              {% endunless %}
+            {% endfor %}
+          {% endif %}
+
+          <p class="mini-cart-item-price"><span class="money">{% include 'money', value: item.price %}</span></p>
+        </div>
+
+      </article>
+    {% endfor %}
+  </div>
+
+  <div class="mini-cart-footer">
+    <a class="button secondary" href="/cart">{{ 'layout.mini_cart.view_cart' | t }}</a>
+    <a class="button mini-cart-checkout-button" href="/checkout">
+      {% if section.settings.enable_checkout_lock_icon %}
+        {% include 'icons',
+          id: 'checkout-lock',
+        %}
+      {% endif %}
+      <span>{{ 'layout.mini_cart.checkout' | t }}</span>
+    </a>
+  </div>
+
+</div>

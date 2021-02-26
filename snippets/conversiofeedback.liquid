@@ -1,0 +1,10 @@
+{% assign widgetSlug = conversiofeedback %}
+
+<div class="rf-feedback" data-slug="{{ widgetSlug }}"></div>
+
+<script>
+if (typeof window.ConversioData === 'undefined') {
+  window.ConversioData = {};
+}
+window.ConversioData.feedback = true;
+</script>

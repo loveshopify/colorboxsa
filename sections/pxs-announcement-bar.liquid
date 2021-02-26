@@ -1,0 +1,101 @@
+<script
+  type="application/json"
+  data-section-type="pxs-announcement-bar"
+  data-section-id="{{ section.id }}"
+></script>
+
+{% assign enable_announcement = section.settings.show_announcement %}
+{% assign homepage_only = section.settings.announcement_home_only %}
+{% assign show_announcement = false %}
+
+{% if enable_announcement and homepage_only == false %}
+  {% assign show_announcement = true %}
+{% endif %}
+
+{% if enable_announcement and homepage_only and template.name == 'index' %}
+  {% assign show_announcement = true %}
+{% endif %}
+
+{% if section.settings.announcement_text == blank %}
+  {% assign show_announcement = false %}
+{% endif %}
+
+{% unless show_announcement %}
+  {% break %}
+{% endunless %}
+
+<a
+  class="pxs-announcement-bar"
+  style="
+    color: {{ section.settings.announcement_color }};
+    background-color: {{ section.settings.announcement_background }}
+  "
+  {% if section.settings.announcement_link != blank %}
+    href="{{ section.settings.announcement_link }}"
+  {% endif %}
+>
+  {% if section.settings.announcement_text_mobile != blank %}
+    <span class="pxs-announcement-bar-text-mobile">
+      {{ section.settings.announcement_text_mobile | escape }}
+    </span>
+  {% endif %}
+
+  {% if section.settings.announcement_text != blank %}
+    <span class="pxs-announcement-bar-text-desktop">
+      {{ section.settings.announcement_text | escape }}
+    </span>
+  {% endif %}
+</a>
+
+
+
+{% schema %}
+{
+  "name": "Announcement bar",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_announcement",
+      "label": "Show announcement",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "announcement_home_only",
+      "label": "Show on home page only",
+      "default": false
+    },
+    {
+      "id": "announcement_text",
+      "type": "textarea",
+      "label": "Text",
+      "default": "Call attention to a special discount, feature, or promotion here."
+    },
+    {
+      "id": "announcement_text_mobile",
+      "type": "textarea",
+      "label": "Text (mobile)",
+      "default": "Use less text on mobile!",
+      "info": "Use this option if you want to display alternate text in mobile. Recommended for shortening announcement text to make suitable for mobile."
+    },
+    {
+      "id": "announcement_link",
+      "type": "url",
+      "label": "Link"
+    },
+    {
+      "id": "announcement_color",
+      "type": "color",
+      "label": "Text color",
+      "default": "#ffffff"
+    },
+    {
+      "id": "announcement_background",
+      "type": "color",
+      "label": "Background color",
+      "default": "#000000"
+    }
+  ]
+}
+
+{% endschema %}

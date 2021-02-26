@@ -1,0 +1,29 @@
+{% if settings.twitter-widget-id != blank %}
+
+  <div class="twitter-widget {% if settings.instagram-widget %}has-instagram{% endif %}">
+    <div class="twitter-tweet-wrapper">
+      <div class="twitter-tweet"></div>
+    </div>
+
+    {% if settings.twitter-username != blank %}
+      {% capture twitterLink %}
+        <a href="http://twitter.com/{{ settings.twitter-username }}">@{{ settings.twitter-username }}</a>
+      {% endcapture %}
+      <div class="twitter-follow">{{ 'general.social.follow_on_twitter_html' | t: twitter_link: twitterLink }}</div>
+    {% endif %}
+  </div>
+
+{% else %}
+
+  <div class="twitter-widget onboarding">
+    {% capture settingsPageLink %}
+      <a href="{{ shop.url }}/admin/themes/{{ theme.id }}/settings">{{ 'onboarding.general.settings_page_link' | t | downcase }}</a>
+    {% endcapture %}
+    <div class="twitter-tweet">{{ 'onboarding.twitter_widget.subtitle_html' | t: settings_page_link: settingsPageLink }}</div>
+    {% capture twitterLink %}
+      <a href="http://twitter.com/pixelunion">@pixelunion</a>
+    {% endcapture %}
+    <div class="twitter-follow">{{ 'general.social.follow_on_twitter_html' | t: twitter_link: twitterLink }}</div>
+  </div>
+
+{% endif %}

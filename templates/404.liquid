@@ -1,0 +1,15 @@
+<h1 class="page-title">
+  {{ 'general.404.header' | t }}
+</h1>
+
+{% include 'breadcrumbs' %}
+
+<div class="four-oh-four rte">
+  {% capture searchLink %}
+    <a href="/search">{{ 'general.404.search_link' | t }}</a>
+  {% endcapture %}
+  {% capture collectionLink %}
+    <a href="/collections/all">{{ 'general.404.collection_link' | t }}</a>
+  {% endcapture %}
+  <p>{{ 'general.404.message_html' | t: search_link: searchLink, collection_link: collectionLink }}</p>
+</div>

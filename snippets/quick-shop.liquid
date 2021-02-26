@@ -1,0 +1,70 @@
+
+<section class="quick-shop-wrapper">
+  <div class="quick-shop">
+    <div class="product-images">
+      <div class="product-main-image">
+        {% if settings.product-enable-zoom %}
+          <div class="product-zoom"></div>
+        {% endif %}
+      </div>
+
+      <div class="product-thumbnails-outer-wrapper">
+        <div class="product-thumbnails-wrapper">
+          <div class="product-thumbnails"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="product-details-wrapper">
+      <div class="product-details"></div>
+    </div>
+   
+  </div>  
+ 
+</section>
+
+<script>
+  function customQuickShop(url){
+   
+    jQuery('.quick-shop').html(' ');
+    $.get( url, function( data ) {
+ 
+      
+      
+      $('.quick-shop').html(data).promise().done(function(){          
+        
+          jQuery('.quick-shop').html(jQuery('.main-product-wrap').html());
+          jQuery('.product-description').html(' ');
+          jQuery('.product-description').hide();
+        });
+      
+          
+       });  
+ 
+   /*  jQuery('.quick-shop').html(' ');
+    $.get( url, function( data ) {
+ 
+       jQuery('.quick-shop').append(data);
+      
+        var html = jQuery('.main-product-wrap').html();
+        jQuery('.quick-shop').html(' ');
+        jQuery('.quick-shop').html(html);
+      
+          
+       });  */
+    
+   /*  jQuery('.quick-shop').html(' '); 
+     $.get( url, function( data ) {
+ 
+       var parser  = new DOMParser();
+       var htmlDoc = parser.parseFromString(data, "text/html");
+       var product = htmlDoc.getElementsByClassName('main-product-wrap');  
+       
+       jQuery('.quick-shop').html(product); 
+        
+         
+       });  */
+    
+  }
+  
+</script>

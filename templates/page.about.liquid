@@ -1,0 +1,150 @@
+
+<img class="custom-banner-collection new-cusBann-collection" alt="{{ shop.name | escape }}" src="{{ '190624_About-Banner.jpg' | asset_url }}">
+
+<div class="about-us-section">
+
+<div class="about-left">
+<h1 class="page-title">{{ page.title }}</h1>
+
+{% include 'breadcrumbs' %}
+
+<div class="page-content rte">
+  {{ page.content }}
+</div>
+
+</div>
+
+<div class="about-right">
+
+{% form 'contact' %}
+
+
+  {% if form.errors %}
+    <div class="error-message"><span>{{ 'general.contact.error' | t }}</span></div>
+  {% endif %}
+
+  {% if form.posted_successfully? %}
+    <div class="success-message">{{ 'general.contact.success' | t }}</div>
+  {% else %}
+    <div class="field-wrap name">
+      <h1 class="page-title">Get in touch</h1>
+      <p>We care about our customers and would love to speak you.<br>
+        Feel free to call us or simply complete the enquiry form.</p>
+      
+<p><strong>Morningside Store:</strong><br>
+Morningside Shopping Centre
+Cnr of Rivonia and Outspan Roads,
+Morningside, Sandton, 2196<br>
+Shop U23A<br>
+Tel: 084 912 4444</p>     
+<p>    
+<strong>Monday - Saturday:</strong> 9am-6pm<br>
+<strong>Sunday and Public Holidays:</strong> 9am-3pm
+</p>      
+      
+<p><strong>Melrose Arch Store:</strong><br>
+Shop H68EF, Slip Street Piazza<br>
+Melrose Arch Mall<br>
+Tel: 065 532 1327
+</p>
+<p>    
+<strong>Monday - Saturday:</strong> 9am-6pm<br>
+<strong>Sunday and Public Holidays:</strong> 10am-4pm
+</p> 
+      
+
+      
+      <label>{{ 'general.general.name' | t }}</label>
+      <input type="text" placeholder="{{ 'general.general.name_placeholder' | t }}" value="" name="contact[name]" class="{% if form.errors contains "author" %}error{% endif %}">
+    </div>
+
+    <div class="field-wrap email">
+      <label>{{ 'general.general.email' | t }}</label>
+      <input type="text" placeholder="{{ 'general.general.email_placeholder' | t }}" value="" name="contact[email]" class="{% if form.errors contains "email" %}error{% endif %}">
+    </div>
+
+    <div class="field-wrap message">
+      <label>{{ 'general.general.message' | t }}</label>
+      <textarea name="contact[body]" class="{% if form.errors contains "body" %}error{% endif %}"></textarea>
+    </div>
+
+    <input type="submit" value="{{ 'general.contact.submit' | t }}">
+  {% endif %}
+
+{% endform %}
+
+</div>
+  
+</div>
+
+<div class="gmaps-section">
+  <div class="gmaps-container">
+<h1 class="page-title">Drop in to visit us</h1>
+<p><iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d14334.000464904506!2d28.0600589!3d-26.0825885!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x6a52bd98aed2fe7b!2sMorningside+Shopping+Centre!5e0!3m2!1sen!2sza!4v1562051900160!5m2!1sen!2sza" width="1120" height="425" frameborder="0" style="border: 0;" allowfullscreen=""></iframe></p>
+  </div>
+</div>
+
+
+
+  {% if settings.instagram-widget or settings.twitter-widget %}
+    <div class="social-widget-wrapper">
+
+      {% if settings.social-widget-title != blank %}
+        <h2 class="section-title">{{ settings.social-widget-title }}</h2>
+      {% endif %}
+
+      {% if settings.social-widget-blurb != blank %}
+        <div class="social-widget-blurb rte">
+          {{ settings.social-widget-blurb }}
+        </div>
+      {% endif %}
+
+      {% if settings.instagram-widget %}
+        {% include 'instagram-widget' %}
+      {% endif %}
+
+      {% if settings.twitter-widget %}
+        {% include 'twitter-widget' %}
+      {% endif %}
+    </div>
+  {% endif %}
+
+
+
+
+<script>
+
+    $( document ).ready(function() {
+        var photoContainer = $(".instagram-photos");
+
+        url = "https://api.instagram.com/v1/users/self/media/recent?access_token=2158823588.1677ed0.8338278313284feab3baedfcee2582ab&count=3&callback=";
+        
+        $.ajax({
+            type: "GET",
+            dataType: "jsonp",
+            url: url,
+            success: (function(response) {
+                    var i, len, photo, ref, results;
+                    if (response.meta.code === 200) {
+                        ref = response.data;
+                        results = [];
+                        for (i = 0, len = ref.length; i < len; i++) {
+                            photo = ref[i];
+                            results.push(photoContainer.append("<a class='instagram-photo' target='_blank' href='" + photo.link + "'><img src='" + photo.images.low_resolution.url + "'/></a>"));
+                        }
+                        return results;
+                    } else {
+                         $el.remove();
+                        return console.log("Instagram error: " + response.meta.error_message);
+                    }
+            }),
+            error: (function(_this) {
+                return function(response) {
+                    _this.$el.remove();
+                    return console.log("Instagram error: " + response.meta.error_message);
+                };
+            })
+        });
+
+    });
+</script>

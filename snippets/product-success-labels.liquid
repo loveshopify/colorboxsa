@@ -1,0 +1,14 @@
+<script
+  type="application/json"
+  data-product-success-labels
+>
+  {
+    "cartLink": {{ 'products.product.cart_link' | t | json }},
+    "continueLink": {{ 'products.product.continue_link' | t | json }},
+    "checkoutLink": {{ 'products.product.checkout_link' | t | json }},
+    "cartHeaderText": {{ 'layout.header.cart' | t | json }},
+    "cartQuantityText": {{ 'layout.mini_cart.quantity' | t | json }},
+    "cartPlaceholderImg": {{ 'no-image.svg' | asset_url | json }}
+  }
+</script>
+

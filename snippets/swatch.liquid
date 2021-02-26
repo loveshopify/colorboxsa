@@ -1,0 +1,290 @@
+{% comment %}
+  Set the extension of your color files below. Use 'png', 'jpeg', 'jpg' or 'gif'.
+{% endcomment %}
+
+{% assign file_extension = 'png' %}
+
+{% if swatch == blank %}
+<div class="swatch error">
+  <p>You must include the snippet swatch.liquid with the name of a product option.</p> 
+  <p>Use: <code>{% raw %}{% include 'swatch' with 'name of your product option here' %}{% endraw %}</code></p>
+  <p>Example: <code>{% raw %}{% include 'swatch' with 'Color' %}{% endraw %}</code></p>
+</div>
+{% else %}
+
+{% assign found_option = false %}
+{% assign is_color = false %}
+{% assign option_index = 0 %}
+{% assign swimwear = false %}
+{% assign swimwearoption = false %}
+{% assign slipper = false %}
+{% assign slipper = false %}
+ 
+{% for option in product.options %}
+            {% if option =='swimwear' %}       
+             {% assign swimwear = true %}  
+            {% assign swimwearoption = option %}
+      	  {% endif %}
+        {% if option =='slipper' %}       
+             {% assign slipper = true %}  
+            {% assign slipperoption = option %}
+      	  {% endif %}
+ {% endfor %}
+<script>
+  var soldouturl = "{{ 'soldout.png' | asset_url }}" ;
+         swimwearFlag = false;
+         slipperFlag = false;
+           
+ </script>
+{%if swimwear == true or slipper == true %}
+   {% for option in product.options %}
+            {% if option =='swimwear' %}
+              <script>
+                  swimwearFlag = true; 
+                  swimwearData = [];
+                 {% for variant in product.variants %}              
+                {% unless variant.title contains '% Off' %}
+                        swimwearData.push( new Array(
+                          '{{ variant.title }}','{{ variant.url }}','{{ variant.id }}','{{variant.price  | money }}','{{variant.available}}'
+                        ));               
+  {% endunless %}
+                {% endfor %}                     
+              </script>      
+      	 {% endif %}
+ {% if option =='slipper' %}
+              <script>
+                  slipperFlag = true; 
+                  slipperData = [];
+                 {% for variant in product.variants %}     
+                {% unless variant.title contains '% Off' %}
+                        slipperData.push( new Array(
+                          '{{ variant.title }}','{{ variant.url }}','{{ variant.id }}','{{variant.price  | money }}','{{variant.available}}'
+                        ));               
+  {% endunless %}
+               {% endfor %}                     
+              </script>      
+      	 {% endif %}
+        {% endfor %}
+
+
+{% else %}
+
+{% for option in product.options %}
+  {% if option == swatch %}
+    {% assign found_option = true %}
+    {% assign option_index = forloop.index0 %}
+    <style>
+      label[for="product-select-option-{{ option_index }}"] { display: none; }
+      #product-select-option-{{ option_index }} { display: none; }
+      #product-select-option-{{ option_index }} + .custom-style-select-box { display: none !important; }
+    </style>
+    <script>jQuery(window).load(function() { $('.selector-wrapper:eq({{ option_index }})').hide(); });</script>
+    {% assign downcased_option = swatch | downcase %}
+    {% if downcased_option contains 'color' or downcased_option contains 'colour' %}
+      {% assign is_color = true %}
+    {% endif %}
+  {% endif %}
+{% endfor %}
+
+{% unless found_option %}
+<div class="swatch error">
+  <p>You included the snippet swatch.liquid with the name of a product option — <code>'{{ swatch }}'</code> — that does not belong to your product.</p>
+  <p>Use <code>{% raw %}{% include 'swatch' with 'name of your product option here' %}{% endraw %}</code></p>
+  <p>Example: <code>{% raw %}{% include 'swatch' with 'Color' %}{% endraw %}</code></p>
+  <p><strong>This is case-sensitive!</strong> Do not put in <code>'color'</code> if your product option name is <code>'Color'</code>.</p>
+</div>
+{% else %}
+<div class="swatch clearfix" data-option-index="{{ option_index }}">
+  <div class="header">{{ swatch }}</div>
+  {% assign values = '' %}
+  {% for variant in product.variants %}
+  {% unless variant.title contains '% Off' %}
+    {% assign value = variant.options[option_index] %}
+    {% unless values contains value %}
+      {% assign values = values | join: ',' %}
+      {% assign values = values | append: ',' | append: value %} 
+      {% assign values = values | split: ',' %}
+      <div data-value="{{ value | escape }}" class="removeCO swatch-element {% if is_color %}color {% endif %}{{ value | handle }} {% if variant.available %}available{% else %}soldout{% endif %}">
+        {% if is_color %}
+        <div class="tooltip">{{ value }}</div>
+        {% endif %}
+        <input id="swatch-{{ option_index }}-{{ value | handle }}" type="radio" name="option-{{ option_index }}" value="{{ value | escape }}"{% if forloop.first %} checked{% endif %} {% unless variant.available %}disabled{% endunless %} />
+        {% if is_color %}
+        <label for="swatch-{{ option_index }}-{{ value | handle }}" style="background-color: {{ value | split: ' ' | last | handle }}; background-image: url({{ value | handle | append: '.' | append: file_extension | asset_url }})">
+          <img class="crossed-out" src="{{ 'soldout.png' | asset_url }}" />
+        </label>
+        {% else %}
+        <label for="swatch-{{ option_index }}-{{ value | handle }}">
+          {{ value }}
+          <img class="crossed-out" src="{{ 'soldout.png' | asset_url }}" />
+        </label>
+        {% endif %}
+      </div>
+    {% endunless %}
+    {% if variant.available %}
+    <script>
+      jQuery('.swatch[data-option-index="{{ option_index }}"] .{{ value | handle }}').removeClass('soldout').addClass('available').find(':radio').removeAttr('disabled');
+    </script>
+    {% endif %}
+  {% endunless %}
+  {% endfor %}
+</div>
+
+{% endunless %}
+
+{% endif %}
+{% endif %}
+<script>
+  
+  var htmlVariant ={
+   renderHtmlBody: function(swatchNum,variantTitle,avilable ){
+       var html = ''; 
+           if(avilable =='true'){
+            html =   '<div data-value="'+ variantTitle +'" class=" removeAll swatch-element '+ variantTitle +'">'
+           +' <input id="swatch-'+swatchNum+'-'+ variantTitle +'" type="radio" name="option-'+swatchNum+'" value="'+ variantTitle +'" />'
+            +'<label onclick="removeUserSelect(\'swatch-'+swatchNum+'-'+ variantTitle +'\')" for="swatch-'+swatchNum+'-'+ variantTitle +'">'+ variantTitle +'</label>   </div>'; 
+           }else{
+              html =   '<div data-value="'+ variantTitle +'" class=" removeNotAll swatch-element '+ variantTitle +'">'
+           +' <input  id="swatch-'+swatchNum+'-'+ variantTitle +'" type="radio" name="option-'+swatchNum+'" value="'+ variantTitle +'" disabled="disabled" />'
+            +'<label  for="swatch-'+swatchNum+'-'+ variantTitle +'">'
+            +'<img class="removeCO crossed-out" src="'+soldouturl+'" />'
+            + variantTitle +'</label>   </div>';
+           }
+      return html;
+  
+    },
+  renderHtmlHeader(optionName, price,optionClass){
+    return ' <div class="swatch clearfix" data-option-index="1"><div class="header  '+optionClass+' ">'+optionName+
+           '<span>' + price+ '</span></div>';
+  }
+  
+  }  
+    var slipper ={   
+   
+    process: function(){
+      var html = '';	
+      var women = [];
+      var men =[];
+      var kids =[];
+      var women_price = 0;
+      var men_price = 0;
+      var kids_price = 0;
+      for(i =0; i < slipperData.length; i++){
+       
+       var str = slipperData[i][0];
+       var arr = str.split(' ');
+        str = arr[1];
+      ;
+        if(str.toLowerCase() == 'women'){           
+           women_price = slipperData[i][3];
+           women.push(new Array(arr[0],slipperData[i][4]));
+        }else if(str.toLowerCase() == 'men'){
+           men_price = slipperData[i][3];
+           men.push(new Array(arr[0],slipperData[i][4]));
+        }else if(str.toLowerCase() == 'kids'){
+           kids_price = slipperData[i][3];
+           kids.push(new Array(arr[0],slipperData[i][4]));
+        }       
+      
+      }
+ 
+       
+         var body = ''; 
+         var headers = '';
+      if(women.length > 0){
+         headers = htmlVariant.renderHtmlHeader('Women', women_price,'');
+         for(i =0; i < women.length; i++){             
+            body += htmlVariant.renderHtmlBody(0,women[i][0],women[i][1]);       
+         }
+         
+         html += headers + body+'</div>';
+      }
+         body = '';           
+      if(men.length > 0){
+         headers = htmlVariant.renderHtmlHeader('Men', men_price,'');
+         for(i =0; i < men.length; i++){             
+            body += htmlVariant.renderHtmlBody(1,men[i][0],men[i][1]);       
+         }
+         
+         html += headers + body+'</div>';
+      }
+      body = ''; 
+        if(kids.length > 0){
+         headers = htmlVariant.renderHtmlHeader('Kids', kids_price,'');
+         for(i =0; i <kids.length; i++){             
+            body += htmlVariant.renderHtmlBody(2,kids[i][0],kids[i][1]);       
+         }
+         
+         html += headers + body+'</div>';
+      }
+     
+          
+        jQuery('.product-options').append(html);  
+     console.log(html);
+    
+    }
+  
+  }
+var swimwear ={  
+  
+  
+   
+    process: function(){
+      var html = '';	
+      var bottom = [];
+      var top =[];
+      var top_price = 0;
+      var bottom_price = 0;
+      for(i =0; i < swimwearData.length; i++){
+       // console.log(swimwearData[i]);
+       var str = swimwearData[i][0];
+       var arr = str.split(' ');
+       
+        if(arr[1] == 'Bottom'){           
+           bottom_price = swimwearData[i][3];
+           bottom.push(new Array(arr[0],swimwearData[i][4]));
+        }else{
+           top_price = swimwearData[i][3];
+           top.push(new Array(arr[0],swimwearData[i][4]));
+        }       
+      
+      }
+     
+       
+         var body = '';             
+         var headers = htmlVariant.renderHtmlHeader('Top', top_price,'');
+         for(i =0; i < top.length; i++){             
+            body += htmlVariant.renderHtmlBody(0,top[i][0],top[i][1]);       
+         }
+         
+         html = headers + body+'</div>';
+         body = '';           
+         headers = htmlVariant.renderHtmlHeader('Bottom', bottom_price,'optionBottom');
+         for(i =0; i < bottom.length; i++){          
+           body += htmlVariant.renderHtmlBody(1,bottom[i][0],bottom[i][1]);        
+         }
+        
+         html += headers + body+'</div>';
+     
+          
+        jQuery('.product-options').append(html);   
+     
+    
+    }
+  
+  }
+/*  jQuery.post('/cart/add.js', {
+           quantity: 1,          
+          id: swimwearData[i][2]
+         
+         });*/
+if(swimwearFlag == true){
+   swimwear.process();
+  
+  }
+  
+  if(slipperFlag == true){
+   slipper.process();
+  
+  }
+</script>

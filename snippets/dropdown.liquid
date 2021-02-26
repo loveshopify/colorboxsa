@@ -1,0 +1,40 @@
+<ul class="navigation-submenu navigation-submenu-tier2 " data-linklist="{{ link.handle }}">
+  {% for link in link.links %}
+    {%
+      include 'is-dropdown-or-meganav',
+      first_tier_link: link
+    %}
+
+    <li class="{% if is_dropdown %}has-dropdown open-{{ direction }}{% endif %}">
+      <a
+        id="navigation-{{ link.handle }}"
+        class="navigation-menu-link"
+        href="{{ link.url }}"
+        data-linklist-trigger="{{ link.handle }}"
+        {% if is_dropdown %}aria-haspopup{% endif %}
+      >
+        {{ link.title }}
+        {% if is_dropdown %}
+          <span class="navigation-submenu-toggle" tabIndex="0" role="button" aria-controls="navigation-{{ link.handle }}" aria-expanded="false" data-subnav-toggle>
+            {{- arrow_right -}}
+          </span>
+        {% endif %}
+      </a>
+
+      {% if is_dropdown %}
+        <ul class="navigation-submenu navigation-submenu-tier3" data-linklist="{{ link.handle }}">
+          {% for link in link.links %}
+            <li>
+              <a
+                class="navigation-menu-link"
+                href="{{ link.url }}"
+              >
+                {{ link.title }}
+              </a>
+            </li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    </li>
+  {% endfor %}
+</ul>

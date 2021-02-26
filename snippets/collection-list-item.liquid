@@ -1,0 +1,43 @@
+<article class="collections-list-item {% if use_masonry %}masonry-grid-item{% endif %}" {% if use_masonry %}data-masonry-item{% endif %}>
+
+  {% if collection-list-item == 'linklist' %}
+    {% assign link_handle = link.handle %}
+    {% assign collection = collections[link_handle] %}
+  {% endif %}
+
+  <figure class="thumbnail">
+    <a href="{{ collection.url }}">
+      {% if collection.image %}
+        {%
+          include 'rimg',
+          img: collection.image,
+          size: '480x480',
+          crop: 'center',
+          lazy: true
+        %}
+      {% elsif collection.products.first.featured_image %}
+        {%
+          include 'rimg',
+          img: collection.products.first.featured_image,
+          alt: collection.title,
+          size: '480x480',
+          crop: 'center',
+          lazy: true
+        %}
+      {% else %}
+        {{ 'collection-1' | placeholder_svg_tag: 'placeholder-svg' }}
+      {% endif %}
+    </a>
+  </figure>
+
+  <h2 class="collection-title">
+    <a href="{{ collection.url }}">{{ collection.title }}</a>
+  </h2>
+
+  {% if description and collection.description != blank %}
+    <div class="collection-description rte">
+      {{ collection.description | strip_html }}
+    </div>
+  {% endif %}
+
+</article>

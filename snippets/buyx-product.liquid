@@ -1,0 +1,89 @@
+{% assign buyx_option_positon = 9 %}
+{% if buyx-product.options.size > 0 and buyx-product.options[0] == "BuyXDiscount" %}
+	{% assign buyx_option_positon = 0 %}
+{% endif %}
+{% if buyx-product.options.size > 1 and buyx-product.options[1] == "BuyXDiscount" %}
+	{% assign buyx_option_positon = 1 %}
+{% endif %}
+{% if buyx-product.options.size > 2 and buyx-product.options[2] == "BuyXDiscount" %}
+	{% assign buyx_option_positon = 2 %}
+{% endif %}
+
+
+{% assign buyx_select_one_option = false %}
+{% if product.options.size == 1 and product.options[0] != "BuyXDiscount" %}
+	{% assign buyx_select_one_option = true %}
+{% endif %}
+{% if product.options.size == 2 and product.options[1] == "BuyXDiscount" %}
+	{% assign buyx_select_one_option = true %}
+{% endif %}
+
+
+<style>
+  /* selectors without product id */
+
+  label[for="product-select-option-{{buyx_option_positon}}"] {
+  	display: none !important;
+  }
+  #product-select-option-{{buyx_option_positon}} {
+    display: none !important;
+  }
+
+  label[for="productSelect-option-{{buyx_option_positon}}"] {
+  	display: none !important;
+  }
+  #productSelect-option-{{buyx_option_positon}} {
+    display: none !important;
+  }
+
+  .id-product-select-option-{{buyx_option_positon}} {
+    display: none !important;
+  }
+
+
+  /* selectors with product id */
+
+  label[for="product-select-{{product.id}}-option-{{buyx_option_positon}}"] {
+    display: none !important;
+  }
+  #product-select-{{product.id}}-option-{{buyx_option_positon}} {
+    display: none !important;
+  }
+
+
+  label[for="productSelect-{{product.id}}-option-{{buyx_option_positon}}"] {
+    display: none !important;
+  }
+  #productSelect-{{product.id}}-option-{{buyx_option_positon}} {
+    display: none !important;
+  }
+
+  {% if buyx-product.options.size == 1 and buyx-product.options[0] == "BuyXDiscount" %}
+  #productSelect-{{product.id}} {
+    display: none !important;
+  }
+  #product-select-{{product.id}} {
+    display: none !important;
+  }
+  {% endif %}
+
+</style>
+
+
+<script>
+setTimeout(function() {
+  $( "label:contains('BuyXDiscount')" ).css( "display", "none" );
+}, 100)
+setTimeout(function() {
+  $( "label:contains('BuyXDiscount')" ).css( "display", "none" );
+}, 200)
+setTimeout(function() {
+  $( "label:contains('BuyXDiscount')" ).css( "display", "none" );
+}, 300)
+setTimeout(function() {
+  $( "label:contains('BuyXDiscount')" ).css( "display", "none" );
+}, 500)
+setTimeout(function() {
+  $( "label:contains('BuyXDiscount')" ).css( "display", "none" );
+}, 1000)
+</script>

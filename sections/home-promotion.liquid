@@ -1,0 +1,203 @@
+{% assign has_cta = false %}
+{% if section.settings.button_text != blank and section.settings.button_url != blank %}
+  {% assign has_cta = true %}
+{% endif %}
+
+{% assign has_content = false %}
+{% if section.settings.title != blank or section.settings.subtitle != blank or has_cta %}
+  {% assign has_content = true %}
+{% endif %}
+
+{% assign has_image = false %}
+{% assign has_retina_image = false %}
+{% assign image_url = '' %}
+{% assign image_retina_url = '' %}
+{% if section.settings.image %}
+  {% assign has_image = true %}
+  {% assign image_url = section.settings.image | img_url: '1440x640' %}
+
+  {% if section.settings.image.width >= 2880 %}
+    {% assign has_retina_image = true %}
+    {% assign image_retina_url = section.settings.image | img_url: '1440x640', scale: 2 %}
+  {% endif %}
+{% endif %}
+
+<script
+  type="application/json"
+  data-section-type="dynamic-promotion"
+  data-section-id="{{ section.id }}"
+  data-section-data>
+  {
+    "layout": "{{ section.settings.layout }}"
+  }
+</script>
+
+<section>
+
+  {%- capture classes -%}
+    home-promotion
+    home-promotion-{{ section.id }}
+    home-promotion-layout-{{ section.settings.layout }}
+    home-promotion-align-{{ section.settings.text_alignment }}
+
+    {%- if has_content -%}
+      home-promotion-has-content
+    {%- endif -%}
+  {%- endcapture -%}
+
+  <article class="{{ classes }}" data-promotion-wrapper>
+    {%- if has_image -%}
+      <div
+        class="home-promotion-image-container"
+        data-promotion-image-container
+      >
+        <img
+          class="home-promotion-image"
+          src="{{ image_url }}"
+          {%- if has_retina_image -%}
+            srcset="{{ image_retina_url }} 2x"
+          {%- endif -%}
+          alt="{{ section.settings.image.alt | escape }}"
+          data-promotion-image
+        >
+      </div>
+    {%- endif -%}
+
+    {%- if has_content -%}
+      <div class="home-promotion-content" data-promotion-content>
+        {%- if section.settings.title != blank -%}
+          <h2 class="home-promotion-title">
+            {{ section.settings.title | escape }}
+          </h2>
+        {%- endif -%}
+
+        {%- if section.settings.subtitle != blank -%}
+          <p class="home-promotion-subtitle">
+            {{ section.settings.subtitle | escape }}
+          </p>
+        {%- endif -%}
+
+        {% if has_cta %}
+          <a
+            class="home-promotion-button button"
+            href="{{ section.settings.button_url }}"
+          >
+            {{ section.settings.button_text | escape }}
+          </a>
+        {% endif %}
+      </div>
+    {% endif %}
+  </article>
+
+  <style>
+    .home-promotion-{{ section.id }} .home-promotion-title,
+    .home-promotion-{{ section.id }} .home-promotion-subtitle {
+      color: {{ section.settings.text_color }};
+    }
+
+    {% if has_content and has_image %}
+      .home-promotion-{{ section.id }} .home-promotion-image-container {
+        background-image: url('{{ image_url }}');
+      }
+
+      {% if has_retina_image %}
+        @media (-webkit-min-device-pixel-ratio: 1.5) and (min-width: 1024px),
+          (min-resolution: 144dpi) and (min-width: 1024px) {
+          .home-promotion-{{ section.id }} .home-promotion-image-container {
+            background-image: url('{{ image_retina_url }}');
+          }
+        }
+      {% endif %}
+    {% endif %}
+  </style>
+</section>
+
+{% schema %}
+{
+  "name": "Promotion",
+  "class": "home-promotion-section",
+  "settings": [
+    {
+      "type": "select",
+      "id": "layout",
+      "label": "Layout",
+      "options": [
+        {
+          "value": "content-width",
+          "label": "Content width"
+        },
+        {
+          "value": "full-width",
+          "label": "Full width"
+        },
+        {
+          "value": "full-screen",
+          "label": "Full screen"
+        }
+      ],
+      "default": "full-width"
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "Align text",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#000000"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Promotion"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subheading",
+      "default": "Draw attention to sales, new products and other great offers"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button text"
+    },
+    {
+      "type": "url",
+      "id": "button_url",
+      "label": "Button link"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Background image",
+      "info": "2880 x 1280px recommended"
+    }
+  ],
+  "presets": [
+    {
+      "category": "Promotional",
+      "name": "Promotion"
+    }
+  ]
+}
+
+{% endschema %}

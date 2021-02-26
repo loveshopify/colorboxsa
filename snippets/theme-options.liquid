@@ -1,0 +1,90 @@
+<script>
+  var Theme = {};
+  Theme.version = "4.4.11";
+
+  Theme.currency = '{{ shop.currency }}';
+  Theme.defaultCurrency = '{{ settings.default_currency }}';
+  Theme.moneyFormat = {{ shop.money_format | strip_html | json }};
+  Theme.moneyFormatCurrency = {{ shop.money_with_currency_format | strip_html | json }};
+
+  Theme.addToCartText = "{{ 'products.product.add_to_cart' | t | escape }}";
+  Theme.soldOutText = "{{ 'products.product.sold_out' | t | escape }}";
+  Theme.unavailableText = "{{'products.product.unavailable' | t | escape }}";
+  Theme.processingText = "{{ 'products.product.processing' | t | escape }}";
+  Theme.pleaseSelectText = "{{ 'general.general.please_select' | t | strip_newlines | escape }}";
+
+  Theme.addToCartSuccess = "{{ 'products.product.success_html' | t: product: '**product**', cart_link: '**cart_link**', continue_link: '**continue_link**', checkout_link: '**checkout_link**' | strip_newlines | escape }}";
+
+  {% if shop.customer_accounts_enabled and customer %}
+    Theme.customerLoggedIn = true;
+  {% endif %}
+
+  Theme.shippingCalculator = true;
+  Theme.shippingButton = "{{ 'cart.shipping_calculator.submit' | t | strip_newlines | escape }}";
+  Theme.shippingDisabled = "{{ 'cart.shipping_calculator.disabled' | t | strip_newlines | escape }}";
+
+  {% if shop.customer_accounts_enabled and customer and customer.default_address %}
+    Theme.customerAddress = {{ customer.default_address | json }};
+  {% endif %}
+
+  Theme.shippingCalcErrorMessage = "{{ 'cart.shipping_calculator.error' | t: error_message: '**error_message**' | strip_newlines | escape }}";
+  Theme.shippingCalcMultiRates = "{{ 'cart.shipping_calculator.rates_html' | t: address: '**address**', number_of_rates: '**number_of_rates**', rate: '**rate**' | strip_newlines | escape }}";
+  Theme.shippingCalcOneRate = "{{ 'cart.shipping_calculator.rate' | t: address: '**address**' | strip_newlines | escape }}";
+  Theme.shippingCalcNoRates = "{{ 'cart.shipping_calculator.no_rates' | t | escape }}";
+  Theme.shippingCalcRateValues = "{{ 'cart.shipping_calculator.rate_values_html' | t: rate_title: '**rate_title**', rate: '**rate**' | strip_newlines | escape }}";
+
+  {% if settings.enable_currency_converter %}
+    Theme.enable_currency_converter = true;
+    Theme.currency_display_format = '{{ settings.currency_display_format | escape }}';
+    /*
+      Override the default Theme.moneyFormat for recalculating
+      prices on the product and cart templates.
+    */
+    Theme.moneyFormat = {{ shop.[settings.currency_display_format] | json }};
+  {% endif %}
+    {% if settings.product-zoom %}
+    Theme.imageZoom = true;
+  {% endif %}
+
+  {% if settings.slideshow %}
+    Theme.slideshow = true;
+
+    {% if settings.slideshow-autoplay %}
+      Theme.slideshowAutoplay = true;
+      Theme.slideshowAutoplayDelay = 4;
+        {% if settings.slideshow-autoplay-delay != blank %}
+          Theme.slideshowAutoplayDelay = parseInt('{{ settings.slideshow-autoplay-delay | escape }}',10);
+        {% endif %}
+    {% endif %}
+  {% endif %}
+
+  {% if settings.instagram-widget and settings.instagram-widget-access-token != blank %}
+    Theme.instagram = true;
+    Theme.instagramAccessToken = '{{ settings.instagram-widget-access-token | escape }}';
+    Theme.instagramShowTag = {{ settings.use-instagram-tag | json }};
+    Theme.instagramTag = '{{ settings.instagram-widget-tag | escape }}';
+  {% endif %}
+
+  {% if settings.twitter-widget and settings.twitter-widget-id != blank %}
+    Theme.twitter = true;
+    Theme.twitterId = '{{ settings.twitter-widget-id | escape }}';
+    Theme.twitterShowRetweets = {{ settings.twitter-widget-retweets | json }};
+  {% endif %}
+
+  Theme.itemRemovedFromCart = "{{ 'cart.general.item_removed_message' | t | escape }}";
+  Theme.itemRemovedFromCartUndo = "{{ 'cart.general.undo' | t | escape }}";
+
+  {% if settings.sticky-header %}
+    Theme.stickyHeader = true;
+  {% endif %}
+
+  Theme.cartText = "{{ 'layout.header.cart' | t | escape }}";
+  Theme.itemRemovedFromCart = "{{ 'cart.general.item_removed_message' | t | escape }}";
+
+  Theme.quickShop = {% if settings.product-hover == "quick-shop" %}true{% else %}false{% endif %};
+  Theme.relatedProducts = {{ settings.related-products | json }};
+  Theme.featuredProducts = {{ settings.featured-products | json }};
+
+  // For selecting the first available variant
+  var FirstVariant = {};
+</script>

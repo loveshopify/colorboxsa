@@ -1,0 +1,34 @@
+<div class="cart-shipping-calculator">
+
+  <div class="wrapper-setup">
+
+    <h2>{{ 'cart.shipping_calculator.header' | t }}</h2>
+
+    <label for="address_country">{{ 'cart.shipping_calculator.country' | t }}</label>
+    <div class="country-select select-wrapper">
+      <div class="selected-option">{{ 'cart.shipping_calculator.select_country' | t }}</div>
+      <select class="styled-select address-country" id="address_country" name="address[country]" data-default="{% if shop.customer_accounts_enabled and customer and customer.default_address and customer.default_address.country != '' %}{{ customer.default_address.country }}{% elsif section.settings.shipping_calculator_default_country != '' %}{{ section.settings.shipping_calculator_default_country }}{% endif %}">{{ country_option_tags }}</select>
+    </div>
+
+    <div id="address_province_container">
+      <label for="address_province" id="address_province_label">{{ 'cart.shipping_calculator.province' | t }}</label>
+      <div class="province-select select-wrapper">
+        <div class="selected-option">{{ 'cart.shipping_calculator.select_province' | t }}</div>
+        <select class="styled-select address-province" id="address_province" class="address_form" name="address[province]" data-default="{% if shop.customer_accounts_enabled and customer and customer.default_address.province != '' %}{{ customer.default_address.province }}{% endif %}"></select>
+      </div>
+    </div>
+
+    <div class="zip-code input-wrapper">
+      <label for="address_zip">{{ 'cart.shipping_calculator.zip' | t }}</label>
+      <input type="text" class="address-zip" id="address_zip" class="field" name="address[zip]" {% if shop.customer_accounts_enabled and customer %}value="{{ customer.default_address.zip }}"{% endif %} />
+    </div>
+
+    <input type="button" class="get-rates secondary" value="{{ 'cart.shipping_calculator.submit' | t }}" />
+
+  </div>
+
+  <div class="cart-shipping-calculator-response">
+    <p>{{ 'cart.shipping_calculator.prompt' | t }}</p>
+  </div>
+
+</div>

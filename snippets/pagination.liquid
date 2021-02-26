@@ -1,0 +1,25 @@
+
+{% if paginate.previous or paginate.next %}
+  <ul class="pagination">
+
+    {% if paginate.previous %}
+      <li class="previous"><a href="{{ paginate.previous.url }}">&#xe601;</a></li>
+    {% endif %}
+
+    {% for part in paginate.parts %}
+      {% if part.is_link %}
+        <li>{{ part.title | link_to: part.url }}</li>
+      {% else %}
+        {% if part.title == '&hellip;' %}
+          <li class="ellipsis">{{ part.title }}</li>
+        {% else %}
+          <li class="active">{{ part.title | link_to: part.url }}</li>
+        {% endif %}
+      {% endif %}
+    {% endfor %}
+
+    {% if paginate.next %}
+      <li class="next"><a href="{{ paginate.next.url }}">&#xe600;</a></li>
+    {% endif %}
+  </ul>
+{% endif %}

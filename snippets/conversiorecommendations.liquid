@@ -1,0 +1,16 @@
+{% if conversiorecommendations %}
+  {% assign widgetName = conversiorecommendations %}  
+{% else -%}
+  {% assign widgetName = 'default' %}
+{% endif -%}
+<div class="rf-recommendations {{ widgetName | prepend: 'rf-' }}" data-name="{{ widgetName }}"{% if conversioproductid %} data-product="{{ conversioproductid }}"{% endif %}></div>
+<script>
+if (typeof window.ConversioData === 'undefined') {
+  window.ConversioData = {};
+}
+
+window.ConversioData.product = '{{ product.id }}';
+window.ConversioData.customer = '{{ customer.id }}';
+window.ConversioData.cart = '{{ cart.items | map: 'product' | map: 'id' | join: ',' }}';
+window.ConversioData.recommend = true;
+</script>

@@ -1,0 +1,107 @@
+{% assign product = all_products[section.settings.product_handle] %}
+{% assign show_vendor = settings.show_vendor %}
+{% assign show_social_media_icons = section.settings.show_social_media_icons %}
+{% assign show_payment_button = section.settings.show_payment_button %}
+{% assign images_layout = section.settings.images_layout %}
+{% assign enable_zoom = section.settings.enable_zoom %}
+{% assign enable_cart_redirection = section.settings.enable_cart_redirection %}
+
+<script
+  type="application/json"
+  data-section-type="product"
+  data-section-id="{{ section.id }}"
+  data-section-data
+>
+  {
+    "product": {{ product | json }},
+    "product_settings": {
+      "addToCartText": {{ 'products.product.add_to_cart' | t | json }},
+      "enableHistory": false,
+      "linkedOptions": false,
+      "processingText": {{ 'products.product.processing' | t | json }},
+      "setQuantityText": {{ 'products.product.set_quantity' | t | json }},
+      "soldOutText": {{ 'products.product.sold_out' | t | json }},
+      "unavailableText": {{ 'products.product.unavailable' | t | json }}
+    },
+    "images_layout": {{ images_layout | json }},
+    "enable_zoom": {{ enable_zoom | json }},
+    "enable_cart_redirection": {{ enable_cart_redirection | json }},
+    "enable_fixed_positioning": false
+  }
+</script>
+
+{% include 'product-success-labels' %}
+
+<section class="product-container">
+  {%
+    include 'product',
+    product: product,
+    show_vendor: show_vendor,
+    show_social_media_icons: show_social_media_icons,
+    images_layout: images_layout,
+    enable_zoom: enable_zoom,
+    show_payment_button: show_payment_button,
+    link_to: true,
+    lazy: true
+  %}
+</section>
+
+{% schema %}
+{
+  "name": "Featured product",
+  "settings": [
+    {
+      "type": "product",
+      "id": "product_handle",
+      "label": "Product"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_social_media_icons",
+      "label": "Show social media icons"
+    },
+    {
+      "type": "header",
+      "content": "Images"
+    },
+    {
+      "type": "select",
+      "id": "images_layout",
+      "label": "Layout",
+      "options": [
+        { "label": "Slideshow", "value": "slideshow" },
+        { "label": "List", "value": "list" },
+        { "label": "Masonry", "value": "masonry" }
+      ],
+      "default": "slideshow"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_zoom",
+      "label": "Enable zoom",
+      "info": "Zoom only works with the slideshow image layout"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_cart_redirection",
+      "label": "Enable cart redirection",
+      "info": "Automatically sends users to the Cart page after adding a product.",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_payment_button",
+      "label": "Show dynamic checkout button",
+      "info": "Each customer will see their preferred payment method from those available on your store, such as PayPal or Apple Pay. [Learn more](https://help.shopify.com/manual/using-themes/change-the-layout/dynamic-checkout)",
+      "default": true
+    }
+  ],
+  "presets": [
+    {
+      "category": "Product",
+      "name": "Featured product"
+    }
+  ]
+}
+
+{% endschema %}

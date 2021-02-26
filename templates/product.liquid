@@ -1,0 +1,435 @@
+
+{% include 'buyx-product' with product %}
+{% include 'buyx-price-min' with product %} 
+
+
+{% include 'breadcrumbs' %}
+
+{% assign variant = product.selected_or_first_available_variant %}
+
+{% if collection == null or collection.handle == 'frontpage' or collection.handle == 'all' %}
+{% assign found_a_collection = false %}
+{% for c in product.collections %}
+{% if found_a_collection == false and c.handle != 'frontpage' and c.handle != 'all' %}
+{% assign found_a_collection = true %}
+{% assign collection = c %}
+{% endif %}
+{% endfor %}
+{% endif %}
+
+{% assign swimwear = false %}
+
+{% for option in product.options %}
+{% unless option contains 'BuyXDiscount' %}
+  
+            {% if option =='swimwear' %}       
+             {% assign swimwear = true %}            
+      	   {% endif %}slipper
+      {% if option =='slipper' %}       
+             {% assign slipper = true %}            
+      	   {% endif %}
+{% endunless %}
+ {% endfor %}
+
+
+<div class="main-product-wrap product-wrap" itemscope itemtype="http://schema.org/Product" data-product-id="{{ product.id }}">
+
+  <meta itemprop="url" content="{{ shop.url }}{{ product.url }}">
+  <meta itemprop="image" content="{{ product | img_url: 'grande' }}">
+
+  <div class="product-images">
+
+    {% if settings.product-images-layout == 'slideshow' %}
+
+    <div class="product-main-image">
+      {% assign mainImage = variant.featured_image | default: product.featured_image %}
+      {% if mainImage != blank %}
+      <img alt="{{ mainImage.alt | escape }}" src="{{ mainImage | img_url: '1024x1024' }}">
+      {% else %}
+      <img class="product-no-images" src="{{ 'no-image.svg' | asset_url }}" alt="{{ 'products.product.no_image' | t }}" />
+      {% endif %}
+
+      {% if settings.product-zoom %}
+      <div class="product-zoom"></div>
+      {% endif %}
+    </div>
+
+    {% if product.images.size > 1 %}
+    <div class="product-thumbnails-outer-wrapper">
+      {% if product.images.size > 4 %}
+      <span class="product-thumbnails-navigation-previous">&#xe601;</span>
+      {% endif %}
+      <div class="product-thumbnails-wrapper">
+        <div class="product-thumbnails {% if product.images.size > 4 %}has-side-scroll{% endif %}">
+          {% for image in product.images %}
+          <div class="product-thumbnail {% if mainImage == image %}active{% endif %}">
+            <img alt="{{ image.alt | escape }}" data-high-res="{{ image | img_url: '1024x1024' }}" src="{{ image | img_url: 'compact' }}">
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      {% if product.images.size > 4 %}
+      <span class="product-thumbnails-navigation-next">&#xe600;</span>
+      {% endif %}
+    </div>
+    {% endif %}
+
+    {% else %}
+
+    {% for image in product.images %}
+    <div class="product-image">
+      <img alt="{{ image.alt | escape }}" src="{{ image | img_url: 'medium' }}">
+    </div>
+    {% endfor %}
+
+    {% endif %}
+  </div>
+
+
+
+
+
+  <div class="product-details-wrapper">
+    <div class="product-details">
+
+      
+      <h1 class="product-title" itemprop="name">{{ product.title }}</h1>
+      {% if settings.product-vendor %}
+      <a class="product-vendor" href="{{ product.vendor | url_for_vendor }}">{{ product.vendor }}</a>
+      {% endif %}
+      <!-- .hidden -->
+     {% if swimwear == true or slipper == true %} 
+     <p class="product-price hidden" itemprop="offers" itemscope itemtype="http://schema.org/Offer">
+       
+      {% else %}
+        <p class="product-price " itemprop="offers" itemscope itemtype="http://schema.org/Offer">
+       {% endif %}
+
+        <meta itemprop="priceCurrency" content="{{ shop.currency }}">
+        <meta itemprop="price" content="{{ buyx_price_min | money_without_currency }}">
+
+        <span class="product-price-minimum money">
+          {{ buyx_price_min |  money }}
+          
+        </span>
+
+          
+        <span class="product-price-compare money">
+          {% if product.compare_at_price_min > buyx_price_min %}
+          {{ product.compare_at_price_min |  money }}
+          {% endif %}
+        </span>
+        
+
+          
+        {% if product.price < product.compare_at_price %}
+    <span class="sale-badge">SALE</span>
+  {% endif %}
+
+        {% if product.available %}
+        <link itemprop="availability" href="http://schema.org/InStock">
+        {% else %}
+        <link itemprop="availability" href="http://schema.org/OutOfStock">
+        {% endif %}
+
+      </p> 
+
+ {% if swimwear == false and slipper == false %}  
+      <p class="product-price" itemprop="offers" itemscope itemtype="http://schema.org/Offer">{{ buyx_price_min |  money }}</p>
+  {%  endif %}
+      <form action="/cart/add" method="post" id="product-form-{{ product.id }}">
+
+        <div class="product-options">
+            
+          <select class="product-variants" name="id" id="product-variants-{{ product.id }}">
+            {% for select in product.variants %}
+            {% unless variant.title contains '% Off' %}
+            <option {% if select == product.selected_or_first_available_variant %} selected="selected" {% endif %} value="{{ select.id }}">{{ select.title }}</option>
+           {% assign defVariant = select.title %}
+  {% endunless %}
+            {% endfor %}
+          </select>
+          
+          {% if defVariant != 'Default' %}
+            {% for option in product.options %}
+          {% unless option contains 'BuyXDiscount' %}
+  
+              {% include 'swatch' with option %}
+          {% endunless %}
+            {% endfor %}
+          {% endif %}
+          
+        </div>
+        
+       {% if buyx_product_available %}
+        <div class="product-quantity inline-input-wrapper">
+          <label>{{ 'general.general.quantity' | t }}</label>
+          <input type="text" name="quantity" value="1" class="prod-input-list" />
+        </div>
+        {% endif %}
+
+        
+        
+        <div class="add-to-cart">
+          {% if variant.available %}
+              {% if swimwear == true  %}
+                <div onclick="customoptionsAddCart(swimwearData)" class="btn-add-cart">Add to cart<span></span></div>        
+           
+               {%  elsif slipper == true  %}
+                <div onclick="customoptionsAddCart(slipperData)" class="btn-add-cart">Add to cart<span></span></div>        
+              {% else  %}
+                 <input type="submit" value="{{ 'products.product.add_to_cart' | t }}" />
+              {% endif %}
+          {% else %}
+             {% if product.tags contains 'BIS' %} 
+             	 <button class="BIS_trigger" data-product-handle="{{product.handle}}">Email when available</button>
+              {% else %}
+             	 <input type="button" class="disabled" disabled="disabled" value="sold out" />
+              {% endif %}
+
+          {% endif %}
+           {% if swimwear == false and slipper == false %}
+          {% if product.tags contains 'BIS' %}  
+          
+          {% else %}
+             <span class="icon"></span>
+           {% endif %}
+          {% endif %}
+        </div>
+       
+       
+        <!-- <div class="add-to-wish-list">
+           <input type="button" value="Add to Wish List" /><span class="icon"></span>
+        </div> -->
+          <!-- wishlist -->
+     
+      <!-- end -->
+         </form>
+       {% if variant.available %}
+         <div id="wish"><span class="icon"></span>
+            {% include 'wishlist-product' %}
+         </div>
+       {% endif %}
+  
+ {% if settings.product-share-buttons %}
+        {% include 'share-buttons' %}
+        {% endif %}
+      
+  {% if product.price > 200000 %}
+        <script async src="https://widgets.payflex.co.za/your-merchant-name/partpay-widget-0.1.1.js?type=calculator&min=10&max=20000&amount={{ product.price | money_without_currency | remove: ' ' }}" type="application/javascript"></script>
+  {% endif %}
+    
+ <div class="product-message"></div>
+<!-- product bundles -->
+
+
+
+
+    
+
+
+      {% if product.description != blank %}
+      <div class="product-description rte" itemprop="description">
+        <!-- top/bottom -->
+        <script id="expressrex" src="//shopify.directededge.com/widget/bundle?product={{product.id}}" type="text/javascript" charset="utf-8"></script>
+        <!-- end -->
+        {% include 'product-description-tabs' %}
+      </div>
+      {% endif %}
+
+<div id="shopify-product-reviews" data-id="{{product.id}}">{{ product.metafields.spr.reviews }}</div>
+
+  <!-- test -->
+      <div class="next-prev-product">
+{% if collection %}            
+      {% if collection.previous_product %}
+         {{ '« Previous Product' | link_to: collection.previous_product }}
+      {% endif %}
+      {% if collection.next_product %}
+        {% if collection.previous_product %} | {% endif %}
+        {{ 'Next Product »' | link_to: collection.next_product }}
+      {% endif %}
+   {% endif %}
+      </div>
+
+<!-- end test -->
+    </div>
+  </div>
+
+
+
+</div>
+{% include 'cross-sell' %}
+{% comment %}
+{% if settings.related-products %}
+{% include 'related-products' %}
+{% endif %}
+{% endcomment %}
+
+{% include 'buyx-price-min' with product %} 
+
+<script>
+  // required for splitting variants
+  // see ProductView
+  
+   
+function buyx_product_json(product) {
+     if (product == null) {
+          return null
+     }
+     var variants = []
+     //does it have BuyXDiscount option?
+     var option_position = -1
+     for (var oi = 0, olen = product.options.length; oi < olen; oi++) {
+         if (product.options[oi] == "BuyXDiscount") {
+             option_position = oi+1
+             break
+         }
+     }
+     if (option_position == -1) {
+         return product
+     }
+     if (product.options.length > 1) {
+          product.options.splice(option_position-1, 1)
+     } else {
+          product.options[0] = "Title"
+     }
+     option_position = "option" + option_position
+     product.available = false
+     for (var vi = 0, vlen = product.variants.length; vi < vlen; vi++) {
+         if (product.variants[vi][option_position] == "Default") {
+             //product.variants[vi][option_position] = ""
+             variants.push(product.variants[vi])
+             product.available = product.available || product.variants[vi].available
+         }
+     }
+     product.variants = variants
+     return product
+  }
+
+    
+  window.products["{{ product.id }}"] = buyx_product_json({{ product | json }});
+  FirstVariant["{{ product.id }}"] = {{ product.selected_or_first_available_variant.id | json }};
+                   
+                  
+   setTimeout(function(){
+         jQuery('.removeAll').removeClass('soldout').addClass('available').css( "display", "inline-block" ).find(':radio').removeAttr('disabled');    
+         jQuery('.removeNotAll').removeClass('soldout').addClass('available').css( "display", "inline-block" );
+         jQuery('.removeCO').css( "display", "inline-block" );  
+                  
+                  jQuery('.swatch [type=radio]').each(function(i){
+                    if(jQuery(this).attr('disabled') !='disabled'){
+//jQuery(this).prop( "checked", true );
+                       return false;
+                    }
+                  });    
+                  
+        
+                  
+      },750);
+     
+  
+       
+   var counterAddProduct = 0;        
+   function customoptionsAddCart(Data){
+       counterAddProduct = 0;           
+       Shopify.queue = [];           
+       for(i =0; i < Data.length; i++){       
+         var str = Data[i][0];
+         var arr = str.split(' ');
+        if(slipperFlag == true){
+          str = arr[1];
+          if(str.toLowerCase() == 'men'){
+            if(jQuery('#swatch-1-'+arr[0]).is(':checked')) {           
+                counterAddProduct++;
+              Shopify.queue.push( {
+                 variantId: Data[i][2],
+                 quantity: jQuery( "input:text[name=quantity]" ).val()
+              } );             
+            }
+          }else if(str.toLowerCase() == 'women'){
+			 if(jQuery('#swatch-0-'+arr[0]).is(':checked')) {
+               counterAddProduct++;
+                Shopify.queue.push( {
+                   variantId: Data[i][2],
+                   quantity: jQuery( "input:text[name=quantity]" ).val()
+              } );          
+            }
+          } else if(str.toLowerCase() == 'kids'){
+			 if(jQuery('#swatch-2-'+arr[0]).is(':checked')) {
+               counterAddProduct++;
+                Shopify.queue.push( {
+                   variantId: Data[i][2],
+                   quantity: jQuery( "input:text[name=quantity]" ).val()
+              } );          
+            }
+          } 
+         }
+         if(swimwearFlag == true){
+          if(arr[1] == 'Bottom'){
+            if(jQuery('#swatch-1-'+arr[0]).is(':checked')) {           
+                counterAddProduct++;
+              Shopify.queue.push( {
+                 variantId: Data[i][2],
+                 quantity: jQuery( "input:text[name=quantity]" ).val()
+              } );             
+            }
+          }else{
+			 if(jQuery('#swatch-0-'+arr[0]).is(':checked')) {
+               counterAddProduct++;
+                Shopify.queue.push( {
+                   variantId: Data[i][2],
+                   quantity: jQuery( "input:text[name=quantity]" ).val()
+              } );          
+            }
+          } 
+         }
+  
+      }
+      Shopify.moveAlong();
+     // var html = jQuery('.product-title').html()+'has been successfully added to your <a href="/cart">cart</a>. Feel free to <a href="/collections/all">continue shopping</a> or <a href="/checkout">check out</a>.';
+   
+     // jQuery('.product-message').addClass('success-message');
+    //  jQuery('.product-message').html(html);
+  }
+    
+      Shopify.moveAlong = function() {
+      // If we still have requests in the queue, let's process the next one.
+      if (Shopify.queue.length) {
+        var request = Shopify.queue.shift();
+        Shopify.addItem(request.variantId, request.quantity, Shopify.moveAlong);
+      }
+      // If the queue is empty, we will redirect to the cart page.
+      else {
+      //  counterAddProduct += Number(jQuery('.cart-count-number').html()); 
+        Shopify.getCart(function(cart) {
+          MiniCartView.prototype.updateCart(cart);
+         });
+       
+      //  document.location.href = '/cart';
+          var html  = '';
+        if(counterAddProduct >0){
+          html = jQuery('.product-title').html()+' has been successfully added to your <a href="/cart">cart</a>. Feel free to <a href="/collections/all">continue shopping</a> or <a href="/cart">check out</a>.';
+        }else{
+          html = 'Please select size' ;
+        }
+        jQuery('.product-message').addClass('success-message');
+        jQuery('.product-message').html(html);
+      }
+    };
+ 
+  function removeUserSelect(id){
+  
+    if(jQuery('#'+id).is(':checked')) {
+      
+       setTimeout(function(){
+          jQuery('#'+id).prop( "checked", false );
+      },100);
+   
+    
+    }
+  }
+  
+  </script>
+
+     

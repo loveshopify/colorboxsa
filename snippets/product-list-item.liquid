@@ -1,0 +1,128 @@
+
+{% if template contains 'search' %}
+  {% assign item = item %}
+  {% assign product = item %}
+{% elsif template contains 'product' %}
+  {% assign item = prod %}
+{% else %}
+  {% assign item = product %}
+{% endif %}
+
+{% if settings.product-hover == 'stock-level' and item.available %}
+  {% assign total = 0 %}
+  {% assign threshold = settings.product-stock-level-overlay-threshold | times: 1 %}
+  {% assign infinity = false %}
+  {% for variant in item.variants %}
+    {% if variant.inventory_management == null %}
+      {% assign infinity = true %}
+    {% elsif variant.inventory_management == '' %}
+      {% assign infinity = true %}
+    {% elsif variant.inventory_management == 'shopify' and variant.inventory_policy == 'continue' %}
+      {% assign infinity = true %}
+    {% elsif infinity == false %}
+      {% capture temp %}{{ total | plus: variant.inventory_quantity }}{% endcapture %}
+      {% assign total = temp | times: 1 %}
+    {% endif %}
+  {% endfor %}
+  {% assign stockText = settings.product-stock-level-overlay-text | replace: '{NUM}', total %}
+{% endif %}
+
+<article class="product-list-item exception-{{ item.vendor }}" id="product-list-item-{{ item.id }}" data-product-id="{{ item.id }}">
+
+  {% assign secondaryImage = false %}
+  {% if item.images.size > 1 and settings.product-hover == 'image-flip' %}
+    {% assign secondaryImage = true %}
+  {% endif %}
+  
+
+  <figure class="product-list-item-thumbnail {% if secondaryImage %}has-secondary-image{% endif %}" data-url="{{ item.url | within: collection }}" style="{% if secondaryImage %}background-image:url({{ item.images[1] | img_url: 'grande' }}){% endif %}">
+    <a href="{{ item.url | within: collection }}">
+     <!--  
+      <img src="{{ item | img_url: 'grande' }}" alt="{{ item.featured_image.alt | escape }}" />  -->
+   
+  <!-- test slider -->
+     <div class="hotelpresentation">
+        <section class="royalSlider rsMinW slider1">
+          {% for image in product.images %}
+           
+          <div class="rsContent slide1">
+          {% if  product.tags contains 'BIS'%}
+            
+            
+            {% else %}
+             {% if product.available == false  %}
+               <div class="collection-sold-out"></div>
+            {% endif %}
+              {% endif %}
+            <img alt="{{ image.alt | escape }}" src="{{ image | img_url: 'large' }}">
+           
+          </div>
+             
+          {% endfor %}
+        </section>
+      </div>  
+      <!-- end slider -->
+
+    </a>
+
+  {% include 'buyx-price-min' with item %}
+
+
+
+    {% if settings.product-hover == 'quick-shop' %}
+      <div onclick="customQuickShop('{{ item.url | within: collection }}')" class="quick-shop-bg quick-shop-modal-trigger" data-product-handle="{{ item.handle }}" data-product-id="{{ item.id }}" data-variant-id="{{ item.selected_or_first_available_variant.id }}" data-vendor-url="{{ item.vendor | url_for_vendor }}"></div>
+
+    {% elsif settings.product-hover == 'stock-level' %}
+
+      {% if item.available and infinity == false and total < threshold %}
+        <a class="product-list-item-inventory" href="{{ item.url }}">{{ stockText }}</a>
+      {% endif %}
+
+    {% endif %}
+    
+
+    {% if settings.product-badges %}
+      {% if buyx_product_available != true %}
+        <span class="product-list-item-unavailable"></span>
+      {% elsif item.compare_at_price_min > buyx_price_min %}
+        <span class="product-list-item-on-sale"></span>
+      {% endif %}
+    {% endif %}
+    
+  {% if product.price < product.compare_at_price %}
+    <span class="sale-badge">SALE</span>
+  {% endif %}
+    
+  </figure>
+  
+
+
+  <div class="product-list-item-details">
+    
+    {% if settings.product-vendor %}
+      <p class="product-list-item-vendor">{{ item.vendor | link_to_vendor }}</p>
+    {% endif %}
+    <h2 class="product-list-item-title"><a href="{{ item.url | within: collection }}">{{ item.title }}</a></h2>
+    <p class="product-list-item-price">
+      {% if item.price_max > buyx_price_min %}
+        {% if item.price_max > buyx_price_min %}{{ 'products.product.from' | t }}{% endif %}
+        <span class="money">{{ buyx_price_min |  money }}</span>
+      {% else %}
+        {% if item.compare_at_price_min >  buyx_price_min %}
+          <span class="money">{{ buyx_price_min |  money }}</span>
+          <span class="original money">{{ item.compare_at_price_min | times:1.14 | money }}</span>
+        {% else %}
+          <span class="money">{{ buyx_price_min|  money }}</span>
+        {% endif %}
+      {% endif %}
+      
+    </p>
+     {% if buyx_product_available == false %}
+       {% if product.tags contains 'BIS' %}
+              <a href="#" class="BIS_trigger" data-product-handle="{{ product.handle }}">
+                Email when available
+              </a>
+         {% endif %}
+       {% endif %}
+  </div>
+</article>

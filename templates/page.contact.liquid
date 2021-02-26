@@ -1,0 +1,36 @@
+<h1 class="page-title">{{ page.title }}</h1>
+
+{% include 'breadcrumbs' %}
+
+<div class="page-content rte">
+  {{ page.content }}
+</div>
+
+{% form 'contact' %}
+
+  {% if form.errors %}
+    <div class="error-message"><span>{{ 'general.contact.error' | t }}</span></div>
+  {% endif %}
+
+  {% if form.posted_successfully? %}
+    <div class="success-message">{{ 'general.contact.success' | t }}</div>
+  {% else %}
+    <div class="field-wrap name">
+      <label>{{ 'general.general.name' | t }}</label>
+      <input type="text" placeholder="{{ 'general.general.name_placeholder' | t }}" value="" name="contact[name]" class="{% if form.errors contains "author" %}error{% endif %}">
+    </div>
+
+    <div class="field-wrap email">
+      <label>{{ 'general.general.email' | t }}</label>
+      <input type="text" placeholder="{{ 'general.general.email_placeholder' | t }}" value="" name="contact[email]" class="{% if form.errors contains "email" %}error{% endif %}">
+    </div>
+
+    <div class="field-wrap message">
+      <label>{{ 'general.general.message' | t }}</label>
+      <textarea name="contact[body]" class="{% if form.errors contains "body" %}error{% endif %}"></textarea>
+    </div>
+
+    <input type="submit" value="{{ 'general.contact.submit' | t }}">
+  {% endif %}
+
+{% endform %}

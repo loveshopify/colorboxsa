@@ -1,0 +1,330 @@
+<script type="application/json" data-images>
+  {
+    {%- for image in product.images %}
+      {%- capture rimg_string -%}
+        {%
+          include 'rimg',
+          img: image,
+          attr: 'data-product-main-image',
+          size: '1400x',
+          lazy: false
+        %}
+      {%- endcapture -%}
+      "{{ image.id }}": {{ rimg_string | strip_newlines | json }}{%- unless forloop.last %},{%- endunless -%}
+    {%- endfor -%}
+  }
+</script>
+
+{% assign product_id = product.id %}
+{% assign variant = product.selected_or_first_available_variant %}
+
+{% if collection == null or collection.handle == 'frontpage' or collection.handle == 'all' %}
+  {% assign found_a_collection = false %}
+  {% for c in product.collections %}
+    {% if found_a_collection == false and c.handle != 'frontpage' and c.handle != 'all' %}
+      {% assign found_a_collection = true %}
+      {% assign collection = c %}
+    {% endif %}
+  {% endfor %}
+{% endif %}
+
+{% if product != blank and show_payment_button %}
+  {% capture throwaway %}
+    {% form 'product', product %}
+      {% capture payment_buttons %}
+        {{ form | payment_button }}
+      {% endcapture %}
+    {% endform %}
+  {% endcapture %}
+{% endif %}
+
+{% capture form_content %}
+  {% unless product.has_only_default_variant %}
+    <div class="product-options">
+      {%-
+        include 'product-options-dropdown',
+        form_id: product_id
+      -%}
+
+      <label class="product-option-column-1 product-option-row-4 product-option-quantity-label">{{ 'general.general.quantity' | t }}</label>
+      <input class="product-option-quantity" type="text" name="quantity" value="1" />
+
+      <div class="selector-wrapper no-js-required">
+        <label for="product-select-{{ product_id }}"></label>
+        <select
+          class="product-select"
+          name="id"
+          id="product-select-{{ product_id }}"
+          data-select-ignore
+        >
+          {% for variant in product.variants %}
+            {% if variant.available %}
+              <option
+                {% if variant == selected_variant %}selected="selected"{% endif %}
+                value="{{ variant.id }}" data-variant-id="{{ variant.id }}" data-sku="{{ variant.sku }}">
+                {{ variant.title }} - {% include 'money', value: variant.price %}
+              </option>
+            {% else %}
+              <option disabled="disabled" data-variant-id="{{ variant.id }}" value="{{ variant.id }}">
+                {{ variant.title }} - {{ 'products.product.sold_out' | t }}
+              </option>
+            {% endif %}
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+  {% else %}
+    <div class="product-options product-options-default-only">
+      <input
+        class="product-select"
+        name="id"
+        value="{{ product.variants[0].id }}"
+        type="hidden"
+        data-variant-title="{{ product.variants[0].title }}"
+      />
+
+      <label class="product-option-column-1 product-option-row-1 product-option-quantity-label">{{ 'general.general.quantity' | t }}</label>
+      <input class="product-option-quantity" type="text" name="quantity" value="1" />
+    </div>
+  {% endunless %}
+
+  {% if product.available %}
+    <div id="infiniteoptions-container"></div>
+    <div id="uploadery-container"></div>
+  {% endif %}
+
+  {% if show_social_media_icons %}
+    {% include 'share-buttons' %}
+  {% endif %}
+
+  <div
+    class="
+      product-add-to-cart
+      {% if product != blank and show_payment_button %}
+        product-smart-payments
+      {% endif %}
+    "
+  >
+    {% if variant.available %}
+      <input class="add-to-cart" type="submit" value="{{ 'products.product.add_to_cart' | t }}" />
+    {% else %}
+      <input class="add-to-cart disabled" type="submit" value="{{ 'products.product.sold_out' | t }}" disabled/>
+    {% endif %}
+
+    {% if payment_buttons != blank %}
+      {{ payment_buttons }}
+    {% endif %}
+  </div>
+
+  <div class="product-message"></div>
+{% endcapture %}
+
+<div
+  class="
+    product
+    {% if enable_related_products %}
+      related-products-position-{{ related_products_position }}
+    {% endif %}
+    {% if images_layout == 'masonry' %}
+      product-masonry
+    {% endif %}
+  "
+  itemscope
+  itemtype="http://schema.org/Product"
+  data-ajax
+
+  {% if enable_zoom %}
+    data-zoom
+  {% endif %}
+
+  {% if enable_linked_options %}
+    data-linked-options
+  {% endif %}
+
+  {% if images_layout == 'slideshow' %}
+    data-images-slideshow
+  {% elsif images_layout == 'list' %}
+    data-images-list-view
+  {% elsif images_layout == 'masonry' %}
+    data-product-masonry
+  {% endif %}
+>
+
+  <meta itemprop="url" content="{{ shop.url }}{{ product.url }}">
+  <meta itemprop="image" content="{{ product | img_url: 'grande' }}">
+
+  <div
+    class="
+      product-images
+      {% if images_layout == 'masonry' %}
+        product-images-masonry
+        product-images-masonry-{{ product.images.size }}
+      {% endif %}
+    "
+    {% if images_layout == 'masonry' and product.images.size > 1 %}
+      data-masonry-gallery
+    {% endif %}
+  >
+    {% if images_layout == 'masonry' and product.images.size > 1 %}
+      <div class="product-image-masonry-sizer" data-masonry-image-sizer></div>
+    {% endif %}
+
+    {% if images_layout == 'slideshow' %}
+      <div class="product-main-image">
+        {% assign main_image = variant.image | default: product.featured_image %}
+        {% assign main_image_alt = product.title %}
+        {% if main_image.alt != blank %}
+          {% assign main_image_alt = main_image.alt %}
+        {% endif %}
+
+        {% if main_image != blank %}
+          {% capture attr %}
+            data-image-id="{{ main_image.id }}"
+            data-product-main-image
+          {% endcapture %}
+
+          {%
+            include 'rimg',
+            img: main_image,
+            attr: 'data-product-main-image',
+            lazy: lazy,
+            size: '1400x',
+            attr: attr
+          %}
+        {% else %}
+          {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
+        {% endif %}
+
+        {% if enable_zoom %}
+          <div class="product-zoom"></div>
+        {% endif %}
+      </div>
+
+      {% if product.images.size > 1 %}
+        <div class="product-thumbnails-outer-wrapper">
+          {% if product.images.size > 4 %}
+            <span class="product-thumbnails-navigation-previous">&#xe601;</span>
+          {% endif %}
+
+          <div class="product-thumbnails-wrapper">
+            <div class="product-thumbnails {% if product.images.size > 4 %}has-side-scroll{% endif %}">
+              {% for image in product.images %}
+                <div class="product-thumbnail {% if mainImage == image %}active{% endif %}">
+                  {% capture attr %}
+                    data-image-id="{{ image.id }}"
+                  {% endcapture %}
+                  {%
+                    include 'rimg',
+                    img: image,
+                    size: '115x',
+                    attr: attr,
+                    lazy: true
+                  %}
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+
+          {% if product.images.size > 4 %}
+            <span class="product-thumbnails-navigation-next">&#xe600;</span>
+          {% endif %}
+        </div>
+      {% endif %}
+    {% else %}
+      {%- for image in product.images -%}
+        {% assign use_large_image = false %}
+        {% if product.images.size == 2 %}
+          {% assign use_large_image = true %}
+        {% elsif forloop.first and use_masonry %}
+          {% assign use_large_image = true %}
+        {% endif %}
+
+        {% assign image_alt = product.title %}
+        {% if image.alt != blank %}
+          {% assign image_alt = image.alt %}
+        {% endif %}
+
+        <div class="product-image {% if use_large_image %}product-image-wide{% endif %}">
+          {%
+            include 'rimg',
+            img: image,
+            size: '575x',
+            lazy: lazy,
+            data-image-id: image.id
+          %}
+        </div>
+      {%- else -%}
+        <div class="product-image {% if use_large_image %}product-image-wide{% endif %}">
+          {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
+        </div>
+      {%- endfor -%}
+    {% endif %}
+  </div>
+
+  <div class="product-details-wrapper">
+    <div class="product-details">
+      {% if show_vendor %}
+        <a class="product-vendor" href="{{ product.vendor | url_for_vendor }}">{{ product.vendor }}</a>
+      {% endif %}
+
+      <h1 class="product-title" itemprop="name">
+        {% if product != blank %}
+          {% if link_to %}
+            <a href="{{ product.url }}">
+              {{ product.title }}
+            </a>
+          {% else %}
+            {{ product.title }}
+          {% endif %}
+        {% else %}
+          {{ 'products.product.onboarding.title' | t }}
+        {% endif %}
+      </h1>
+
+      <p class="product-price" itemprop="offers" itemscope itemtype="http://schema.org/Offer">
+        <meta itemprop="priceCurrency" content="{{ shop.currency }}">
+        <meta itemprop="price" content="{{ product.price_min | money_without_currency }}">
+
+        <span class="product-price-minimum money">
+          {% if product != blank %}
+            {% include 'money', value: variant.price %}
+          {% else %}
+            {{ 'products.product.onboarding.price' | t }}
+          {% endif %}
+        </span>
+
+        <span
+          class="product-price-compare money original {% if variant.compare_at_price > variant.price %}visible{% endif %}"
+        >
+          {% include 'money', value: variant.compare_at_price %}
+        </span>
+
+        {% if product.available %}
+          <link itemprop="availability" href="http://schema.org/InStock">
+        {% else %}
+          <link itemprop="availability" href="http://schema.org/OutOfStock">
+        {% endif %}
+      </p>
+
+      {% if product != blank %}
+        {% form 'product', product, data-product-form: '' %}
+          {{ form_content }}
+        {% endform %}
+      {% else %}
+        <div data-product-form>
+          {{ form_content }}
+        </div>
+      {% endif %}
+
+      {% if product != blank and product.description != blank %}
+        <div class="product-description rte" itemprop="description">
+          {{ product.description }}
+        </div>
+      {% elsif product == blank %}
+        <div class="product-description rte" itemprop="description">
+          {{ 'products.product.onboarding.description' | t }}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>

@@ -1,0 +1,5 @@
+{% if settings.currency_display_format == 'money_format' %}
+  {{ value | money }}
+{% else %}
+  {{ value | money_with_currency }}
+{% endif %}

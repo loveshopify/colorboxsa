@@ -1,0 +1,84 @@
+{% comment %}
+
+  Facebook and Pinterest Open Graph
+
+  Use the Facebook Open Graph Debugger for validation (and cache clearing)
+    - http://developers.facebook.com/tools/debug
+
+  Validate your Pinterest rich pins
+    - https://developers.pinterest.com/rich_pins/validator/
+
+{% endcomment %}
+
+<meta property="og:site_name" content="{{ shop.name }}" />
+<meta property="og:url" content="{{ canonical_url }}" />
+<meta property="og:title" content="{{ page_title }}" />
+{% if page_description %}
+  <meta property="og:description" content="{{ page_description }}" />
+{% endif %}
+{% if template contains 'product' %}
+  <meta property="og:type" content="product">
+  {% for image in product.images %}
+    <meta property="og:image" content="http:{{ image | img_url: 'grande' }}" />
+    <meta property="og:image:secure_url" content="https:{{ image | img_url: 'grande' }}" />
+  {% endfor %}
+  <meta property="og:price:amount" content="{{ product.price |  money_without_currency | stip_html | escape }}">
+  <meta property="og:price:currency" content="{{ shop.currency }}">
+{% elsif template contains 'article' %}
+  <meta property="og:type" content="article">
+  {% assign img_tag = '<' | append: 'img' %}
+  {% if article.content contains img_tag %}
+    {% assign src = article.content | split: 'src="' %}
+    {% assign src = src[1] | split: '"' | first | remove: 'https:' | remove: 'http:' %}
+    {% if src %}
+      <meta property="og:image" content="http:{{ src }}" />
+      <meta property="og:image:secure_url" content="https:{{ src }}" />
+    {% endif %}
+  {% endif %}
+{% else %}
+  <meta property="og:type" content="website" />
+  {% if settings.use-logo %}
+    <meta property="og:image" content="http:{{ 'logo.png' | asset_url }}" />
+    <meta property="og:image:secure_url" content="https:{{ 'logo.png' | asset_url }}" />
+  {% endif %}
+{% endif %}
+
+{% comment %}
+
+  Twitter Card
+
+  Cards must be approved by Twitter to be activated
+    - https://dev.twitter.com/docs/cards/validation/validator
+
+{% endcomment %}
+
+<meta name="twitter:card" content="summary">
+
+{% if settings.twitter-handle != blank %}
+  <meta name="twitter:site" content="{{ settings.twitter-handle }}">
+{% endif %}
+
+{% if page_description %}
+  <meta property="twitter:description" content="{{ page_description }}" />
+{% endif %}
+
+<meta name="twitter:url" content="{{ canonical_url }}">
+
+{% if template contains 'product' %}
+  <meta name="twitter:title" content="{{ product.title }}">
+  <meta name="twitter:image" content="http:{{ product | img_url: 'grande' }}">
+{% elsif template contains 'article' %}
+  <meta name="twitter:title" content="{{ article.title }}" />
+  {% if article.content contains "<img" %}
+    {% assign src = article.content | split: 'src="' %}
+    {% assign src = src[1] | split: '"' | first | replace: '//cdn', 'http://cdn' | replace: 'http:http://', 'http://' | remove: 'https:'  %}
+    {% if src %}
+      <meta property="twitter:image" content="{{ src }}" />
+    {% endif %}
+ {% endif %}
+{% else %}
+  <meta name="twitter:title" content="{{ shop.name }}" />
+  {% if settings.use-logo %}
+    <meta name="twitter:image" content="{{ 'logo.png' | asset_url }}" />
+  {% endif %}
+{% endif %}

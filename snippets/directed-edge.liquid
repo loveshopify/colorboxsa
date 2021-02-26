@@ -1,0 +1,115 @@
+<div id="directededge-blocks"></div>
+<script type="text/javascript" id="directededge-script">
+
+var DirectedEdgeQuery = new Object();
+
+DirectedEdgeQuery.addParameter = function(name, value)
+{
+    if(!DirectedEdgeQuery.parameters)
+    {
+        DirectedEdgeQuery.parameters = new Object();
+    }
+    DirectedEdgeQuery.parameters[name] = value;
+}
+
+DirectedEdgeQuery.formatQuery = function()
+{
+
+    var url = window.location.protocol +
+        "//shopify.directededge.com/blocks/compound?shop={{ shop.permanent_domain }}";
+    for(var p in DirectedEdgeQuery.parameters)
+    {
+        url += "&" + p + "=" + encodeURIComponent(DirectedEdgeQuery.parameters[p]);
+    }
+    
+    return url;
+}
+
+DirectedEdgeQuery.generateGUID = function()
+{
+    return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function(c) {
+        var r = Math.random() * 16 | 0;
+        var v = c == "x" ? r : r & 0x3 | 0x8;
+        return v.toString(16);
+    });
+}
+
+DirectedEdgeQuery.checkCookie = function()
+{
+    var guid = DirectedEdgeQuery.getCookie("de_guid");
+
+    if(!guid)
+    {
+        guid = DirectedEdgeQuery.generateGUID();
+
+        var expires = new Date();
+        expires.setFullYear(expires.getFullYear() + 2);
+
+        document.cookie =
+            "de_guid=" + guid + "; " +
+            "expires=" + expires.toUTCString() + "; " +
+            "path=/";
+    }
+
+    return guid;
+}
+
+DirectedEdgeQuery.getCookie = function(key)
+{
+    var cookies = new Object();
+    var pairs = document.cookie.split("; ");
+    for(var i = 0; i < pairs.length; i++)
+    {
+        var pair = pairs[i].split("=")
+        if(pair[0] === key)
+        {
+            return pair[1];
+        }
+    }
+
+    return undefined;
+}
+
+DirectedEdgeQuery.execute = function()
+{
+  DirectedEdgeQuery.addParameter("tracking", DirectedEdgeQuery.checkCookie());
+
+  var script = document.createElement("script");
+  script.setAttribute("type", "text/javascript");
+  script.setAttribute("charset", "utf-8");
+  script.setAttribute("src", DirectedEdgeQuery.formatQuery());
+  document.getElementsByTagName("head").item(0).appendChild(script);
+}
+
+DirectedEdgeQuery.executeAsync = function()
+{
+    setTimeout(DirectedEdgeQuery.execute, 0);
+}
+
+DirectedEdgeQuery.addParameter("template", "{{ template }}");
+DirectedEdgeQuery.addParameter("page", "{{ page.handle }}");
+DirectedEdgeQuery.addParameter("customer", "{{ customer.id }}");
+DirectedEdgeQuery.addParameter("product", "{{ product.id }}");
+DirectedEdgeQuery.addParameter("product_handle", "{{ product.handle }}");
+DirectedEdgeQuery.addParameter("basket", "{% for item in cart.items %}{{ item.product.id }},{% endfor %}");
+{% if directed-edge-tags %}
+DirectedEdgeQuery.addParameter("tags", "{{ directed-edge-tags }}");
+{% endif %}
+{% if directed-edge-excluded-tags %}
+DirectedEdgeQuery.addParameter("excluded_tags", "{{ directed-edge-excluded-tags }}");
+{% endif %}
+{% if directed-edge-blocks %}
+DirectedEdgeQuery.addParameter("blocks", "{{ directed-edge-blocks }}");
+{% endif %}
+{% if directed-edge-callback %}
+DirectedEdgeQuery.addParameter("callback", "{{ directed-edge-callback }}");
+{% endif %}
+{% if directed-edge-jsonp %}
+DirectedEdgeQuery.addParameter("jsonp", "{{ directed-edge-jsonp }}");
+{% endif %}
+{% if directed-edge-price-metafield %}
+DirectedEdgeQuery.addParameter("price_metafield", "{{ directed-edge-price-metafield }}");
+{% endif %}
+DirectedEdgeQuery.executeAsync();
+
+</script>
